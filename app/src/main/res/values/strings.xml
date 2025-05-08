@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">GalleryIos18</string>
+    <string name="You_need_to_enable_permissions_to_use_this_feature">You need to enable permissions to use this feature</string>
+    <string name="go_to_setting">Go to setting</string>
+    <string name="go_back">Go back</string>
+    <string name="english">English</string>
+    <string name="vn">Viet Nam</string>
+    <string name="tap_to_open">Tap to open</string>
+    <string name="set_successfully">Set Successfully</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply_to_project">Apply to</string>
+    <string name="exit_editing">Exit editing</string>
+    <string name="ok">Ok</string>
+    <string name="select_more_photos">Select more photos</string>
+    <string name="change_settings">Change settings</string>
+    <string name="rate_us">Rate us</string>
+    <string name="text_content_rate">We’re grateful for your time on Lock Screen</string>
+    <string name="text_question_rate">Are you satisfied with Lock Screen?</string>
+    <string name="submit">Submit</string>
+    <string name="not_now">Not now</string>
+    <string name="please_rate_5_star">Please rate 5 star</string>
+    <string name="link_share_market">Link share market</string>
+    <string name="home">Home</string>
+    <string name="languages">Language</string>
+    <string name="this_file_is_corrupted_please_choose_another_file">This file is corrupted please choose another file</string>
+
+</resources>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:id="@+id/layout_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_66000000">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_28sdp"
+            android:background="@color/white">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_thumb_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:src="@drawable/ic_launcher_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_rate_us"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:fontFamily="@font/sf_pro_text_semibold"
+                android:includeFontPadding="false"
+                android:text="@string/rate_us"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_20ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_thumb_rate" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_we_re_grateful_for_your_time_on_zipper_lock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_22sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:fontFamily="@font/sf_pro_text_semibold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/text_content_rate"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_rate_us" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_are_you_satisfied_with_zipper_lock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_22sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:fontFamily="@font/sf_pro_text_semibold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/text_question_rate"
+                android:textColor="@color/gray"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_we_re_grateful_for_your_time_on_zipper_lock" />
+
+
+            <com.example.galleryios18.utils.rateapp.RotationRatingBar
+                android:id="@+id/simpleRatingBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:gravity="center"
+                app:clearRatingEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_are_you_satisfied_with_zipper_lock"
+                app:touchable="true" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_22sdp"
+                android:background="@color/blue"
+                android:fontFamily="@font/sf_pro_text_semibold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingVertical="@dimen/_12sdp"
+                android:text="@string/submit"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15ssp"
+                app:layout_constraintTop_toBottomOf="@+id/simpleRatingBar" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_not_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_22sdp"
+                android:layout_marginVertical="@dimen/_6sdp"
+                android:background="@color/white"
+                android:fontFamily="@font/sf_pro_text_semibold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_6sdp"
+                android:text="@string/not_now"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_submit" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

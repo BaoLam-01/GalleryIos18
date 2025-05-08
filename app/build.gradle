@@ -1,0 +1,120 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+//    id 'com.google.gms.google-services'
+//    id 'com.google.firebase.crashlytics'
+}
+
+android {
+    namespace 'com.example.galleryios18'
+    compileSdk versions.compileSdkVersion
+    buildToolsVersion versions.buildToolsVersion
+
+    defaultConfig {
+        applicationId "com.example.galleryios18"
+        minSdkVersion versions.minSdkVersion
+        targetSdkVersion versions.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        flavorDimensions "default"
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+        renderscriptTargetApi 33
+        renderscriptSupportModeEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        dataBinding true
+    }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "500" // or whatever number you want
+        }
+    }
+    productFlavors {
+        product {
+            dimension "default"
+        }
+        dev {
+            dimension "default"
+            applicationId = 'com.example.galleryios18'
+        }
+        billing {
+            dimension "default"
+            applicationId = 'com.example.galleryios18'
+        }
+    }
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
+    /*Core*/
+    implementation libraries.androidAppCopmpat
+    implementation libraries.multidex
+    implementation libraries.ktxCore
+    /*UI*/
+    implementation libraries.androidxNavigation
+    implementation libraries.androidUICommon
+    implementation libraries.materialDesign
+    implementation libraries.hilt
+    kapt libraries.hiltKpt
+    annotationProcessor libraries.hiltAP
+
+    implementation libraries.glide
+    implementation libraries.transformationGlide
+    annotationProcessor libraries.glideAP
+
+    /*Firebase*/
+    implementation platform("com.google.firebase:firebase-bom:$versions.firebaseVersion")
+    implementation libraries.firebase
+
+    /*Database ( if use Room) */
+    implementation libraries.room
+    implementation libraries.roomRxjava
+    annotationProcessor libraries.roomKpt
+    kapt libraries.roomAP
+
+/*Other*/
+    implementation libraries.timberLog
+    implementation libraries.sdp
+    implementation libraries.ssp
+    implementation libraries.retrofitWithLogger
+    implementation libraries.lottie
+    implementation libraries.rxJava
+    implementation libraries.gson
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    /*Test*/
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation testLib
+
+    /*billing*/
+    implementation libraries.billing
+}
