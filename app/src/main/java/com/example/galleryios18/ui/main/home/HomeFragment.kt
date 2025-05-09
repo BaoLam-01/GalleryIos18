@@ -88,6 +88,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun observerData() {
+        mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
+
+        }
     }
 
     @SuppressLint("InlinedApi")
