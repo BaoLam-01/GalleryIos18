@@ -27,7 +27,6 @@ abstract class BaseBindingFragment<B : ViewDataBinding, T : BaseViewModel> :
     lateinit var viewModel: T
     lateinit var mainViewModel: MainViewModel
     private var loaded = false
-    protected var isPro = true
     private var mRateDialog: RateDialog? = null
     protected abstract fun getViewModel(): Class<T>
     abstract val layoutId: Int
@@ -59,15 +58,12 @@ abstract class BaseBindingFragment<B : ViewDataBinding, T : BaseViewModel> :
         }
         viewModel = ViewModelProvider(this)[getViewModel()]
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        val isProChanged = isPro
         if (!needToKeepView()) {
             onCreatedView(view, savedInstanceState)
         } else {
             if (!loaded) {
                 onCreatedView(view, savedInstanceState)
                 loaded = true
-            } else if (isProChanged) {
-                updateWhenBecomePro(isPro)
             }
         }
         observerData()
@@ -139,7 +135,6 @@ abstract class BaseBindingFragment<B : ViewDataBinding, T : BaseViewModel> :
         lastClickTime = 0
     }
 
-    open fun updateWhenBecomePro(isPro: Boolean) {}
     open fun finishRate() {}
 
 
@@ -155,8 +150,6 @@ abstract class BaseBindingFragment<B : ViewDataBinding, T : BaseViewModel> :
         }
     }
 
-    fun showProDialog() {
-    }
 
     private var rateListener: RateDialog.ListenerRate = object : RateDialog.ListenerRate {
         override fun rateFiveStar() {

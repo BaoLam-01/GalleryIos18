@@ -30,7 +30,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkIconPremium()
         onBackPress()
     }
 
@@ -47,12 +46,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 override fun handleOnBackPressed() {
                 }
             })
-    }
-
-    private fun checkIconPremium() {
-        if (isPro) {
-        } else {
-        }
     }
 
     override fun needToKeepView(): Boolean {
@@ -78,11 +71,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun onClick() {
 
-    }
-
-    override fun updateWhenBecomePro(isPro: Boolean) {
-        super.updateWhenBecomePro(isPro)
-        checkIconPremium()
     }
 
     override fun finishRate() {

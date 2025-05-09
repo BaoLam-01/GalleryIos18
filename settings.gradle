@@ -1,2 +1,3 @@
 rootProject.name = "GalleryIos18"
 include ':app'
+include ':realtimeblurview'

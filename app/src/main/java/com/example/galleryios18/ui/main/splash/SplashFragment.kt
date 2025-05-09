@@ -23,7 +23,7 @@ class SplashFragment : BaseBindingFragment<FragmentSplashBinding, MainViewModel>
             if (isAdded) {
                 navigateScreen(null, R.id.homeFragment)
             }
-        }, 4000)
+        }, 1000)
     }
 
     override fun needInsetTop(): Boolean {

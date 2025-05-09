@@ -117,4 +117,6 @@ dependencies {
 
     /*billing*/
     implementation libraries.billing
+    implementation project(':realtimeblurview')
+
 }
