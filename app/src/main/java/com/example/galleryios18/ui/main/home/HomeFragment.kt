@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,6 +47,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+        Timber.e("LamPro - on created")
+        Log.e("LamPro", "onCreatedView: ")
         initView()
         onClick()
     }
@@ -72,9 +75,11 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         super.onStart()
         if (requestPermission) {
             requestPermission = false
+            Timber.e("LamPro - requestPermission: " + requestPermission)
             if (!PermissionUtils.checkNotificationPermission(requireContext())) {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
+
             if (PermissionHelper.checkPermissionMedia(requireActivity())) {
                 val permissions =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

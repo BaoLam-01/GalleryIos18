@@ -5,7 +5,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.multidex.BuildConfig
 import androidx.multidex.MultiDexApplication
 import com.example.galleryios18.common.Constant
 import com.example.galleryios18.data.local.SharedPreferenceHelper
@@ -30,7 +29,7 @@ class App : MultiDexApplication() {
         instance = this
         initLog()
         initLanguage()
-        enableFirebaseCrashlytics(false)
+//        enableFirebaseCrashlytics(false)
         AnalyticsManager.init(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleEventObserver);
 
