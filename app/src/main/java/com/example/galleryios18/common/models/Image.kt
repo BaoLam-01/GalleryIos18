@@ -8,9 +8,7 @@ data class Image(
     var dateModifier: Long = 0,
     var path: String = "",
     var time: Long = 0,
+    var isImage: Boolean = true,
+    var duration: Long = 0L
 ) {
-    constructor(path: String, i: Int) : this() {
-        this.path = path
-        this.position = i
-    }
 }

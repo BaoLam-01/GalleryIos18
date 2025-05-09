@@ -1,10 +1,15 @@
 package com.example.galleryios18.utils
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Point
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.net.Uri
+import android.provider.Settings
 import android.text.TextPaint
 import android.text.TextUtils
 import android.text.format.DateFormat
@@ -15,6 +20,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.example.galleryios18.R
 
 object ViewUtils {
     fun disableAnimateRCV(recycler: RecyclerView) {
@@ -151,4 +157,25 @@ object ViewUtils {
         return false
     }
 
+    fun showDialogPermission(context: Context) {
+        AlertDialog.Builder(context).setMessage(
+            context.getString(R.string.you_need_to_enable_permissions)
+        ).setPositiveButton(
+            context.getString(R.string.go_to_setting)
+        ) { dialog: DialogInterface?, which: Int ->
+            // navigate to settings
+            intentToSettings(context)
+        }.setNegativeButton(
+            context.getString(R.string.go_back)
+        ) { dialog: DialogInterface, which: Int ->
+            // leave?
+            dialog.dismiss()
+        }.show()
+    }
+    fun intentToSettings(context: Context) {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", context.packageName, null)
+        intent.setData(uri)
+        context.startActivity(intent)
+    }
 }

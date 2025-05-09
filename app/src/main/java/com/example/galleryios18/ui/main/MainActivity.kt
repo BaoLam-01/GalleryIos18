@@ -67,10 +67,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
     private fun checkDismissDialogs() {
     }
 
-    fun closePremiumDialog() {
-        viewModel?.closePremiumDialog?.postValue(true)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         checkDismissDialogs()

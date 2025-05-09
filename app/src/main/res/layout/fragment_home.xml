@@ -5,36 +5,90 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:fitsSystemWindows="true">
+        android:background="@drawable/nature"
+        android:fitsSystemWindows="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPhotos"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
             <com.github.mmin18.widget.RealtimeBlurView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/tvCountItem"
                 app:layout_constraintTop_toTopOf="parent"
-                app:realtimeBlurRadius="20dp"
-                app:realtimeOverlayColor="#8000" />
+                app:realtimeBlurRadius="100dp"
+                app:realtimeOverlayColor="@color/transparent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_16sdp"
                 android:text="Photos"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_20ssp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCountItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 item"
+                app:layout_constraintStart_toStartOf="@id/tvTitle"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgAccount"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:src="@drawable/ic_launcher_background"
+                app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvTitle"
+                app:shapeAppearanceOverlay="@style/circle" />
+
+            <com.github.mmin18.widget.RealtimeBlurView
+                android:id="@+id/bgBtnChose"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_btn_chose"
+                app:layout_constraintBottom_toBottomOf="@id/tvChose"
+                app:layout_constraintEnd_toEndOf="@id/tvChose"
+                app:layout_constraintStart_toStartOf="@id/tvChose"
+                app:layout_constraintTop_toTopOf="@id/tvChose" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvChose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:text="Chose"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/imgAccount"
+                app:layout_constraintEnd_toStartOf="@id/imgAccount"
+                app:layout_constraintTop_toTopOf="@id/imgAccount" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@color/blue"
+                app:layout_constraintBottom_toBottomOf="@id/tvChose"
+                app:layout_constraintEnd_toStartOf="@id/tvChose"
+                app:layout_constraintTop_toTopOf="@id/tvChose"
+                app:shapeAppearanceOverlay="@style/circle" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
 </layout>

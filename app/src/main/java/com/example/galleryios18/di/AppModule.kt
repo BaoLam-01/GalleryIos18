@@ -13,6 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import com.example.galleryios18.common.Constant
 import com.example.galleryios18.data.local.SharedPreferenceHelper
+import com.tapbi.spark.launcherios18.data.repository.MediaRepository
 import javax.inject.Singleton
 
 
@@ -31,6 +32,10 @@ class AppModule {
         return SharedPreferenceHelper(sharedPreferences)
     }
 
-
+    @Provides
+    @Singleton
+    fun provideMediaRepository(): MediaRepository {
+        return MediaRepository()
+    }
 
 }
