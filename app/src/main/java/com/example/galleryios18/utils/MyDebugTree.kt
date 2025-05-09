@@ -11,16 +11,11 @@ class MyDebugTree : Timber.DebugTree() {
         )
     }
 
-    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        val mTag: String?
-        val mMessage: String
-        if (tag != null && tag.length > 35) {
-            mTag = fileName
-            mMessage = "$message $tag"
-        } else {
-            mTag = tag
-            mMessage = message
-        }
+    override fun log(
+        priority: Int, tag: String?, message: String, t: Throwable?
+    ) {
+        val mTag = fileName
+        val mMessage = "$tag $message"
         super.log(priority, mTag, mMessage, t)
     }
 }

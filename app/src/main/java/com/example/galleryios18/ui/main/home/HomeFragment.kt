@@ -16,6 +16,7 @@ import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.PermissionUtils
 import com.example.galleryios18.utils.Utils
+import com.google.android.datatransport.cct.internal.LogEvent
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
 import timber.log.Timber
 
@@ -24,14 +25,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { _ ->
-        Timber.e("LamPro - notification")
+        Timber.e("LamPro | notification - ")
         Utils.startService(requireActivity(), true)
     }
 
     private val mediaPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        Timber.e("LamPro - permission size: " + permissions.size)
+        Timber.tag("LamPro").e("LamPro | permission size: ${permissions.size} ")
     }
 
     override fun getViewModel(): Class<HomeViewModel> {
@@ -47,8 +48,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        Timber.e("LamPro - on created")
-        Log.e("LamPro", "onCreatedView: ")
+        Timber.e("LamPro | onCreatedView - ")
         initView()
         onClick()
     }
@@ -75,7 +75,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         super.onStart()
         if (requestPermission) {
             requestPermission = false
-            Timber.e("LamPro - requestPermission: " + requestPermission)
+            Timber.e("LamPro | onStart - requestPermission : $requestPermission")
             if (!PermissionUtils.checkNotificationPermission(requireContext())) {
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
@@ -122,7 +122,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun getAllMedia() {
-        Timber.e("LamPro - get all media")
+        Timber.e("LamPro | getAllMedia - ")
         mainViewModel.getAllMedia()
     }
 
