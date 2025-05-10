@@ -2,22 +2,29 @@ package com.example.galleryios18.ui.main.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.galleryios18.R
 import com.example.galleryios18.databinding.FragmentHomeBinding
+import com.example.galleryios18.ui.adapter.LibraryAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.Utils
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
 import timber.log.Timber
 
-class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
+class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>(),
+    LibraryAdapter.OnClickPickMediaListener {
     private var requestPermission = true
+    private lateinit var libraryAdapter: LibraryAdapter
 
     private val multiplePermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -89,7 +96,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun observerData() {
         mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
-
+            libraryAdapter.setData(it)
         }
     }
 
@@ -131,6 +138,16 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initView() {
+        setupViewBlur()
+//        setupViewBlurChose()
+        libraryAdapter =
+            LibraryAdapter(this, requireContext(), Utils.getScreenWidth(requireContext()))
+        binding.rvPhotos.apply {
+            layoutManager =
+                GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
+            adapter = libraryAdapter
+        }
+
         binding.tvTitle.apply {
             val layoutParams = this.layoutParams
             if (layoutParams is ConstraintLayout.LayoutParams) {
@@ -139,6 +156,24 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 requestLayout()
             }
         }
+    }
+
+//    private fun setupViewBlurChose() {
+//        val radius = 10f
+//
+//        val rootView: ViewGroup = binding.rootView
+//
+//        binding.bgBtnChose.setupWith(rootView)
+//        binding.bgBtnChose.setBlurRadius(radius)
+//        binding.bgBtnChose.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
+//        binding.bgBtnChose.setClipToOutline(true);
+//    }
+
+    private fun setupViewBlur() {
+        val radius = 10f
+        val rootView: ViewGroup = binding.rootView
+        binding.viewBlurHeader.setupWith(rootView)
+        binding.viewBlurHeader.setBlurRadius(radius)
     }
 
     private fun onClick() {
@@ -154,6 +189,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         super.finishRate()
         if (isAdded) {
         }
+    }
+
+    override fun onClickImage(string: String) {
+    }
+
+    override fun onErrClickImage() {
     }
 
 }
