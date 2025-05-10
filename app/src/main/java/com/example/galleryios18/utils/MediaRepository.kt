@@ -138,10 +138,13 @@ class MediaRepository @Inject constructor() {
                 cursor.close()
                 listMedia.addAll(listVideo)
             }
-
             listMedia
         }
+    }
 
+
+    fun sortVideosByCreatedDateAscending(list: ArrayList<Media>) {
+        list.sortBy { it.dateAdded }
     }
 
     private fun getVideoCollectionUri(): Uri {
@@ -151,5 +154,4 @@ class MediaRepository @Inject constructor() {
     private fun getImageCollectionUri(): Uri {
         return MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     }
-
 }

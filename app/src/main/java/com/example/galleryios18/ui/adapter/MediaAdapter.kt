@@ -1,6 +1,7 @@
 package com.example.galleryios18.ui.adapter
 
 import android.annotation.SuppressLint
+import android.view.View
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
@@ -57,6 +58,11 @@ class MediaAdapter : BaseBindingAdapter<ItemMediaBinding>() {
         val second: Long = duration / 1000 % 60
         Timber.e("LamPro | onBindViewHolderBase - $minute:$second")
         holder.binding.tvDuration.text = "$minute:$second"
+        if (listMedia.currentList[position].isImage) {
+            holder.binding.tvDuration.visibility = View.INVISIBLE
+        } else {
+            holder.binding.tvDuration.visibility = View.VISIBLE
+        }
     }
 
     override val layoutIdItem: Int

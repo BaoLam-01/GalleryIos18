@@ -22,7 +22,7 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
     fun getAllMedia() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
             run {
-                Timber.e(": ${throwable.message}")
+                Timber.e("LamPro: ${throwable.message}")
             }
         }) {
             allMediaLiveData.postValue(libraryViewRepository.getListLibs(false))

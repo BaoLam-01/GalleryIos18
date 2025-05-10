@@ -92,7 +92,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun observerData() {
         mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
-            mediaAdapter.setData(it)
+            val listSort = it.sortedBy { it.dateAdded }
+            mediaAdapter.setData(listSort)
+            binding.rvPhotos.scrollToPosition(it.size - 1)
         }
     }
 
