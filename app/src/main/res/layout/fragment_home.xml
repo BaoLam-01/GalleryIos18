@@ -12,13 +12,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <eightbitlab.com.blurview.BlurView
+        <com.github.mmin18.widget.RealtimeBlurView
             android:id="@+id/viewBlurHeader"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:blurOverlayColor="#19000000"
             app:layout_constraintBottom_toBottomOf="@id/tvCountItem"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:realtimeBlurRadius="2dp"
+            app:realtimeDownsampleFactor="2"
+            app:realtimeOverlayColor="#36000000" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitle"
@@ -65,7 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_10sdp"
-            android:padding="@dimen/_5sdp"
+            android:includeFontPadding="true"
+            android:paddingHorizontal="@dimen/_5sdp"
+            android:paddingVertical="@dimen/_3sdp"
             android:text="Chose"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/imgAccount"

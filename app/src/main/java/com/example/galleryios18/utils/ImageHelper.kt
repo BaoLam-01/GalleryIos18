@@ -1,57 +1,57 @@
 package com.example.galleryios18.utils
 
-import com.example.galleryios18.common.models.Folder
-import com.example.galleryios18.common.models.Image
+import com.example.galleryios18.common.models.Album
+import com.example.galleryios18.common.models.Media
 
 object ImageHelper {
 
-    fun singleListFromImage(image: Image): ArrayList<Image> {
-        val images = arrayListOf<Image>()
-        images.add(image)
-        return images
+    fun singleListFromImage(media: Media): ArrayList<Media> {
+        val listMedia = arrayListOf<Media>()
+        listMedia.add(media)
+        return listMedia
     }
 
-    fun folderListFromImages(images: List<Image>): List<Folder> {
-        val folderMap: MutableMap<Long, Folder> = LinkedHashMap()
-        for (image in images) {
+    fun folderListFromImages(media: List<Media>): List<Album> {
+        val folderMap: MutableMap<Long, Album> = LinkedHashMap()
+        for (image in media) {
             val bucketId = image.bucketId
             val bucketName = image.bucketName
             var folder = folderMap[bucketId]
             if (folder == null) {
-                folder = Folder(bucketId, bucketName)
+                folder = Album(bucketId, bucketName)
                 folderMap[bucketId] = folder
             }
-            folder.images.add(image)
+            folder.media.add(image)
         }
         return ArrayList(folderMap.values)
     }
 
-    fun filterImages(images: ArrayList<Image>, bucketId: Long?): ArrayList<Image> {
-        if (bucketId == null || bucketId == 0L) return images
+    fun filterImages(media: ArrayList<Media>, bucketId: Long?): ArrayList<Media> {
+        if (bucketId == null || bucketId == 0L) return media
 
-        val filteredImages = arrayListOf<Image>()
-        for (image in images) {
+        val filteredMedia = arrayListOf<Media>()
+        for (image in media) {
             if (image.bucketId == bucketId) {
-                filteredImages.add(image)
+                filteredMedia.add(image)
             }
         }
-        return filteredImages
+        return filteredMedia
     }
 
-    fun findImageIndex(image: Image, images: ArrayList<Image>): Int {
-        for (i in images.indices) {
-            if (images[i].path == image.path) {
+    fun findImageIndex(media: Media, listMedia: ArrayList<Media>): Int {
+        for (i in listMedia.indices) {
+            if (listMedia[i].path == media.path) {
                 return i
             }
         }
         return -1
     }
 
-    fun findImageIndexes(subImages: ArrayList<Image>, images: ArrayList<Image>): ArrayList<Int> {
+    fun findImageIndexes(subMedia: ArrayList<Media>, media: ArrayList<Media>): ArrayList<Int> {
         val indexes = arrayListOf<Int>()
-        for (image in subImages) {
-            for (i in images.indices) {
-                if (images[i].path == image.path) {
+        for (image in subMedia) {
+            for (i in media.indices) {
+                if (media[i].path == image.path) {
                     indexes.add(i)
                     break
                 }
@@ -61,8 +61,8 @@ object ImageHelper {
     }
 
 
-    fun isGifFormat(image: Image): Boolean {
-        val fileName = image.name
+    fun isGifFormat(media: Media): Boolean {
+        val fileName = media.name
         val extension = if (fileName.contains(".")) {
             fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length)
         } else ""

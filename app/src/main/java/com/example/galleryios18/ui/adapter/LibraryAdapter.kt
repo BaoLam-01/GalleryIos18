@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.galleryios18.R
-import com.example.galleryios18.common.models.Image
+import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.ItemMediaPickerBinding
 import com.example.galleryios18.utils.GlideUtils
 
@@ -19,18 +19,18 @@ class LibraryAdapter(
 ) : RecyclerView.Adapter<LibraryAdapter.ViewHolder>() {
     private var toast: Toast? = null
 
-    private val images: MutableList<Image> = arrayListOf()
+    private val media: MutableList<Media> = arrayListOf()
     private var pos = -1
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(images: List<Image>) {
-        this.images.clear()
-        this.images.addAll(images)
+    fun setData(media: List<Media>) {
+        this.media.clear()
+        this.media.addAll(media)
         notifyDataSetChanged()
     }
 
     fun setCurrentChoose(src: String) {
-        val index = images.indexOfFirst { it.path == src }
+        val index = media.indexOfFirst { it.path == src }
         if (index != -1) {
             pos = index
             notifyItemChanged(pos)
@@ -63,7 +63,7 @@ class LibraryAdapter(
 
         @SuppressLint("SetTextI18n")
         fun bindData(position: Int) {
-            val image = images[position].path
+            val image = media[position].path
             GlideUtils.loadImage(binding.ivThumb, image, screenWidth)
             binding.ivThumb.setOnClickListener {
                 if (pos != position) {
@@ -93,7 +93,7 @@ class LibraryAdapter(
     }
 
     override fun getItemCount(): Int {
-        return images.size
+        return media.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
