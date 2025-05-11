@@ -86,6 +86,63 @@
             app:layout_constraintTop_toTopOf="@id/tvChose"
             app:shapeAppearanceOverlay="@style/circle" />
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvSort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            app:cardCornerRadius="@dimen/_50sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clipToPadding="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cvClose"
+            app:layout_constraintStart_toEndOf="@id/cvSort">
+
+            <com.github.mmin18.widget.RealtimeBlurView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:realtimeBlurRadius="5dp"
+                app:realtimeDownsampleFactor="2"
+                app:realtimeOverlayColor="#79000000" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tlBottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_e9e9e9"
+                app:tabGravity="fill"
+                app:tabIndicator="@drawable/bg_item_tl_theme_light"
+                app:tabIndicatorColor="@color/color_8c767680"
+                app:tabIndicatorGravity="stretch"
+                app:tabMode="auto"
+                app:tabRippleColor="@color/transparent" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            app:cardCornerRadius="@dimen/_50sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </androidx.cardview.widget.CardView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.View.OnLongClickListener
+import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -15,6 +17,8 @@ import com.example.galleryios18.ui.adapter.MediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.Utils
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
 import timber.log.Timber
 
@@ -142,6 +146,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
             adapter = mediaAdapter
         }
+        initTabLayout()
 
         binding.tvTitle.apply {
             val layoutParams = this.layoutParams
@@ -149,6 +154,53 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 layoutParams.topMargin = (requireActivity() as MainActivity).statusBarHeight
                 this.layoutParams = layoutParams
                 requestLayout()
+            }
+        }
+    }
+
+    private fun initTabLayout() {
+        binding.tlBottom.addTab(
+            binding.tlBottom.newTab().setText(getText(R.string.month))
+        )
+        binding.tlBottom.addTab(
+            binding.tlBottom.newTab().setText(getText(R.string.all_photos))
+        )
+        binding.tlBottom.selectTab(binding.tlBottom.getTabAt(TabImage.TAB_ALL_PHOTO))
+        changeTabLayout(TabImage.TAB_ALL_PHOTO)
+        binding.tlBottom.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val tabCurrent = tab.getPosition()
+                changeTabLayout(tabCurrent)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+        })
+
+        for (i in 0 until binding.tlBottom.getTabCount()) {
+            val tabView = (binding.tlBottom.getChildAt(0) as ViewGroup).getChildAt(i)
+            tabView.setOnLongClickListener(OnLongClickListener { v: View? -> true })
+        }
+    }
+
+    private fun changeTabLayout(position: Int) {
+        when (position) {
+            TabImage.TAB_MONTH -> {
+                binding.rvPhotos.layoutManager =
+                    GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
+                mediaAdapter.setStyle(MediaAdapter.StyleRecycler.MONTH)
+                mainViewModel.allMediaLiveData.value?.let { mediaAdapter.setData(it) }
+            }
+
+            TabImage.TAB_ALL_PHOTO -> {
+                binding.rvPhotos.layoutManager =
+                    GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
+
+                mediaAdapter.setStyle(MediaAdapter.StyleRecycler.ALL)
+                mainViewModel.allMediaLiveData.value?.let { mediaAdapter.setData(it) }
             }
         }
     }
@@ -169,5 +221,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    object TabImage {
+        const val TAB_MONTH = 0
+        const val TAB_ALL_PHOTO = 1
+    }
 
 }

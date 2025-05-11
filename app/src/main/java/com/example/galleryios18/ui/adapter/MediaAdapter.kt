@@ -1,38 +1,43 @@
 package com.example.galleryios18.ui.adapter
 
 import android.annotation.SuppressLint
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.ItemMediaBinding
-import com.example.galleryios18.ui.base.BaseBindingAdapter
+import com.example.galleryios18.databinding.ItemMediaMonthBinding
 import com.example.galleryios18.utils.Utils
 import timber.log.Timber
 
-class MediaAdapter : BaseBindingAdapter<ItemMediaBinding>() {
+class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
+    private var style = StyleRecycler.ALL
 
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
         override fun areItemsTheSame(
             oldItem: Media,
-            newItem: Media
+            newItem: Media,
         ): Boolean {
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(
             oldItem: Media,
-            newItem: Media
+            newItem: Media,
         ): Boolean {
             return oldItem == newItem
         }
 
     }
 
-    val listMedia: AsyncListDiffer<Media> = AsyncListDiffer(this, mDiffCallback)
+    private val listMedia: AsyncListDiffer<Media> = AsyncListDiffer(this, mDiffCallback)
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(listMedia: List<Media>) {
@@ -40,33 +45,79 @@ class MediaAdapter : BaseBindingAdapter<ItemMediaBinding>() {
         notifyDataSetChanged()
     }
 
-    override fun onBindViewHolderBase(
-        holder: BaseHolder<ItemMediaBinding>,
-        position: Int
-    ) {
-        Glide.with(holder.binding.imgThumbMedia.context)
-            .load(listMedia.currentList[position].path)
-            .signature(ObjectKey(listMedia.currentList[position].id))
-            .placeholder(R.drawable.imagepicker_image_placeholder)
-            .error(R.drawable.imagepicker_image_error)
-            .override(Utils.getScreenWidth(holder.binding.imgThumbMedia.context) / 3)
-            .into(
-                holder.binding.imgThumbMedia
-            )
-        val duration = listMedia.currentList[position].duration
-        val minute: Long = duration / 1000 / 60
-        val second: Long = duration / 1000 % 60
-        Timber.e("LamPro | onBindViewHolderBase - $minute:$second")
-        holder.binding.tvDuration.text = "$minute:$second"
-        if (listMedia.currentList[position].isImage) {
-            holder.binding.tvDuration.visibility = View.INVISIBLE
-        } else {
-            holder.binding.tvDuration.visibility = View.VISIBLE
-        }
+    fun setStyle(style: StyleRecycler) {
+        this.style = style
     }
 
-    override val layoutIdItem: Int
-        get() = R.layout.item_media
-    override val sizeItem: Int
-        get() = listMedia.currentList.size
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): MediaViewHolder {
+        val binding: ViewDataBinding
+        if (style == StyleRecycler.ALL) {
+            binding = ItemMediaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        } else {
+            binding =
+                ItemMediaMonthBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        }
+        return MediaViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(
+        holder: MediaViewHolder,
+        position: Int,
+    ) {
+        holder.bindData(listMedia.currentList[position], holder.adapterPosition)
+    }
+
+    override fun getItemCount(): Int {
+        return listMedia.currentList.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return super.getItemViewType(position)
+    }
+
+    inner class MediaViewHolder(private val binding: ViewDataBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bindData(media: Media, position: Int) {
+            if (style == StyleRecycler.ALL) {
+                binding as ItemMediaBinding
+                Glide.with(binding.imgThumbMedia.context)
+                    .load(media.path)
+                    .signature(ObjectKey(media.id))
+                    .placeholder(R.drawable.imagepicker_image_placeholder)
+                    .error(R.drawable.imagepicker_image_error)
+                    .override(Utils.getScreenWidth(binding.imgThumbMedia.context) / 3)
+                    .into(binding.imgThumbMedia)
+                val duration = media.duration
+                val minute: Long = duration / 1000 / 60
+                val second: Long = duration / 1000 % 60
+                Timber.e("LamPro | onBindViewHolderBase - $minute:$second")
+                binding.tvDuration.text = "$minute:$second"
+                if (media.isImage) {
+                    binding.tvDuration.visibility = View.INVISIBLE
+                } else {
+                    binding.tvDuration.visibility = View.VISIBLE
+                }
+            } else {
+                binding as ItemMediaMonthBinding
+                Glide.with(binding.imgThumbMedia.context)
+                    .load(media.path)
+                    .signature(ObjectKey(media.id))
+                    .placeholder(R.drawable.imagepicker_image_placeholder)
+                    .error(R.drawable.imagepicker_image_error)
+                    .override(Utils.getScreenWidth(binding.imgThumbMedia.context))
+                    .into(binding.imgThumbMedia)
+            }
+
+        }
+
+    }
+
+
+    enum class StyleRecycler {
+        ALL,
+        MONTH
+    }
 }
