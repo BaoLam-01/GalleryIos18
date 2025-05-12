@@ -1,12 +1,15 @@
 package com.example.galleryios18.ui.main.showmedia
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.example.galleryios18.App
 import com.example.galleryios18.R
@@ -14,9 +17,11 @@ import com.example.galleryios18.databinding.FragmentShowMediaBinding
 import com.example.galleryios18.ui.adapter.MediaShowAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.custom.FastPagerSnapHelper
+import com.example.galleryios18.ui.custom.HorizontalSpaceItemDecoration
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.ViewUtils
 import timber.log.Timber
+import kotlin.math.abs
 
 
 class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMediaViewModel>() {
@@ -43,10 +48,38 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
     }
 
     private fun initView() {
+        initMediaShow()
+
+        ViewUtils.adjustViewWithSystemBar(
+            binding.tvDateMedia,
+            binding.btnShare,
+            requireActivity() as MainActivity
+        )
+
+    }
+
+    private fun initMediaShow() {
         binding.rvMediaShow.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
         val snapHelper: SnapHelper = FastPagerSnapHelper(requireContext())
         snapHelper.attachToRecyclerView(binding.rvMediaShow)
+
+        binding.rvMediaShow.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val center = recyclerView.width / 2f
+                for (i in 0 until recyclerView.childCount) {
+                    val child = recyclerView.getChildAt(i)
+                    val childCenter = (child.left + child.right) / 2f
+                    val d = abs(center - childCenter)
+                    val scale = 1f - d / recyclerView.width * 0.1f
+                    child.scaleY = scale
+                    child.scaleX = scale
+                }
+            }
+        })
+
+
         binding.rvMediaShow.adapter = mediaShowAdapter
         mainViewModel.allMediaLiveData.value?.let {
             if (App.instance.currentMediaShow != null && App.instance.currentPositionShow != -1) {
@@ -63,13 +96,6 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
                 binding.rvMediaShow.scrollToPosition(it.size - 1)
             }
         }
-
-        ViewUtils.adjustViewWithSystemBar(
-            binding.tvDateMedia,
-            binding.btnShare,
-            requireActivity() as MainActivity
-        )
-
     }
 
     private fun listener() {
@@ -78,12 +104,16 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
             Timber.e("LamPro | listener - rv onclick")
             if (binding.gr.isVisible) {
                 binding.gr.visibility = View.INVISIBLE
+                binding.root.setBackgroundColor(Color.BLACK)
             } else {
                 binding.gr.visibility = View.VISIBLE
+                binding.root.setBackgroundColor(Color.WHITE)
             }
         }
 
-
+        binding.imgBack.setOnClickListener {
+            popBackStack()
+        }
     }
 
     override fun observerData() {
