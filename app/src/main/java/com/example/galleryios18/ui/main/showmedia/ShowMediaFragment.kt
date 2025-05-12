@@ -2,6 +2,9 @@ package com.example.galleryios18.ui.main.showmedia
 
 import android.os.Bundle
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.SnapHelper
@@ -11,6 +14,9 @@ import com.example.galleryios18.databinding.FragmentShowMediaBinding
 import com.example.galleryios18.ui.adapter.MediaShowAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.custom.FastPagerSnapHelper
+import com.example.galleryios18.ui.main.MainActivity
+import com.example.galleryios18.utils.ViewUtils
+import timber.log.Timber
 
 
 class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMediaViewModel>() {
@@ -58,9 +64,25 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
             }
         }
 
+        ViewUtils.adjustViewWithSystemBar(
+            binding.tvDateMedia,
+            binding.btnShare,
+            requireActivity() as MainActivity
+        )
+
     }
 
     private fun listener() {
+        mediaShowAdapter.setListener {
+
+            Timber.e("LamPro | listener - rv onclick")
+            if (binding.gr.isVisible) {
+                binding.gr.visibility = View.INVISIBLE
+            } else {
+                binding.gr.visibility = View.VISIBLE
+            }
+        }
+
 
     }
 

@@ -11,6 +11,9 @@ import com.example.galleryios18.ui.base.BaseBindingAdapter
 import com.example.galleryios18.utils.Utils
 
 class MediaShowAdapter : BaseBindingAdapter<ItemMediaShowBinding>() {
+
+    private var listener: (() -> Unit)? = null
+
     private var listMediaShow: AsyncListDiffer<Media>
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
         override fun areItemsTheSame(
@@ -36,11 +39,14 @@ class MediaShowAdapter : BaseBindingAdapter<ItemMediaShowBinding>() {
         listMediaShow.submitList(listMedia)
     }
 
+    fun setListener(listener: () -> Unit) {
+        this.listener = listener
+    }
+
     override fun onBindViewHolderBase(
         holder: BaseHolder<ItemMediaShowBinding>,
         position: Int
     ) {
-        holder.binding.imgShow
         Glide.with(holder.binding.imgShow.context)
             .load(listMediaShow.currentList[position].path)
             .signature(ObjectKey(listMediaShow.currentList[position].id))
@@ -48,6 +54,10 @@ class MediaShowAdapter : BaseBindingAdapter<ItemMediaShowBinding>() {
             .error(R.color.white)
             .override(Utils.getScreenWidth(holder.binding.imgShow.context))
             .into(holder.binding.imgShow)
+
+        holder.binding.imgShow.setOnClickListener {
+            listener?.invoke()
+        }
     }
 
     override val layoutIdItem: Int

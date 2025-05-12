@@ -19,6 +19,7 @@ import com.example.galleryios18.ui.adapter.MediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.Utils
+import com.example.galleryios18.utils.ViewUtils
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
@@ -79,7 +80,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         Timber.e("LamPro | onCreatedView - ")
         initView()
-        onClick()
+        listener()
     }
 
 
@@ -150,14 +151,11 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
         initTabLayout()
 
-        binding.tvTitle.apply {
-            val layoutParams = this.layoutParams
-            if (layoutParams is ConstraintLayout.LayoutParams) {
-                layoutParams.topMargin = (requireActivity() as MainActivity).statusBarHeight
-                this.layoutParams = layoutParams
-                requestLayout()
-            }
-        }
+        ViewUtils.adjustViewWithSystemBar(
+            binding.tvTitle,
+            binding.imgSort,
+            requireActivity() as MainActivity
+        )
     }
 
     private fun initTabLayout() {
@@ -211,7 +209,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
 
-    private fun onClick() {
+    private fun listener() {
         mediaAdapter.setListener(object : MediaAdapter.IMediaClick {
             override fun onMediaClick(media: Media, position: Int) {
                 if (!checkClick())

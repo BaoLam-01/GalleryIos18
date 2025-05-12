@@ -15,11 +15,13 @@ abstract class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit var mPrefHelper: SharedPreferenceHelper
     var statusBarHeight = 0
+    var navigationBarHeight = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         LocaleUtils.applyLocale(this)
         super.onCreate(savedInstanceState)
         statusBarHeight = ViewUtils.getStatusBarHeight(this)
+        navigationBarHeight = ViewUtils.getNaviBarHeight(this)
     }
 
     override fun attachBaseContext(newBase: Context) {

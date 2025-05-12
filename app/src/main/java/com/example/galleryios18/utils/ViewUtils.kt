@@ -18,9 +18,11 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.galleryios18.R
+import com.example.galleryios18.ui.main.MainActivity
 
 object ViewUtils {
     fun disableAnimateRCV(recycler: RecyclerView) {
@@ -172,10 +174,36 @@ object ViewUtils {
             dialog.dismiss()
         }.show()
     }
+
     fun intentToSettings(context: Context) {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri = Uri.fromParts("package", context.packageName, null)
         intent.setData(uri)
         context.startActivity(intent)
+    }
+
+    fun adjustViewWithSystemBar(
+        viewTop: View? = null,
+        viewBottom: View? = null,
+        activity: MainActivity
+    ) {
+
+        viewTop?.apply {
+            val layoutParams = this.layoutParams
+            if (layoutParams is ConstraintLayout.LayoutParams) {
+                layoutParams.topMargin = activity.statusBarHeight
+                this.layoutParams = layoutParams
+                requestLayout()
+            }
+        }
+
+        viewBottom?.apply {
+            val layoutParams = this.layoutParams
+            if (layoutParams is ConstraintLayout.LayoutParams) {
+                layoutParams.bottomMargin = activity.navigationBarHeight
+                this.layoutParams = layoutParams
+            }
+        }
+
     }
 }

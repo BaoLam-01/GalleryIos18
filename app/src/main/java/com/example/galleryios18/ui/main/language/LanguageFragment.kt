@@ -35,7 +35,7 @@ class LanguageFragment : BaseBindingFragment<FragmentLanguageBinding, LanguageVi
         binding.layoutHeader.tvTitle.text = getString(R.string.languages)
         binding.layoutHeader.tvTitle.visibility = View.VISIBLE
         getData()
-        onClick()
+        listener()
     }
 
     override fun observerData() {
@@ -65,7 +65,7 @@ class LanguageFragment : BaseBindingFragment<FragmentLanguageBinding, LanguageVi
         }
     }
 
-    private fun onClick() {
+    private fun listener() {
         binding.layoutHeader.tvApply.visibility = View.GONE
         binding.ivChoose.setOnClickListener {
             languageAdapter?.apply {
