@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class LibraryViewRepository @Inject constructor(private val mediaRepository: MediaRepository) {
 
-    suspend fun getListLibs(isJustImage: Boolean): List<Media> {
+    fun getListLibs(isJustImage: Boolean): List<Media> {
         return mediaRepository.getListMedia(isJustImage)
     }
 }

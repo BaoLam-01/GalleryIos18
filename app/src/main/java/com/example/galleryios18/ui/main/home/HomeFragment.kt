@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.galleryios18.R
+import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.MediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
@@ -96,8 +97,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun observerData() {
         mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
-            val listSort = it.sortedBy { it.dateAdded }
-            mediaAdapter.setData(listSort)
+            mediaAdapter.setData(it)
             binding.rvPhotos.scrollToPosition(it.size - 1)
         }
     }
@@ -140,6 +140,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initView() {
+
         mediaAdapter = MediaAdapter()
         binding.rvPhotos.apply {
             layoutManager =
@@ -192,7 +193,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 binding.rvPhotos.layoutManager =
                     GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
                 mediaAdapter.setStyle(MediaAdapter.StyleRecycler.MONTH)
-                mainViewModel.allMediaLiveData.value?.let { mediaAdapter.setData(it) }
+                binding.rvPhotos.scheduleLayoutAnimation()
+
+//                    binding.rvPhotos.scrollToPosition(it.size - 1)
             }
 
             TabImage.TAB_ALL_PHOTO -> {
@@ -200,14 +203,19 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                     GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
 
                 mediaAdapter.setStyle(MediaAdapter.StyleRecycler.ALL)
-                mainViewModel.allMediaLiveData.value?.let { mediaAdapter.setData(it) }
+
+//                    binding.rvPhotos.scrollToPosition(it.size - 1)
             }
         }
     }
 
 
     private fun onClick() {
+        mediaAdapter.setListener(object : MediaAdapter.IMediaClick {
+            override fun onMediaClick(media: Media) {
 
+            }
+        })
     }
 
     private fun getAllMedia() {

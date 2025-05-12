@@ -1,5 +1,7 @@
 package com.example.galleryios18.common.models
 
+import com.example.galleryios18.ui.adapter.MediaAdapter
+
 data class Media(
     var id: Long,
     var name: String = "",
@@ -13,7 +15,7 @@ data class Media(
     var height: Int,
     var size: Long,
     var isImage: Boolean = true,
-    var duration: Long = 0L
+    var duration: Long = 0L,
 ) {
     override fun toString(): String {
         return "id: $id\n" +

@@ -19,20 +19,21 @@ import timber.log.Timber
 
 class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     private var style = StyleRecycler.ALL
+    private var listenter: IMediaClick? = null
 
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
         override fun areItemsTheSame(
             oldItem: Media,
             newItem: Media,
         ): Boolean {
-            return oldItem == newItem
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(
             oldItem: Media,
             newItem: Media,
         ): Boolean {
-            return oldItem == newItem
+            return oldItem.id == newItem.id
         }
 
     }
@@ -42,11 +43,14 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     @SuppressLint("NotifyDataSetChanged")
     fun setData(listMedia: List<Media>) {
         this.listMedia.submitList(listMedia)
-        notifyDataSetChanged()
     }
 
-    fun setStyle(style: StyleRecycler) {
+    fun setStyle(style: Int) {
         this.style = style
+    }
+
+    fun setListener(iMediaClick: IMediaClick) {
+        this.listenter = iMediaClick
     }
 
     override fun onCreateViewHolder(
@@ -54,7 +58,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
         viewType: Int,
     ): MediaViewHolder {
         val binding: ViewDataBinding
-        if (style == StyleRecycler.ALL) {
+        if (viewType == StyleRecycler.ALL) {
             binding = ItemMediaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         } else {
             binding =
@@ -67,7 +71,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
         holder: MediaViewHolder,
         position: Int,
     ) {
-        holder.bindData(listMedia.currentList[position], holder.adapterPosition)
+        holder.bindData(listMedia.currentList[position], position)
     }
 
     override fun getItemCount(): Int {
@@ -75,19 +79,19 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return super.getItemViewType(position)
+        return style
     }
 
     inner class MediaViewHolder(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindData(media: Media, position: Int) {
-            if (style == StyleRecycler.ALL) {
+            if (getItemViewType(position) == StyleRecycler.ALL) {
                 binding as ItemMediaBinding
                 Glide.with(binding.imgThumbMedia.context)
                     .load(media.path)
                     .signature(ObjectKey(media.id))
-                    .placeholder(R.drawable.imagepicker_image_placeholder)
-                    .error(R.drawable.imagepicker_image_error)
+                    .placeholder(R.color.white)
+                    .error(R.color.white)
                     .override(Utils.getScreenWidth(binding.imgThumbMedia.context) / 3)
                     .into(binding.imgThumbMedia)
                 val duration = media.duration
@@ -105,10 +109,14 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
                 Glide.with(binding.imgThumbMedia.context)
                     .load(media.path)
                     .signature(ObjectKey(media.id))
-                    .placeholder(R.drawable.imagepicker_image_placeholder)
-                    .error(R.drawable.imagepicker_image_error)
+                    .placeholder(R.color.white)
+                    .error(R.color.white)
                     .override(Utils.getScreenWidth(binding.imgThumbMedia.context))
                     .into(binding.imgThumbMedia)
+            }
+
+            binding.root.setOnClickListener {
+                listenter?.onMediaClick(media)
             }
 
         }
@@ -116,8 +124,12 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     }
 
 
-    enum class StyleRecycler {
-        ALL,
-        MONTH
+    object StyleRecycler {
+        const val ALL = 1
+        const val MONTH = 0
+    }
+
+    interface IMediaClick {
+        fun onMediaClick(media: Media)
     }
 }
