@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMediaShow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+        <View
+            android:id="@+id/bgHeader"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvTimeMedia"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:src="@drawable/ic_arrow_back_left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDateMedia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_15ssp"
+            app:layout_constraintEnd_toEndOf="@id/imgMore"
+            app:layout_constraintStart_toStartOf="@id/imgBack"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvTimeMedia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:textColor="@color/gray"
+            app:layout_constraintEnd_toEndOf="@id/imgMore"
+            app:layout_constraintStart_toStartOf="@id/imgBack"
+            app:layout_constraintTop_toBottomOf="@id/tvDateMedia" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:src="@drawable/more"
+            android:tint="@color/color_1573fe"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/viewBgBottom"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rvMediaBottom" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@color/light_gray"
+            android:src="@drawable/share"
+            android:tint="@color/color_1573fe"
+            app:contentPadding="@dimen/_6sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:shapeAppearanceOverlay="@style/Circle" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnTrash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@color/light_gray"
+            android:src="@drawable/trash"
+            android:tint="@color/color_1573fe"
+            app:contentPadding="@dimen/_6sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:shapeAppearanceOverlay="@style/Circle" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnInformation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray"
+            android:src="@drawable/information"
+            android:tint="@color/color_1573fe"
+            app:contentPadding="@dimen/_6sdp"
+            app:layout_constraintBottom_toBottomOf="@id/btnShare"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnShare" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray"
+            android:src="@drawable/heart"
+            android:tint="@color/color_1573fe"
+            app:contentPadding="@dimen/_6sdp"
+            app:layout_constraintBottom_toBottomOf="@id/btnInformation"
+            app:layout_constraintEnd_toStartOf="@id/btnInformation"
+            app:layout_constraintTop_toTopOf="@id/btnInformation"
+            app:shapeAppearanceOverlay="@style/CircleLeft" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnAdjust"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/light_gray"
+            android:src="@drawable/adjust"
+            android:tint="@color/color_1573fe"
+            app:contentPadding="@dimen/_6sdp"
+            app:layout_constraintBottom_toBottomOf="@id/btnInformation"
+            app:layout_constraintStart_toEndOf="@id/btnInformation"
+            app:layout_constraintTop_toTopOf="@id/btnInformation"
+            app:shapeAppearanceOverlay="@style/CircleRight" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMediaBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_20sdp"
+            app:layout_constraintBottom_toTopOf="@id/btnInformation" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

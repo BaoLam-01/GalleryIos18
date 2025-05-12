@@ -116,7 +116,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             }
 
             binding.root.setOnClickListener {
-                listenter?.onMediaClick(media)
+                listenter?.onMediaClick(media, position)
             }
 
         }
@@ -130,6 +130,6 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     }
 
     interface IMediaClick {
-        fun onMediaClick(media: Media)
+        fun onMediaClick(media: Media, position: Int)
     }
 }

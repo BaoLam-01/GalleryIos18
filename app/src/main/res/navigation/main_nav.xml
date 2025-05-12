@@ -17,4 +17,9 @@
         android:name="com.example.galleryios18.ui.main.language.LanguageFragment"
         android:label="LanguageFragment" />
 
+    <fragment
+        android:id="@+id/showMediaFragment"
+        android:name="com.example.galleryios18.ui.main.showmedia.ShowMediaFragment"
+        android:label="ShowMediaFragment" />
+
 </navigation>

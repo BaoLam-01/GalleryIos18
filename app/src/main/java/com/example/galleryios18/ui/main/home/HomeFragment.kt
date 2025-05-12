@@ -11,6 +11,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.galleryios18.App
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.FragmentHomeBinding
@@ -212,8 +213,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun onClick() {
         mediaAdapter.setListener(object : MediaAdapter.IMediaClick {
-            override fun onMediaClick(media: Media) {
-
+            override fun onMediaClick(media: Media, position: Int) {
+                if (!checkClick())
+                    return
+                App.instance.currentMediaShow = media
+                App.instance.currentPositionShow = position
+                navigateScreen(null, R.id.showMediaFragment)
             }
         })
     }

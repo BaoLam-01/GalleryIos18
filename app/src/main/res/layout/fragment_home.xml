@@ -51,7 +51,7 @@
             app:layout_constraintBottom_toBottomOf="@id/tvTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tvTitle"
-            app:shapeAppearanceOverlay="@style/circle" />
+            app:shapeAppearanceOverlay="@style/Circle" />
 
         <View
             android:id="@+id/bgBtnChose"
@@ -85,7 +85,7 @@
             app:layout_constraintBottom_toBottomOf="@id/tvChose"
             app:layout_constraintEnd_toStartOf="@id/tvChose"
             app:layout_constraintTop_toTopOf="@id/tvChose"
-            app:shapeAppearanceOverlay="@style/circle" />
+            app:shapeAppearanceOverlay="@style/Circle" />
 
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -100,7 +100,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
-            app:shapeAppearanceOverlay="@style/circle" />
+            app:shapeAppearanceOverlay="@style/Circle" />
 
 
         <androidx.cardview.widget.CardView
@@ -163,7 +163,7 @@
             app:layout_constraintBottom_toBottomOf="@id/imgSort"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/imgSort"
-            app:shapeAppearanceOverlay="@style/circle" />
+            app:shapeAppearanceOverlay="@style/Circle" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

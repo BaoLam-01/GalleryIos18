@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDexApplication
 import com.example.galleryios18.common.Constant
+import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.data.local.SharedPreferenceHelper
 import com.example.galleryios18.manager.AnalyticsManager
 import com.example.galleryios18.utils.LocaleUtils
@@ -23,6 +24,8 @@ class App : MultiDexApplication() {
     lateinit var mPrefHelper: SharedPreferenceHelper
     val stateLifecycle = MutableLiveData<Boolean>()
     var isAppInForeground: Boolean = false
+    var currentMediaShow: Media? = null
+    var currentPositionShow: Int = -1
 
     override fun onCreate() {
         super.onCreate()
