@@ -118,6 +118,7 @@ dependencies {
     /*billing*/
     implementation libraries.billing
     implementation project(':realtimeblurview')
-    implementation 'com.github.Dimezis:BlurView:version-2.0.6'
+    implementation project(':HorizontalWheelView')
+    implementation 'com.mikhaellopez:circularprogressbar:3.1.0'
 
 }
