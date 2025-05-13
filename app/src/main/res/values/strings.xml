@@ -27,5 +27,6 @@
     <string name="you_need_to_enable_permissions">You need to enable permissions</string>
     <string name="month">Month</string>
     <string name="all_photos">All</string>
+    <string name="adjust">Adjust</string>
 
 </resources>

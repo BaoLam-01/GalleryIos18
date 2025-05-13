@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/bg_circle"
+            android:backgroundTint="@color/gray"
+            android:paddingHorizontal="@dimen/_5sdp"
+            android:text="@string/cancel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:background="@drawable/bg_circle"
+            android:backgroundTint="@color/color_FFE7AA"
+            android:paddingHorizontal="@dimen/_5sdp"
+            android:text="@string/cancel"
+            app:layout_constraintBottom_toBottomOf="@id/tvCancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvCancel" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnUndo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:src="@drawable/ic_undo"
+            android:tint="@color/gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCancel" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnRedo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:src="@drawable/ic_redo"
+            android:tint="@color/gray"
+            app:layout_constraintStart_toEndOf="@id/btnUndo"
+            app:layout_constraintTop_toBottomOf="@id/tvCancel" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/ic_more_edit"
+            android:tint="@color/gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCancel" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btnPaint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/ic_pen"
+            android:tint="@color/gray"
+            app:layout_constraintEnd_toStartOf="@id/btnMore"
+            app:layout_constraintTop_toBottomOf="@id/tvCancel" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvAdjust"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/adjust"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/btnUndo"
+            app:layout_constraintEnd_toStartOf="@id/btnPaint"
+            app:layout_constraintStart_toEndOf="@id/btnRedo"
+            app:layout_constraintTop_toTopOf="@id/btnUndo" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnAdjust"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/ic_adjust_edit"
+            android:tint="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/btnFilter"
+            app:layout_constraintEnd_toStartOf="@id/btnFilter"
+            app:layout_constraintTop_toTopOf="@id/btnFilter" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnFilter"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:src="@drawable/ic_filter"
+            android:tint="@color/gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/icCrop"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:src="@drawable/ic_crop"
+            android:tint="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/btnFilter"
+            app:layout_constraintStart_toEndOf="@id/btnFilter"
+            app:layout_constraintTop_toTopOf="@id/btnFilter" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -79,7 +79,6 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
             }
         })
 
-
         binding.rvMediaShow.adapter = mediaShowAdapter
         mainViewModel.allMediaLiveData.value?.let {
             if (App.instance.currentMediaShow != null && App.instance.currentPositionShow != -1) {
@@ -113,6 +112,10 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
 
         binding.imgBack.setOnClickListener {
             popBackStack()
+        }
+
+        binding.btnAdjust.setOnClickListener {
+
         }
     }
 
