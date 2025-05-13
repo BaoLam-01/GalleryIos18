@@ -3,6 +3,7 @@ package com.example.galleryios18.utils
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.core.database.getStringOrNull
 import com.example.galleryios18.App
 import com.example.galleryios18.common.models.Media
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +77,8 @@ class MediaRepository @Inject constructor() {
                     cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)),
                     cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)),
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)),
+                    cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
+                        ?: "",
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)),
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)),
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)),

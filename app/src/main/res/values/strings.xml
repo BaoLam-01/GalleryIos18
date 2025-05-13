@@ -28,5 +28,21 @@
     <string name="month">Month</string>
     <string name="all_photos">All</string>
     <string name="adjust">Adjust</string>
+    <string name="auto">AUTO</string>
+    <string name="exposure">exposure</string>
+    <string name="brilliance">brilliance</string>
+    <string name="highlights">highlights</string>
+    <string name="shadows">shadows</string>
+    <string name="contrast">contrast</string>
+    <string name="brightness">brightness</string>
+    <string name="blackpoint">blackpoint</string>
+    <string name="saturation">saturation</string>
+    <string name="vibrance">vibrance</string>
+    <string name="warmth">warmth</string>
+    <string name="tint">tint</string>
+    <string name="sharpness">sharpness</string>
+    <string name="definition">definition</string>
+    <string name="noise_reduction">noise reduction</string>
+    <string name="vignette">vignette</string>
 
 </resources>

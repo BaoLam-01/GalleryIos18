@@ -10,8 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        tools:background="@color/gray">
+        android:animateLayoutChanges="true">
 
 
         <com.mikhaellopez.circularprogressbar.CircularProgressBar
@@ -35,8 +34,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
             android:src="@drawable/ic_edit_straighten"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
