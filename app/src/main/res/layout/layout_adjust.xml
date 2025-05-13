@@ -14,7 +14,7 @@
             android:id="@+id/rvTypeAdjust"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
-            android:foregroundGravity="center"
+            android:layout_gravity="center"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toTopOf="parent" />
@@ -27,6 +27,7 @@
             android:layout_marginTop="@dimen/_3sdp"
             app:activeColor="@color/white"
             app:cursorColor="@color/white"
+            app:endLock="true"
             app:layout_constraintTop_toBottomOf="@id/rvTypeAdjust"
             app:normalColor="@color/gray" />
 
