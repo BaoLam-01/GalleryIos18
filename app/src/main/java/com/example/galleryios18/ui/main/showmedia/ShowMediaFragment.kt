@@ -102,7 +102,7 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
 
             Timber.e("LamPro | listener - rv onclick")
             if (binding.gr.isVisible) {
-                binding.gr.visibility = View.INVISIBLE
+                binding.gr.visibility = View.GONE
                 binding.root.setBackgroundColor(Color.BLACK)
             } else {
                 binding.gr.visibility = View.VISIBLE

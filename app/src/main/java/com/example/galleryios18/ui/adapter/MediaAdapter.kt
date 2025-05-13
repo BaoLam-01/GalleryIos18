@@ -100,7 +100,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
                 Timber.e("LamPro | onBindViewHolderBase - $minute:$second")
                 binding.tvDuration.text = "$minute:$second"
                 if (media.isImage) {
-                    binding.tvDuration.visibility = View.INVISIBLE
+                    binding.tvDuration.visibility = View.GONE
                 } else {
                     binding.tvDuration.visibility = View.VISIBLE
                 }

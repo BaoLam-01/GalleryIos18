@@ -37,7 +37,7 @@
             android:background="@color/color_view_block_wheel_view"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/wheelViewAdjust"
             app:layout_constraintTop_toTopOf="@id/wheelViewAdjust" />
 
