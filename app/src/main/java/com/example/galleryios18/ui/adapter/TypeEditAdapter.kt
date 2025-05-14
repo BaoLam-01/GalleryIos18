@@ -1,28 +1,35 @@
 package com.example.galleryios18.ui.adapter
 
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.example.galleryios18.R
-import com.example.galleryios18.data.models.ItemProgress
+import com.example.galleryios18.data.models.TypeEdit
 import com.example.galleryios18.databinding.ItemTypeEditBinding
 import com.example.galleryios18.ui.base.BaseBindingAdapter
+import com.example.galleryios18.utils.Utils
+import com.example.galleryios18.utils.rcvhelper.CenterRcv
 
 class TypeEditAdapter : BaseBindingAdapter<ItemTypeEditBinding>() {
     private var selectedPosition = 0
+    private var listener: ((Int, TypeEdit) -> Unit)? = null
+    fun setListener(typeEditClick: ((Int, TypeEdit) -> Unit)) {
+        listener = typeEditClick
+    }
 
-    private var listTypeEdit: AsyncListDiffer<ItemProgress>
-    private val mDiffCallback = object : DiffUtil.ItemCallback<ItemProgress>() {
+    private var listTypeEdit: AsyncListDiffer<TypeEdit>
+    private val mDiffCallback = object : DiffUtil.ItemCallback<TypeEdit>() {
         override fun areItemsTheSame(
-            oldItem: ItemProgress,
-            newItem: ItemProgress
+            oldItem: TypeEdit,
+            newItem: TypeEdit
         ): Boolean {
             return oldItem.name == newItem.name
         }
 
         override fun areContentsTheSame(
-            oldItem: ItemProgress,
-            newItem: ItemProgress
+            oldItem: TypeEdit,
+            newItem: TypeEdit
         ): Boolean {
             return oldItem.name == newItem.name
         }
@@ -33,7 +40,7 @@ class TypeEditAdapter : BaseBindingAdapter<ItemTypeEditBinding>() {
         listTypeEdit = AsyncListDiffer(this, mDiffCallback)
     }
 
-    fun setData(list: List<ItemProgress>) {
+    fun setData(list: List<TypeEdit>) {
         listTypeEdit.submitList(list)
     }
 
@@ -46,31 +53,61 @@ class TypeEditAdapter : BaseBindingAdapter<ItemTypeEditBinding>() {
             if (listTypeEdit.currentList[0].isShow)
                 typeEdit.numberRandomAuto else typeEdit.number
         val progressShow = (numberShow * 3.6).toInt()
-        if (position == 0)
+        if (position == 0) {
             showNumber(holder, typeEdit)
-        else
-            showIcon(holder, typeEdit)
+        } else {
+
+            if (typeEdit.isShow && position == selectedPosition) {
+                showNumber(holder, typeEdit)
+            } else {
+                showIcon(holder, typeEdit)
+            }
+        }
         holder.binding.circularProgressBar.progress = progressShow.toFloat()
         holder.binding.tvNumber.text = numberShow.toInt().toString()
+
+        var progressBarColor: Int = 0
+        var backgroundProgressBarColor: Int = 0
+        if (progressShow <= 0) {
+            progressBarColor =
+                ContextCompat.getColor(holder.itemView.context, R.color.white)
+            backgroundProgressBarColor =
+                ContextCompat.getColor(holder.itemView.context, R.color.color_8a8a8a)
+        } else {
+            progressBarColor =
+                ContextCompat.getColor(holder.itemView.context, R.color.color_FFD60A)
+            backgroundProgressBarColor =
+                ContextCompat.getColor(holder.itemView.context, R.color.color_7a786a)
+        }
+        holder.binding.circularProgressBar.progressBarColor = progressBarColor
+        holder.binding.circularProgressBar.backgroundProgressBarColor = backgroundProgressBarColor
+        holder.binding.tvNumber.setTextColor(progressBarColor)
+
+        holder.binding.root.setOnClickListener {
+            Utils.checkClick(it, 500)
+            listener?.invoke(position, typeEdit)
+        }
+        CenterRcv.setMarginItem(listTypeEdit.currentList.size, position, holder.itemView)
+
     }
 
     private fun showIcon(
         holder: BaseHolder<ItemTypeEditBinding>,
-        itemProgress: ItemProgress
+        typeEdit: TypeEdit
     ) {
         holder.binding.imgIcon.visibility = View.VISIBLE
         holder.binding.tvNumber.visibility = View.GONE
 
-        holder.binding.imgIcon.setImageResource(itemProgress.idIcon)
+        holder.binding.imgIcon.setImageResource(typeEdit.idIcon)
     }
 
     private fun showNumber(
         holder: BaseHolder<ItemTypeEditBinding>,
-        itemProgress: ItemProgress
+        typeEdit: TypeEdit
     ) {
         holder.binding.imgIcon.visibility = View.GONE
         holder.binding.tvNumber.visibility = View.VISIBLE
-        holder.binding.tvNumber.text = itemProgress.number.toString()
+        holder.binding.tvNumber.text = typeEdit.number.toString()
     }
 
 

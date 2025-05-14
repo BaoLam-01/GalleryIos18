@@ -17,7 +17,7 @@
             android:layout_gravity="center"
             android:visibility="gone" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.alexvasilkov.gestures.views.GestureImageView
             android:id="@+id/imgShow"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

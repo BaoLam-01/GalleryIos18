@@ -19,6 +19,10 @@
     <color name="color_view_block_wheel_view">#C1000000</color>
     <color name="color_view_block_item_type_edit">#C1000000</color>
     <color name="yellow">#FFCA00</color>
+    <color name="color_8a8a8a">#8a8a8a</color>
+    <color name="color_7a786a">#7a786a</color>
+    <color name="color_FFD60A">#FFD60A</color>
+
 
 
 </resources>

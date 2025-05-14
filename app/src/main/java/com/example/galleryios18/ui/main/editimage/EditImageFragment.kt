@@ -7,6 +7,10 @@ import com.example.galleryios18.R
 import com.example.galleryios18.databinding.FragmentEditImageBinding
 import com.example.galleryios18.ui.adapter.TypeEditAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
+import com.example.galleryios18.ui.custom.MyLinearSnapHelper
+import com.example.galleryios18.ui.main.MainActivity
+import com.example.galleryios18.utils.Utils
+import com.example.galleryios18.utils.ViewUtils
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 
 class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImageViewModel>() {
@@ -30,17 +34,23 @@ class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImag
     }
 
     private fun initView() {
-        val snapHelper = LinearSnapHelper()
+        ViewUtils.adjustViewWithSystemBar(
+            binding.tvCancel,
+            binding.btnFilter,
+            requireActivity() as MainActivity
+        )
+        val snapHelper = MyLinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.layoutAdjust.rvTypeAdjust)
-        binding.layoutAdjust.rvTypeAdjust.adapter = typeEditAdapter
-
         OverScrollDecoratorHelper.setUpOverScroll(
             binding.layoutAdjust.rvTypeAdjust,
             OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL
         )
+        binding.layoutAdjust.rvTypeAdjust.adapter = typeEditAdapter
     }
 
     private fun listener() {
+        typeEditAdapter.setListener { position, typeEdit ->
+        }
     }
 
     override fun observerData() {

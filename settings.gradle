@@ -2,3 +2,4 @@ rootProject.name = "GalleryIos18"
 include ':app'
 include ':realtimeblurview'
 include ':HorizontalWheelView'
+include ':photoview'

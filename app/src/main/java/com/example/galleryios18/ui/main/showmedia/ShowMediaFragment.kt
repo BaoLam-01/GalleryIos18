@@ -3,12 +3,8 @@ package com.example.galleryios18.ui.main.showmedia
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.example.galleryios18.App
@@ -17,7 +13,6 @@ import com.example.galleryios18.databinding.FragmentShowMediaBinding
 import com.example.galleryios18.ui.adapter.MediaShowAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.custom.FastPagerSnapHelper
-import com.example.galleryios18.ui.custom.HorizontalSpaceItemDecoration
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.ViewUtils
 import timber.log.Timber
@@ -95,6 +90,8 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
                 binding.rvMediaShow.scrollToPosition(it.size - 1)
             }
         }
+
+        binding.rvMediaShow
     }
 
     private fun listener() {
@@ -117,6 +114,7 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
         binding.btnAdjust.setOnClickListener {
             navigateScreen(null, R.id.EditImageFragment)
         }
+
     }
 
     override fun observerData() {

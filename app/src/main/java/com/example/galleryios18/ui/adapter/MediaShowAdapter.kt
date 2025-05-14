@@ -1,5 +1,6 @@
 package com.example.galleryios18.ui.adapter
 
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
