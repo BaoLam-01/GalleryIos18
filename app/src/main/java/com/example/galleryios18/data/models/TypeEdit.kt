@@ -5,7 +5,8 @@ data class TypeEdit(
     var number: Double,
     var idIcon: Int,
     var isShow: Boolean = true,
-    var numberRandomAuto: Double = 0.0
+    var numberRandomAuto: Double = 0.0,
+    var isCrop: Boolean
 ) {
 
 }

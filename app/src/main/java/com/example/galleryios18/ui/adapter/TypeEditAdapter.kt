@@ -49,20 +49,28 @@ class TypeEditAdapter : BaseBindingAdapter<ItemTypeEditBinding>() {
         position: Int
     ) {
         val typeEdit = listTypeEdit.currentList[position]
-        val numberShow =
-            if (listTypeEdit.currentList[0].isShow)
-                typeEdit.numberRandomAuto else typeEdit.number
-        val progressShow = (numberShow * 3.6).toInt()
-        if (position == 0) {
-            showNumber(holder, typeEdit)
+        var numberShow = 0.0
+        var progressShow = 0
+        if (typeEdit.isCrop) {
+            numberShow = typeEdit.number
+            progressShow = numberShow.toInt()
         } else {
-
-            if (typeEdit.isShow && position == selectedPosition) {
-                showNumber(holder, typeEdit)
-            } else {
+            numberShow = if (listTypeEdit.currentList[0].isShow)
+                typeEdit.numberRandomAuto else typeEdit.number
+            progressShow = (numberShow * 3.6).toInt()
+            if (position == 0) {
                 showIcon(holder, typeEdit)
+            } else {
+                if (typeEdit.isShow && position == selectedPosition) {
+                    showNumber(holder, typeEdit)
+                } else {
+                    showIcon(holder, typeEdit)
+                }
             }
+            holder.binding.vBlockTypeEdit.visibility =
+                if (typeEdit.isShow) View.GONE else View.VISIBLE
         }
+
         holder.binding.circularProgressBar.progress = progressShow.toFloat()
         holder.binding.tvNumber.text = numberShow.toInt().toString()
 
