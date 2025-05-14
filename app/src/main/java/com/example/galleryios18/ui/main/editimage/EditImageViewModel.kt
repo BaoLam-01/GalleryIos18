@@ -14,19 +14,8 @@ import timber.log.Timber
 import java.util.concurrent.ThreadLocalRandom
 
 class EditImageViewModel : BaseViewModel() {
-    val listItemAdjust: MutableLiveData<List<TypeEdit>> = MutableLiveData()
 
-    fun getAllItemAdjust() {
-        viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
-            run {
-                Timber.e("LamPro | getAllListItemAdjust: ${throwable.message}")
-            }
-        }) {
-            listItemAdjust.postValue(getListItemAdjust())
-        }
-    }
-
-    private fun getListItemAdjust(): List<TypeEdit> {
+    fun getListItemAdjust(): List<TypeEdit> {
         val listTypeEdits = mutableListOf<TypeEdit>()
         listTypeEdits.add(
             TypeEdit(

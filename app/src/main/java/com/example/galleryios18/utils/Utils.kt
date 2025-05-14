@@ -208,4 +208,8 @@ object Utils {
             false
         }
     }
+
+    fun changeDegreesToPercent(degrees: Double): Double {
+        return degrees * 100 / 360
+    }
 }

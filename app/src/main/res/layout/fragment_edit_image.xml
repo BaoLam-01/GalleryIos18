@@ -142,6 +142,18 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@id/wheelView" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_select_filter"
+            android:foregroundGravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/rvTypeAdjust"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rvTypeAdjust" />
+
         <com.github.shchurov.horizontalwheelview.HorizontalWheelView
             android:id="@+id/wheelView"
             android:layout_width="match_parent"
@@ -161,7 +173,7 @@
             android:background="@color/color_view_block_wheel_view"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/wheelView"
             app:layout_constraintTop_toTopOf="@id/wheelView" />
 

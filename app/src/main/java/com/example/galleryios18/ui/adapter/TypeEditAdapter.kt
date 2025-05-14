@@ -22,14 +22,14 @@ class TypeEditAdapter : BaseBindingAdapter<ItemTypeEditBinding>() {
     private val mDiffCallback = object : DiffUtil.ItemCallback<TypeEdit>() {
         override fun areItemsTheSame(
             oldItem: TypeEdit,
-            newItem: TypeEdit
+            newItem: TypeEdit,
         ): Boolean {
             return oldItem.name == newItem.name
         }
 
         override fun areContentsTheSame(
             oldItem: TypeEdit,
-            newItem: TypeEdit
+            newItem: TypeEdit,
         ): Boolean {
             return oldItem.name == newItem.name
         }
@@ -44,9 +44,19 @@ class TypeEditAdapter : BaseBindingAdapter<ItemTypeEditBinding>() {
         listTypeEdit.submitList(list)
     }
 
+    fun notifyItemChanged(item: TypeEdit) {
+        for (i in listTypeEdit.currentList.indices) {
+            if (listTypeEdit.currentList[i].name.equals(item.name, true)) {
+                notifyItemChanged(i)
+                break
+            }
+        }
+    }
+
+
     override fun onBindViewHolderBase(
         holder: BaseHolder<ItemTypeEditBinding>,
-        position: Int
+        position: Int,
     ) {
         val typeEdit = listTypeEdit.currentList[position]
         var numberShow = 0.0
@@ -101,7 +111,7 @@ class TypeEditAdapter : BaseBindingAdapter<ItemTypeEditBinding>() {
 
     private fun showIcon(
         holder: BaseHolder<ItemTypeEditBinding>,
-        typeEdit: TypeEdit
+        typeEdit: TypeEdit,
     ) {
         holder.binding.imgIcon.visibility = View.VISIBLE
         holder.binding.tvNumber.visibility = View.GONE
@@ -111,7 +121,7 @@ class TypeEditAdapter : BaseBindingAdapter<ItemTypeEditBinding>() {
 
     private fun showNumber(
         holder: BaseHolder<ItemTypeEditBinding>,
-        typeEdit: TypeEdit
+        typeEdit: TypeEdit,
     ) {
         holder.binding.imgIcon.visibility = View.GONE
         holder.binding.tvNumber.visibility = View.VISIBLE

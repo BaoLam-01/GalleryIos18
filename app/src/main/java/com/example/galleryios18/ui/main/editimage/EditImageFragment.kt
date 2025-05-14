@@ -1,6 +1,7 @@
 package com.example.galleryios18.ui.main.editimage
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,15 +11,19 @@ import com.example.galleryios18.databinding.FragmentEditImageBinding
 import com.example.galleryios18.ui.adapter.TypeEditAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.main.MainActivity
+import com.example.galleryios18.utils.Utils
 import com.example.galleryios18.utils.ViewUtils
+import com.example.galleryios18.utils.enable
 import com.example.galleryios18.utils.rcvhelper.CenterRcv
 import com.github.shchurov.horizontalwheelview.HorizontalWheelView
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper
 import timber.log.Timber
+import kotlin.math.round
 
 class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImageViewModel>() {
     private lateinit var typeEditAdapter: TypeEditAdapter
     private var currentTypeEdit: TypeEdit? = null
+    private lateinit var listTypeEditAdjust: List<TypeEdit>
     override fun getViewModel(): Class<EditImageViewModel> {
         return EditImageViewModel::class.java
     }
@@ -34,7 +39,8 @@ class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImag
 
     private fun initData() {
         typeEditAdapter = TypeEditAdapter()
-        viewModel.getAllItemAdjust()
+        listTypeEditAdjust = viewModel.getListItemAdjust()
+        typeEditAdapter.setData(listTypeEditAdjust)
     }
 
     private fun initView() {
@@ -55,18 +61,37 @@ class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImag
                 var position = binding.rvTypeAdjust.getPos()
                 Timber.e("LamPro | onScrolled - pre position : $position")
                 if (position == -1) {
-                    position = viewModel.listItemAdjust.value!!.size - 1
+                    if (listTypeEditAdjust.isNotEmpty()) {
+                        position = listTypeEditAdjust.size - 1
+                    } else return
                 }
                 Timber.e("LamPro | onScrolled - position: $position")
-                currentTypeEdit = viewModel.listItemAdjust.value?.get(position)
+                currentTypeEdit = listTypeEditAdjust[position]
+
+                binding.vBlockWheelView.visibility =
+                    if (currentTypeEdit!!.isShow) View.GONE else View.VISIBLE
             }
+
         })
 
         binding.wheelView.setListener(object : HorizontalWheelView.Listener() {
             override fun onRotationChanged(radians: Double) {
                 super.onRotationChanged(radians)
-//                val degree = binding.wheelView.degreesAngle
-//                Timber.e("LamPro | onRotationChanged - degree: $degree")
+                val degree = binding.wheelView.degreesAngle
+                Timber.e("LamPro | onRotationChanged - degree: $degree")
+                val percent = round(Utils.changeDegreesToPercent(degree))
+
+                if (listTypeEditAdjust.isNotEmpty()) {
+                    if (listTypeEditAdjust[0].isShow) {
+                        currentTypeEdit?.numberRandomAuto = percent
+                    } else {
+                        currentTypeEdit?.number = percent
+                    }
+                }
+                currentTypeEdit?.let {
+                    typeEditAdapter.notifyItemChanged(it)
+                }
+
             }
         })
         typeEditAdapter.setListener { position, typeEdit ->
@@ -94,8 +119,5 @@ class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImag
     }
 
     override fun observerData() {
-        viewModel.listItemAdjust.observe(viewLifecycleOwner) {
-            typeEditAdapter.setData(it)
-        }
     }
 }
