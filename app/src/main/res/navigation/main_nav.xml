@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_nav"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/homeFragment">
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.galleryios18.ui.main.splash.SplashFragment"
@@ -26,5 +26,9 @@
         android:id="@+id/EditImageFragment"
         android:name="com.example.galleryios18.ui.main.editimage.EditImageFragment"
         android:label="EditImageFragment" />
+    <fragment
+        android:id="@+id/CoordinatorLayout"
+        android:name="com.example.galleryios18.ui.main.cordinatorlayout.CordiLayout"
+        android:label="CoordinatorLayout" />
 
 </navigation>

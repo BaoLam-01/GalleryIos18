@@ -91,7 +91,12 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
             }
         }
 
-        binding.rvMediaShow
+        binding.rvMediaShow.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val view = snapHelper.findSnapView(recyclerView.layoutManager)
+            }
+        })
     }
 
     private fun listener() {

@@ -1,7 +1,6 @@
 package com.example.galleryios18.ui.main.editimage
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,6 @@ import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.Utils
 import com.example.galleryios18.utils.ViewUtils
-import com.example.galleryios18.utils.enable
 import com.example.galleryios18.utils.rcvhelper.CenterRcv
 import com.github.shchurov.horizontalwheelview.HorizontalWheelView
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper

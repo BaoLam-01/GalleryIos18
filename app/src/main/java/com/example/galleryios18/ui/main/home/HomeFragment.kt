@@ -86,8 +86,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun onBackPress() {
         requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
+            viewLifecycleOwner, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                 }
             })
@@ -142,6 +141,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initView() {
+        binding.rvPhotos.layoutParams.let {
+            val layoutParams = it as ConstraintLayout.LayoutParams
+            layoutParams.height =
+                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight + 10
+            binding.rvPhotos.layoutParams = layoutParams
+        }
 
         mediaAdapter = MediaAdapter()
         binding.rvPhotos.apply {
@@ -152,9 +157,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         initTabLayout()
 
         ViewUtils.adjustViewWithSystemBar(
-            binding.tvTitle,
-            binding.imgSort,
-            requireActivity() as MainActivity
+            binding.tvTitle, binding.imgSort, requireActivity() as MainActivity
         )
     }
 
@@ -208,12 +211,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-
     private fun listener() {
         mediaAdapter.setListener(object : MediaAdapter.IMediaClick {
             override fun onMediaClick(media: Media, position: Int) {
-                if (!checkClick())
-                    return
+                if (!checkClick()) return
                 App.instance.currentMediaShow = media
                 App.instance.currentPositionShow = position
                 navigateScreen(null, R.id.showMediaFragment)

@@ -26,6 +26,7 @@ class App : MultiDexApplication() {
     var isAppInForeground: Boolean = false
     var currentMediaShow: Media? = null
     var currentPositionShow: Int = -1
+    var currentMediaEdit : Media? = null
 
     override fun onCreate() {
         super.onCreate()
