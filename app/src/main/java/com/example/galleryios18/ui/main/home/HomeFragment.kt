@@ -4,13 +4,18 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.galleryios18.App
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
@@ -141,12 +146,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initView() {
-        binding.rvPhotos.layoutParams.let {
-            val layoutParams = it as ConstraintLayout.LayoutParams
-            layoutParams.height =
-                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight + 10
-            binding.rvPhotos.layoutParams = layoutParams
-        }
+//        binding.rvPhotos.layoutParams.let {
+//            val layoutParams = it as ConstraintLayout.LayoutParams
+//            layoutParams.height =
+//                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight + 10
+//            binding.rvPhotos.layoutParams = layoutParams
+//        }
 
         mediaAdapter = MediaAdapter()
         binding.rvPhotos.apply {
@@ -211,6 +216,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun listener() {
         mediaAdapter.setListener(object : MediaAdapter.IMediaClick {
             override fun onMediaClick(media: Media, position: Int) {
@@ -220,6 +226,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 navigateScreen(null, R.id.showMediaFragment)
             }
         })
+
     }
 
     private fun getAllMedia() {
