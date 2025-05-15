@@ -4,22 +4,18 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.galleryios18.App
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.FragmentHomeBinding
+import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.MediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.main.MainActivity
@@ -33,6 +29,7 @@ import timber.log.Timber
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private var requestPermission = true
     private lateinit var mediaAdapter: MediaAdapter
+    private lateinit var collectionAdapter: CollectionAdapter
 
     private val multiplePermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -104,7 +101,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun observerData() {
         mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
             mediaAdapter.setData(it)
-            binding.rvPhotos.scrollToPosition(it.size - 1)
+            binding.rcvMedia.scrollToPosition(it.size - 1)
+        }
+
+        mainViewModel.allCollectionLiveData.observe(viewLifecycleOwner) {
+            Timber.e("LamPro | observerData - setdata: ${it.size}")
+            collectionAdapter.setData(it)
         }
     }
 
@@ -154,10 +156,17 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 //        }
 
         mediaAdapter = MediaAdapter()
-        binding.rvPhotos.apply {
+        binding.rcvMedia.apply {
             layoutManager =
                 GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
             adapter = mediaAdapter
+        }
+
+        collectionAdapter = CollectionAdapter()
+        binding.rcvCollection.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            adapter = collectionAdapter
         }
         initTabLayout()
 
@@ -197,16 +206,16 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun changeTabLayout(position: Int) {
         when (position) {
             TabImage.TAB_MONTH -> {
-                binding.rvPhotos.layoutManager =
+                binding.rcvMedia.layoutManager =
                     GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
                 mediaAdapter.setStyle(MediaAdapter.StyleRecycler.MONTH)
-                binding.rvPhotos.scheduleLayoutAnimation()
+                binding.rcvMedia.scheduleLayoutAnimation()
 
 //                    binding.rvPhotos.scrollToPosition(it.size - 1)
             }
 
             TabImage.TAB_ALL_PHOTO -> {
-                binding.rvPhotos.layoutManager =
+                binding.rcvMedia.layoutManager =
                     GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
 
                 mediaAdapter.setStyle(MediaAdapter.StyleRecycler.ALL)
@@ -232,6 +241,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun getAllMedia() {
         Timber.e("LamPro | getAllMedia - ")
         mainViewModel.getAllMedia()
+        mainViewModel.getAllCollection()
     }
 
     override fun finishRate() {

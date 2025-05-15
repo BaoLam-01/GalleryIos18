@@ -44,5 +44,7 @@
     <string name="definition">definition</string>
     <string name="noise_reduction">noise reduction</string>
     <string name="vignette">vignette</string>
+    <string name="edit_sort"><![CDATA[Edit & sort]]></string>
+    <string name="action">Action</string>
 
 </resources>
