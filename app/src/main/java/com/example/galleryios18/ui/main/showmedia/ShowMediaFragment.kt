@@ -63,6 +63,7 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
         binding.rvMediaShow.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val center = recyclerView.width / 2f
+                // create distance
                 for (i in 0 until recyclerView.childCount) {
                     val child = recyclerView.getChildAt(i)
                     val childCenter = (child.left + child.right) / 2f
@@ -71,6 +72,13 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
                     child.scaleY = scale
                     child.scaleX = scale
                 }
+                val view = snapHelper.findSnapView(recyclerView.layoutManager)
+//                val position = recyclerView.layoutManager?.getPosition(view!!)
+                view?.let {
+                    val position = recyclerView.getChildAdapterPosition(it)
+                    App.instance.currentMediaEdit = mainViewModel.allMediaLiveData.value!![position]
+                }
+
             }
         })
 
@@ -91,12 +99,6 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
             }
         }
 
-        binding.rvMediaShow.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val view = snapHelper.findSnapView(recyclerView.layoutManager)
-            }
-        })
     }
 
     private fun listener() {

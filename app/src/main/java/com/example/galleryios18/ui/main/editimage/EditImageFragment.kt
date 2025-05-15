@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.galleryios18.App
 import com.example.galleryios18.R
+import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.data.models.TypeEdit
 import com.example.galleryios18.databinding.FragmentEditImageBinding
 import com.example.galleryios18.ui.adapter.TypeEditAdapter
@@ -22,6 +25,7 @@ class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImag
     private lateinit var typeEditAdapter: TypeEditAdapter
     private var currentTypeEdit: TypeEdit? = null
     private lateinit var listTypeEditAdjust: List<TypeEdit>
+    private var currentMediaEdit: Media? = null
     override fun getViewModel(): Class<EditImageViewModel> {
         return EditImageViewModel::class.java
     }
@@ -39,6 +43,9 @@ class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImag
         typeEditAdapter = TypeEditAdapter()
         listTypeEditAdjust = viewModel.getListItemAdjust()
         typeEditAdapter.setData(listTypeEditAdjust)
+        App.instance.currentMediaEdit?.let {
+            currentMediaEdit = it
+        }
     }
 
     private fun initView() {
@@ -49,6 +56,9 @@ class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImag
             binding.rvTypeAdjust, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL
         )
         binding.rvTypeAdjust.adapter = typeEditAdapter
+        currentMediaEdit?.let {
+            Glide.with(requireContext()).load(it.path).into(binding.imgEdit)
+        }
     }
 
     private fun listener() {
