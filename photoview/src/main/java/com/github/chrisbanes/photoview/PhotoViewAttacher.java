@@ -95,16 +95,19 @@ public class PhotoViewAttacher implements View.OnTouchListener,
     private boolean mZoomEnabled = true;
     private ScaleType mScaleType = ScaleType.FIT_CENTER;
 
+    private boolean isDrag = true;
     private OnGestureListener onGestureListener = new OnGestureListener() {
         @Override
         public void onDrag(float dx, float dy) {
             if (mScaleDragDetector.isScaling()) {
                 return; // Do not drag if we are already scaling
             }
-            if (mOnViewDragListener != null) {
-                mOnViewDragListener.onDrag(dx, dy);
+            if (isDrag) {
+                if (mOnViewDragListener != null) {
+                    mOnViewDragListener.onDrag(dx, dy);
+                }
+                mSuppMatrix.postTranslate(dx, dy);
             }
-            mSuppMatrix.postTranslate(dx, dy);
             checkAndDisplayMatrix();
 
             /*
@@ -136,10 +139,13 @@ public class PhotoViewAttacher implements View.OnTouchListener,
 
         @Override
         public void onFling(float startX, float startY, float velocityX, float velocityY) {
-            mCurrentFlingRunnable = new FlingRunnable(mImageView.getContext());
-            mCurrentFlingRunnable.fling(getImageViewWidth(mImageView),
-                    getImageViewHeight(mImageView), (int) velocityX, (int) velocityY);
-            mImageView.post(mCurrentFlingRunnable);
+            if (isDrag) {
+
+                mCurrentFlingRunnable = new FlingRunnable(mImageView.getContext());
+                mCurrentFlingRunnable.fling(getImageViewWidth(mImageView),
+                        getImageViewHeight(mImageView), (int) velocityX, (int) velocityY);
+                mImageView.post(mCurrentFlingRunnable);
+            }
         }
 
         @Override
@@ -150,15 +156,20 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         @Override
         public void onScale(float scaleFactor, float focusX, float focusY, float dx, float dy) {
             if (getScale() < mMaxScale || scaleFactor < 1f) {
-                if (mScaleChangeListener != null) {
-                    mScaleChangeListener.onScaleChange(scaleFactor, focusX, focusY);
-                }
+
                 mSuppMatrix.postScale(scaleFactor, scaleFactor, focusX, focusY);
                 mSuppMatrix.postTranslate(dx, dy);
                 checkAndDisplayMatrix();
+                if (mScaleChangeListener != null) {
+                    mScaleChangeListener.onScaleChange(scaleFactor, focusX, focusY);
+                }
             }
         }
     };
+
+    public void setDrag(Boolean isDrag) {
+        this.isDrag = isDrag;
+    }
 
     public PhotoViewAttacher(ImageView imageView) {
         mImageView = imageView;
@@ -387,7 +398,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
             }
 
         }
-        return handled;
+        return isDrag ? handled : false;
     }
 
     public void setAllowParentInterceptOnEdge(boolean allow) {

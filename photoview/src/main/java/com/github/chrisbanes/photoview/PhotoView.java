@@ -61,6 +61,10 @@ public class PhotoView extends AppCompatImageView {
         }
     }
 
+    public void setDrag(Boolean isDrag) {
+        attacher.setDrag(isDrag);
+    }
+
     /**
      * Get the current {@link PhotoViewAttacher} for this view. Be wary of holding on to references
      * to this attacher, as it has a reference to this view, which, if a reference is held in the
@@ -159,7 +163,8 @@ public class PhotoView extends AppCompatImageView {
         attacher.getDisplayMatrix(matrix);
     }
 
-    @SuppressWarnings("UnusedReturnValue") public boolean setDisplayMatrix(Matrix finalRectangle) {
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean setDisplayMatrix(Matrix finalRectangle) {
         return attacher.setDisplayMatrix(finalRectangle);
     }
 
