@@ -124,6 +124,10 @@ class EditImageFragment : BaseBindingFragment<FragmentEditImageBinding, EditImag
             }
         }
 
+        binding.btnPaint.setOnClickListener {
+
+        }
+
     }
 
     override fun observerData() {
