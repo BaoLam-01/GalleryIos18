@@ -75,8 +75,7 @@ class MyCustomImageView : PhotoView {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        
-        val displayRect = attacher.displayRect ?: return
+
         canvas.save()
         // clip the drawing to the display area
         canvas.clipRect(displayRect)
