@@ -1,29 +1,85 @@
 package com.example.galleryios18.ui.custom
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.BitmapShader
 import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.LinearGradient
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Shader
+import android.graphics.Xfermode
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
+import com.example.galleryios18.R
 import com.github.chrisbanes.photoview.OnScaleChangedListener
 import com.github.chrisbanes.photoview.PhotoView
-import timber.log.Timber
 
 class MyCustomImageView : PhotoView {
+    /*
+    * ballpoint:
+    *
+    *  currentPaint.apply {
+            strokeJoin = Paint.Join.ROUND
+            strokeCap = Paint.Cap.ROUND
+        }
+    *
+    * Pencil
+    *
+    * Memory pen
+     currentPaint.apply {
+            strokeJoin = Paint.Join.ROUND
+            strokeCap = Paint.Cap.BUTT
+            alpha = 100
+            maskFilter = BlurMaskFilter(2f, BlurMaskFilter.Blur.NORMAL)
+        }*
+    *
+    *
+    * select pen:
+     currentPaint.apply {
+            strokeJoin = Paint.Join.ROUND
+            strokeCap = Paint.Cap.ROUND
+            pathEffect = DashPathEffect(floatArrayOf(20f, 20f), 0f)
+        }*
+    *
+    * pencil texture;
+    *  currentPaint.apply {
+            this.shader = shader
+            strokeJoin = Paint.Join.ROUND
+            strokeCap = Paint.Cap.ROUND
+            maskFilter = BlurMaskFilter(1f, BlurMaskFilter.Blur.NORMAL)
+        }
+    *
+    *
+    * fountain pen
+    *
+    *
+    * */
 
 
     private val currentPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        isDither = true
         color = Color.RED
         style = Paint.Style.STROKE
-        strokeWidth = 6f
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
-        maskFilter = BlurMaskFilter(1f, BlurMaskFilter.Blur.NORMAL)
+        strokeWidth = 40f
+    }
+
+
+    init {
+
+        val crayonTexture = BitmapFactory.decodeResource(resources, R.drawable.crayon_texture)
+        val shader = BitmapShader(crayonTexture, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
+
+        currentPaint.apply {
+            strokeJoin = Paint.Join.ROUND
+            strokeCap = Paint.Cap.SQUARE
+        }
     }
 
     private val paths = mutableListOf<Pair<Path, Paint>>()
@@ -66,7 +122,6 @@ class MyCustomImageView : PhotoView {
                 focusX: Float,
                 focusY: Float
             ) {
-                Timber.e("LamPro | onScaleChange - ")
                 getSuppMatrix(drawMatrix)
 
             }
