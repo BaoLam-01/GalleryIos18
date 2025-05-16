@@ -1,6 +1,7 @@
 package com.example.galleryios18.ui.custom
 
 import android.content.Context
+import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
@@ -22,6 +23,7 @@ class MyCustomImageView : PhotoView {
         strokeWidth = 6f
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
+        maskFilter = BlurMaskFilter(1f, BlurMaskFilter.Blur.NORMAL)
     }
 
     private val paths = mutableListOf<Pair<Path, Paint>>()
@@ -73,13 +75,16 @@ class MyCustomImageView : PhotoView {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        
+        val displayRect = attacher.displayRect ?: return
         canvas.save()
-        canvas.concat(drawMatrix)
+        // clip the drawing to the display area
+        canvas.clipRect(displayRect)
 
+        canvas.concat(drawMatrix)
         for ((path, paint) in paths) {
             canvas.drawPath(path, paint)
         }
-
         if (!ignoreDrawing) {
             canvas.drawPath(currentPath, currentPaint)
         }
@@ -132,5 +137,6 @@ class MyCustomImageView : PhotoView {
             }
         }
     }
+
 
 }

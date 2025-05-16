@@ -75,13 +75,13 @@ class ZoomableDrawingView : AppCompatImageView {
         val dWidth = drawable.intrinsicWidth
         val dHeight = drawable.intrinsicHeight
 
-        // Tỉ lệ scale để ảnh vừa khít view theo chiều rộng hoặc chiều cao
+        // scale image with width height
         val scaleX = w.toFloat() / dWidth.toFloat()
         val scaleY = h.toFloat() / dHeight.toFloat()
         baseScale = minOf(scaleX, scaleY)
         currentScale = baseScale
 
-        // Tính toán vị trí translate để căn giữa ảnh trong view
+        // calculator distance, image center
         val dx = (w - dWidth * baseScale) / 2f
         val dy = (h - dHeight * baseScale) / 2f
 
@@ -175,7 +175,7 @@ class ZoomableDrawingView : AppCompatImageView {
                 lastFocusX = focusX
                 lastFocusY = focusY
 
-                // Lấy translate hiện tại từ matrix
+                // get translate matrix
                 val values = FloatArray(9)
                 drawMatrix.getValues(values)
                 currentTranslateX = values[Matrix.MTRANS_X]
@@ -194,17 +194,17 @@ class ZoomableDrawingView : AppCompatImageView {
 
                 val realScaleFactor = newScale / currentScale
 
-                // Scale quanh focus point
+                // Scale at focus point
                 drawMatrix.postTranslate(-focusX, -focusY)
                 drawMatrix.postScale(realScaleFactor, realScaleFactor)
                 drawMatrix.postTranslate(focusX, focusY)
 
-                // Pan với giới hạn
+                // Pan limit
 
                 val dx = focusX - lastFocusX
                 val dy = focusY - lastFocusY
 
-                // Lấy kích thước ảnh và view
+                // get size image, view
                 val drawable = drawable ?: return
                 val dWidth = drawable.intrinsicWidth
                 val dHeight = drawable.intrinsicHeight
@@ -215,26 +215,28 @@ class ZoomableDrawingView : AppCompatImageView {
                 val viewWidth = width.toFloat()
                 val viewHeight = height.toFloat()
 
-                // Tính translate hiện tại sau scale
+                // get translate after scale
                 val values = FloatArray(9)
                 drawMatrix.getValues(values)
                 var transX = values[Matrix.MTRANS_X] + dx
                 var transY = values[Matrix.MTRANS_Y] + dy
 
-                // Tính giới hạn translate X
+                // get translate X
+                // prevent translate out of view
                 val minTranslateX = if (imageWidth <= viewWidth) {
-                    (viewWidth - imageWidth) / 2f // center nếu nhỏ hơn
+                    (viewWidth - imageWidth) / 2f
                 } else {
-                    viewWidth - imageWidth        // chặn kéo ra ngoài bên trái
+                    viewWidth - imageWidth
                 }
                 val maxTranslateX = if (imageWidth <= viewWidth) {
-                    (viewWidth - imageWidth) / 2f // center nếu nhỏ hơn
+                    (viewWidth - imageWidth) / 2f
                 } else {
-                    0f                            // chặn kéo ra ngoài bên phải
+                    0f
                 }
                 transX = clamp(transX, minTranslateX, maxTranslateX)
 
-// Tính giới hạn translate Y
+// get translate Y
+                // prevent translate out of view
                 val minTranslateY = if (imageHeight <= viewHeight) {
                     (viewHeight - imageHeight) / 2f
                 } else {
@@ -247,10 +249,7 @@ class ZoomableDrawingView : AppCompatImageView {
                 }
                 transY = clamp(transY, minTranslateY, maxTranslateY)
 
-                // Cập nhật lại ma trận dịch chuyển có giới hạn
-                // Trước đó ma trận đã có scale và translate cũ, ta reset translate rồi set translate mới
-                // Cách đơn giản: reset ma trận rồi apply scale + translate mới
-
+                // update translate
                 val scaleOnlyMatrix = Matrix()
                 scaleOnlyMatrix.setScale(newScale, newScale)
 
