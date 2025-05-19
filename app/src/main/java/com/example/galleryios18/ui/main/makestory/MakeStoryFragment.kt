@@ -101,13 +101,37 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
 
                             val cmd = when (ext) {
                                 "jpg", "jpeg", "png" -> arrayOf(
-                                    "-loop", "1", "-t", "3", "-i", path,
-                                    "-f", "lavfi", "-t", "3", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
-                                    "-vf", "scale=1080:1920",
-                                    "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23",
-                                    "-c:a", "aac", "-shortest",
-                                    "-pix_fmt", "yuv420p", "-threads", "2",
-                                    "-loglevel", "error", "-y", outputFile.absolutePath
+                                    "-loop",
+                                    "1",
+                                    "-t",
+                                    "3",
+                                    "-i",
+                                    path,
+                                    "-f",
+                                    "lavfi",
+                                    "-t",
+                                    "3",
+                                    "-i",
+                                    "anullsrc=channel_layout=stereo:sample_rate=44100",
+                                    "-vf",
+                                    "scale=1080:1920",
+                                    "-c:v",
+                                    "libx264",
+                                    "-preset",
+                                    "ultrafast",
+                                    "-crf",
+                                    "23",
+                                    "-c:a",
+                                    "aac",
+                                    "-shortest",
+                                    "-pix_fmt",
+                                    "yuv420p",
+                                    "-threads",
+                                    "2",
+                                    "-loglevel",
+                                    "error",
+                                    "-y",
+                                    outputFile.absolutePath
                                 )
 
                                 "mp4", "mov", "mkv" -> arrayOf(
@@ -142,7 +166,8 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
 
                 // Tạo file list concat
                 val listFile = File(tempDir, "list.txt")
-                val listText = tempFiles.sortedBy { it.first }.joinToString("\n") { "file '${it.second}'" }
+                val listText =
+                    tempFiles.sortedBy { it.first }.joinToString("\n") { "file '${it.second}'" }
                 listFile.writeText(listText)
 
                 val outputPath =
@@ -157,12 +182,22 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                     "-c:v", "libx264", "-crf", "23", "-c:a", "aac",
                     "-shortest", "-y", outputPath
                 )
+                val mediaList: List<String> = tempFiles.sortedBy { it.first }.map { it.second }
 
+                val ffmpegCmd =
+                    generateFFmpegConcatWithMusicCommand(
+                        listFile.absolutePath,
+                        musicPath,
+                        outputPath
+                    )
+
+
+                Timber.e("LamPro | createStoryFromMedia - ffmpegCmd" + ffmpegCmd)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, "🎬 Đang tạo video...", Toast.LENGTH_SHORT).show()
                 }
 
-                runFFmpegAsync(cmdConcat) { success ->
+                runFFmpegAsync(ffmpegCmd) { success ->
                     withContext(Dispatchers.Main) {
                         if (success) {
                             Toast.makeText(context, "✅ Tạo video thành công!", Toast.LENGTH_SHORT)
@@ -236,4 +271,27 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         }
         return outFile.absolutePath
     }
+
+    fun generateFFmpegConcatWithMusicCommand(
+        listFilePath: String,
+        musicPath: String,
+        outputPath: String
+    ): Array<String> {
+        return arrayOf(
+            "-f", "concat",
+            "-safe", "0",
+            "-i", listFilePath,
+            "-i", musicPath,
+            "-filter_complex", "[0:v][1:v]xfade=transition=fade:duration=1:offset=4[v]",
+            "-map", "0:v",
+            "-map", "[aout]",
+            "-c:v", "libx264",
+            "-crf", "23",
+            "-c:a", "aac",
+            "-shortest",
+            "-y",
+            outputPath
+        )
+    }
+
 }
