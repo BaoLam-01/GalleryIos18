@@ -131,19 +131,19 @@ class MyCustomImageView : PhotoView {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas.save()
-        // clip the drawing to the display area
-        canvas.clipRect(displayRect)
-
-        canvas.concat(drawMatrix)
-        for ((path, paint) in paths) {
-            canvas.drawPath(path, paint)
-        }
-        if (!ignoreDrawing) {
-            canvas.drawPath(currentPath, currentPaint)
-        }
-
-        canvas.restore()
+//        canvas.save()
+//        // clip the drawing to the display area
+//        canvas.clipRect(displayRect)
+//
+//        canvas.concat(drawMatrix)
+//        for ((path, paint) in paths) {
+//            canvas.drawPath(path, paint)
+//        }
+//        if (!ignoreDrawing) {
+//            canvas.drawPath(currentPath, currentPaint)
+//        }
+//
+//        canvas.restore()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
