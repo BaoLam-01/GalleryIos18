@@ -192,7 +192,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                     )
 
 
-                Timber.e("LamPro | createStoryFromMedia - ffmpegCmd" + ffmpegCmd)
+                Timber.e("LamPro | createStoryFromMedia - ffmpegCmd" + ffmpegCmd.joinToString())
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, "🎬 Đang tạo video...", Toast.LENGTH_SHORT).show()
                 }
