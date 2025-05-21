@@ -13,7 +13,10 @@ import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.arthenica.ffmpegkit.Session
 import com.example.galleryios18.R
 import com.example.galleryios18.databinding.FragmentMakeStoryBinding
+import com.example.galleryios18.interfaces.OnSaveVideoListener
 import com.example.galleryios18.ui.base.BaseBindingFragment
+import com.example.galleryios18.utils.CreateVideoManager
+import com.example.galleryios18.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -25,11 +28,17 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
+import kotlin.text.toFloat
+import kotlin.times
 
-class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStoryViewModel>() {
+class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStoryViewModel>(),
+    OnSaveVideoListener {
 
     private lateinit var videoView: VideoView
     private val mediaUris = mutableListOf<Uri>()
+    private lateinit var pathAudio: String
+
+    private var createVideoManager: CreateVideoManager? = null
 
     private val pickMediaLauncher = registerForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments()
@@ -39,6 +48,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
             mediaUris.addAll(uris)
             Toast.makeText(requireContext(), "Đã chọn ${uris.size} media", Toast.LENGTH_SHORT)
                 .show()
+            binding.img.setImageURI(uris[0])
         }
     }
 
@@ -51,15 +61,91 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         get() = R.layout.fragment_make_story
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-
-        videoView = binding.videoView
+        setupLayout()
+//        videoView = binding.videoView
 
         binding.btnPickMedia.setOnClickListener {
             pickMediaLauncher.launch(arrayOf("image/*", "video/*"))
         }
 
         binding.btnCreateStory.setOnClickListener {
-            createStoryFromMedia()
+            saveVideo(pathAudio)
+//            createStoryFromMedia()
+        }
+    }
+
+    private fun setupLayout() {
+
+        binding.containerView.post {
+            //todo: set layout params cardView, view
+            val params = binding.cardView.layoutParams
+            params.width = 1080
+            params.height = 1920
+            binding.cardView.requestLayout()
+
+            val f = 1080.toFloat() / 1920.toFloat()
+            val f1 = binding.containerView.width.toFloat() / binding.containerView.height.toFloat()
+
+            val paramsView = binding.view.layoutParams
+
+            if (f > f1) {
+                paramsView.width = binding.containerView.width - Utils.dpToPx(35f)
+                paramsView.height = paramsView.width * 1920 / 1080
+            } else {
+                paramsView.height = binding.containerView.height - Utils.dpToPx(35f)
+                paramsView.width = paramsView.height * 1080 / 1920
+            }
+            binding.view.requestLayout()
+
+            //todo: scale
+            scaleCardView()
+        }
+    }
+
+    private fun scaleCardView() {
+        binding.view.post {
+            val scale = binding.view.width.toFloat() / binding.cardView.width.toFloat()
+            binding.cardView.scaleX = scale
+            binding.cardView.scaleY = scale
+            binding.cardView.visibility = View.VISIBLE
+            binding.cardView.postDelayed({
+                if (isAdded) {
+                    initCreateVideoManager()
+                }
+            }, 300)
+        }
+    }
+
+
+    private fun initCreateVideoManager() {
+        if (createVideoManager == null) {
+            createVideoManager = CreateVideoManager(
+                requireActivity(), binding.cardView, 1080, 1920, 10000, this
+            )
+            pathAudio = copyAssetToExternal(requireContext(), "bg_music.mp3", "bg_music.mp3")
+            createVideoManager?.setupAudioPreview(
+                pathAudio, 0, 10000
+            )
+        }
+    }
+
+    private fun saveVideo(pathAudio: String) {
+        createVideoManager?.let {
+            it.setupAudio(
+                pathAudio, 0, 10000, 10000
+            )
+//            val listViews = ArrayList<TemplateView>()
+//            val pages = selectPageAdapter.getPages()
+//            for (i in 0 until pages.size) {
+//                if (pages[i]) {
+//                    listViews.add(listTemplateView[i])
+//                }
+//            }
+//            setTimeDelay(listViews)
+//            val duration = getDurationAllPage(listViews)
+
+
+            it.startEncoding()
         }
     }
 
@@ -70,9 +156,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
     private fun createStoryFromMedia() {
         if (mediaUris.isEmpty()) {
             Toast.makeText(
-                requireContext(),
-                "Hãy chọn ít nhất 1 ảnh hoặc video",
-                Toast.LENGTH_SHORT
+                requireContext(), "Hãy chọn ít nhất 1 ảnh hoặc video", Toast.LENGTH_SHORT
             ).show()
             return
         }
@@ -90,11 +174,8 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                         if (path != null) {
                             val ext = path.substringAfterLast(".").lowercase()
                             val outputFile = File(
-                                tempDir,
-                                if (ext in listOf(
-                                        "jpg",
-                                        "jpeg",
-                                        "png"
+                                tempDir, if (ext in listOf(
+                                        "jpg", "jpeg", "png"
                                     )
                                 ) "img_$index.mp4" else "vid_$index.mp4"
                             )
@@ -135,13 +216,28 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                                 )
 
                                 "mp4", "mov", "mkv" -> arrayOf(
-                                    "-i", path,
-                                    "-t", "3",
-                                    "-vf", "scale=1080:1920",
-                                    "-af", "volume=0.5",
-                                    "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23",
-                                    "-threads", "2", "-pix_fmt", "yuv420p",
-                                    "-loglevel", "error", "-y", outputFile.absolutePath
+                                    "-i",
+                                    path,
+                                    "-t",
+                                    "3",
+                                    "-vf",
+                                    "scale=1080:1920",
+                                    "-af",
+                                    "volume=0.5",
+                                    "-c:v",
+                                    "libx264",
+                                    "-preset",
+                                    "ultrafast",
+                                    "-crf",
+                                    "23",
+                                    "-threads",
+                                    "2",
+                                    "-pix_fmt",
+                                    "yuv420p",
+                                    "-loglevel",
+                                    "error",
+                                    "-y",
+                                    outputFile.absolutePath
                                 )
 
                                 else -> null
@@ -175,21 +271,35 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                 val musicPath = copyAssetToExternal(context, "bg_music.mp3", "bg_music.mp3")
 
                 val cmdConcat = arrayOf(
-                    "-f", "concat", "-safe", "0", "-i", listFile.absolutePath,
-                    "-i", musicPath,
-                    "-filter_complex", "[0:a][1:a]amix=inputs=2:duration=shortest[aout]",
-                    "-map", "0:v", "-map", "[aout]",
-                    "-c:v", "libx264", "-crf", "23", "-c:a", "aac",
-                    "-shortest", "-y", outputPath
+                    "-f",
+                    "concat",
+                    "-safe",
+                    "0",
+                    "-i",
+                    listFile.absolutePath,
+                    "-i",
+                    musicPath,
+                    "-filter_complex",
+                    "[0:a][1:a]amix=inputs=2:duration=shortest[aout]",
+                    "-map",
+                    "0:v",
+                    "-map",
+                    "[aout]",
+                    "-c:v",
+                    "libx264",
+                    "-crf",
+                    "23",
+                    "-c:a",
+                    "aac",
+                    "-shortest",
+                    "-y",
+                    outputPath
                 )
                 val mediaList: List<String> = tempFiles.sortedBy { it.first }.map { it.second }
 
-                val ffmpegCmd =
-                    generateFFmpegConcatWithMusicCommand(
-                        listFile.absolutePath,
-                        musicPath,
-                        outputPath
-                    )
+                val ffmpegCmd = generateXfadeWithMusicCommand(
+                    mediaList, musicPath, outputPath
+                )
 
 
                 Timber.e("LamPro | createStoryFromMedia - ffmpegCmd" + ffmpegCmd.joinToString())
@@ -202,6 +312,12 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                         if (success) {
                             Toast.makeText(context, "✅ Tạo video thành công!", Toast.LENGTH_SHORT)
                                 .show()
+                            Timber.e("LamPro | createStoryFromMedia - output path: $outputPath")
+                            videoView.setOnErrorListener { mp, what, extra ->
+                                Toast.makeText(context, "Không phát được video", Toast.LENGTH_SHORT)
+                                    .show()
+                                true
+                            }
                             videoView.setVideoURI(Uri.parse(outputPath))
                             videoView.start()
                         } else {
@@ -272,26 +388,91 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         return outFile.absolutePath
     }
 
-    fun generateFFmpegConcatWithMusicCommand(
-        listFilePath: String,
+    fun generateXfadeWithMusicCommand(
+        videoPaths: List<String>,
         musicPath: String,
-        outputPath: String
+        outputPath: String,
+        transitionDuration: Int = 1,
+        eachVideoDuration: Int = 5
     ): Array<String> {
-        return arrayOf(
-            "-f", "concat",
-            "-safe", "0",
-            "-i", listFilePath,
-            "-i", musicPath,
-            "-filter_complex", "[0:v][1:v]xfade=transition=fade:duration=1:offset=4[v]",
-            "-map", "0:v",
-            "-map", "[aout]",
-            "-c:v", "libx264",
-            "-crf", "23",
-            "-c:a", "aac",
+        val inputs = mutableListOf<String>()
+        videoPaths.forEach { inputs += listOf("-i", it) }
+        inputs += listOf("-i", musicPath)
+
+        val filterParts = mutableListOf<String>()
+        val videoLabels = videoPaths.indices.map { "v$it" }
+        val trimmedLabels = videoPaths.indices.map { "t$it" }
+
+        // Tách các video ra, cắt độ dài mỗi clip (nếu cần), scale về cùng kích thước
+        videoPaths.indices.forEach { i ->
+            filterParts += "[$i:v]trim=duration=${eachVideoDuration},setpts=PTS-STARTPTS,scale=1280:720[${videoLabels[i]}]"
+        }
+
+        // Áp dụng xfade lần lượt
+        var count = 0
+        var xfadeOffset = eachVideoDuration
+        var prevLabel = videoLabels[0]
+        for (i in 1 until videoPaths.size) {
+            val nextLabel = videoLabels[i]
+            val outLabel = "x$count"
+            filterParts += "[$prevLabel][$nextLabel]xfade=transition=fade:duration=$transitionDuration:offset=$xfadeOffset[$outLabel]"
+            prevLabel = outLabel
+            xfadeOffset += eachVideoDuration - transitionDuration
+            count++
+        }
+
+        // Thêm nhạc
+        filterParts += "[${videoPaths.size}:a]anull[aout]"
+
+        val filterComplex = filterParts.joinToString(";")
+
+        val command = mutableListOf<String>()
+        command.addAll(inputs)
+        command += listOf(
+            "-filter_complex",
+            filterComplex,
+            "-map",
+            "[x${count - 1}]",
+            "-map",
+            "[aout]",
+            "-c:v",
+            "libx264",
+            "-crf",
+            "23",
+            "-preset",
+            "medium",
+            "-c:a",
+            "aac",
             "-shortest",
             "-y",
             outputPath
         )
+
+        return command.toTypedArray()
+    }
+
+    override fun onSaveSuccess(path: ArrayList<String>) {
+        Timber.e("LamPro | onSaveSuccess - on save success")
+    }
+
+    override fun onSaveFailure(messError: String) {
+        Timber.e("LamPro | onSaveFailure - on save failure")
+    }
+
+    override fun onStartPreview() {
+        Timber.e("LamPro | onStartPreview - on start preview")
+    }
+
+    override fun onStopPreview(end: Boolean) {
+        Timber.e("LamPro | onStopPreview - on stop preview")
+    }
+
+    override fun onProgress(process: Int) {
+        Timber.e("LamPro | onProgress - on progress")
+    }
+
+    override fun onProcessPreview(process: Int) {
+        Timber.e("LamPro | onProcessPreview - on process preview")
     }
 
 }

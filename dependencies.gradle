@@ -189,7 +189,6 @@ ext {
             ssp                  : 'com.intuit.ssp:ssp-android:1.1.0',
 
             keyboardListener     : 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3'
-
     ]
     testLib = [
             'androidx.test.ext:junit:1.1.3',

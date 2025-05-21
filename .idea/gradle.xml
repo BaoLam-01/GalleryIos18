@@ -12,9 +12,12 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/HorizontalWheelView" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/capva" />
             <option value="$PROJECT_DIR$/ffmpeg-aar" />
+            <option value="$PROJECT_DIR$/filter" />
             <option value="$PROJECT_DIR$/photoview" />
             <option value="$PROJECT_DIR$/realtimeblurview" />
+            <option value="$PROJECT_DIR$/transition" />
           </set>
         </option>
       </GradleProjectSettings>
