@@ -18,5 +18,6 @@ public class Common {
 
     public static final int TIME_DELAY_ELEMENT = 300;
     public static final int DEFAULT_DURATION_PAGE = 5000;
-
+    public static final int  TYPE_SAVE_IMAGE = 0;
+    public static final int  TYPE_SAVE_VIDEO = 1;
 }

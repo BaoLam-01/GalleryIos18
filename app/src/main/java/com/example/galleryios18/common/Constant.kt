@@ -32,13 +32,6 @@ object Constant {
     const val FILE_MUSIC = "music"
 
     const val START_PATH_ASSET = "file:///android_asset/"
-
-    const val DEFAULT_DURATION_PAGE = 5000
-    const val MIN_DURATION_VIDEO = 5000
-    const val FRAME_RATE = 30
-    const val TIME_DELAY_ELEMENT = 300
-
-    const val TYPE_SAVE_IMAGE = 0
-    const val TYPE_SAVE_VIDEO = 1
-
+    const val PATH_MEDIA_FROM_GALLERY = "PATH_IMAGE_FROM_GALLERY"
+    const val CURRENT_POS_TEMPLATE = "CURRENT_POS_TEMPLATE"
 }

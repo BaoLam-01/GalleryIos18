@@ -1,5 +1,6 @@
 package com.example.galleryios18.ui.main.makestory
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -8,12 +9,12 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.arthenica.ffmpegkit.FFmpegKit
-import com.arthenica.ffmpegkit.FFmpegKitConfig
-import com.arthenica.ffmpegkit.Session
 import com.example.galleryios18.R
 import com.example.galleryios18.databinding.FragmentMakeStoryBinding
 import com.example.galleryios18.interfaces.OnSaveVideoListener
+import com.example.galleryios18.ui.adapter.TemplateViewPager
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.utils.CreateVideoManager
 import com.example.galleryios18.utils.Utils
@@ -28,8 +29,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
-import kotlin.text.toFloat
-import kotlin.times
+import kotlin.compareTo
 
 class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStoryViewModel>(),
     OnSaveVideoListener {
@@ -37,8 +37,9 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
     private lateinit var videoView: VideoView
     private val mediaUris = mutableListOf<Uri>()
     private lateinit var pathAudio: String
-
+    private var templateViewPager: TemplateViewPager? = null
     private var createVideoManager: CreateVideoManager? = null
+    private var listTemplate = ArrayList<String>()
 
     private val pickMediaLauncher = registerForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments()
@@ -48,7 +49,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
             mediaUris.addAll(uris)
             Toast.makeText(requireContext(), "Đã chọn ${uris.size} media", Toast.LENGTH_SHORT)
                 .show()
-            binding.img.setImageURI(uris[0])
+            listTemplate.addAll(uris.map { it.toString() })
         }
     }
 
@@ -74,28 +75,44 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         }
     }
 
+    @SuppressLint("WrongConstant")
+    private fun initViewPager() {
+        templateViewPager = TemplateViewPager(childFragmentManager, lifecycle, "")
+        binding.container.post {
+            binding.vpTemplate.requestLayout()
+            templateViewPager!!.initList(listTemplate)
+            binding.vpTemplate.post {
+                if (isAdded) {
+                    binding.vpTemplate.adapter = templateViewPager
+                }
+            }
+        }
+
+        binding.vpTemplate.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int,
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+            }
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+            }
+        })
+    }
+
+
     private fun setupLayout() {
 
-        binding.containerView.post {
+        binding.container.post {
             //todo: set layout params cardView, view
             val params = binding.cardView.layoutParams
-            params.width = 1080
-            params.height = 1920
-            binding.cardView.requestLayout()
-
-            val f = 1080.toFloat() / 1920.toFloat()
-            val f1 = binding.containerView.width.toFloat() / binding.containerView.height.toFloat()
-
-            val paramsView = binding.view.layoutParams
-
-            if (f > f1) {
-                paramsView.width = binding.containerView.width - Utils.dpToPx(35f)
-                paramsView.height = paramsView.width * 1920 / 1080
-            } else {
-                paramsView.height = binding.containerView.height - Utils.dpToPx(35f)
-                paramsView.width = paramsView.height * 1080 / 1920
-            }
-            binding.view.requestLayout()
 
             //todo: scale
             scaleCardView()
@@ -393,7 +410,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         musicPath: String,
         outputPath: String,
         transitionDuration: Int = 1,
-        eachVideoDuration: Int = 5
+        eachVideoDuration: Int = 5,
     ): Array<String> {
         val inputs = mutableListOf<String>()
         videoPaths.forEach { inputs += listOf("-i", it) }

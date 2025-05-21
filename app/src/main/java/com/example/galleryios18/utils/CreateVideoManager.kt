@@ -9,8 +9,8 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.widget.FrameLayout
+import com.base.capva.common.Common
 import com.example.galleryios18.R
-import com.example.galleryios18.common.Constant
 import com.example.galleryios18.interfaces.OnSaveVideoListener
 import com.example.galleryios18.utils.createvideo.BitmapToVideoEncoder
 import kotlinx.coroutines.Runnable
@@ -36,11 +36,11 @@ class CreateVideoManager(
     private var durationAudioSelected = 0
     private var durationAudio = 0
     private var positionFrame = 0
-    private val frameRateVideo = Constant.FRAME_RATE
+    private val frameRateVideo = Common.FRAME_RATE
     private val durationOneFrame = 1000 / frameRateVideo
     private var timeFrame = 0
     private val handle = Handler(Looper.getMainLooper())
-    private var typeSave = Constant.TYPE_SAVE_IMAGE
+    private var typeSave = Common.TYPE_SAVE_IMAGE
     private var listTemplateSave = ArrayList<Boolean>()
     private var thread: Thread? = null
     private var stopThread = true
