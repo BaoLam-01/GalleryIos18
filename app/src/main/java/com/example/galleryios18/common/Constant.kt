@@ -16,7 +16,6 @@ object Constant {
     const val DB_NAME = "DB_NAME"
 
 
-
     // other
     const val ACTION_CHANGE_THEME_APPLY = "ACTION_CHANGE_THEME_APPLY"
     const val ACTION_CHANGE_LANGUAGE = "ACTION_CHANGE_LANGUAGE"
@@ -34,4 +33,5 @@ object Constant {
     const val START_PATH_ASSET = "file:///android_asset/"
     const val PATH_MEDIA_FROM_GALLERY = "PATH_IMAGE_FROM_GALLERY"
     const val CURRENT_POS_TEMPLATE = "CURRENT_POS_TEMPLATE"
+    const val ITEM_STRING = "ITEM_STRING"
 }

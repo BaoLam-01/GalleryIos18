@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.opengl.GLES20;
 
-import com.filter.base.GPUImageFilter;
 import com.filter.base.OpenGlUtils;
 import com.filter.transition.GLFilter;
 
@@ -171,7 +170,7 @@ public class MagicToneCurvedFilter extends GLFilter {
                         toneCurveByteArray[currentCurveIndex * 4 + 3] = (byte) (255 & 0xff);
                     }
 
-                    GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 256 , 1 , 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ByteBuffer.wrap(toneCurveByteArray));
+                    GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 256, 1, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ByteBuffer.wrap(toneCurveByteArray));
                 }
 //        Buffer pixels!
 //        GLES20.glTexImage2D(int target,

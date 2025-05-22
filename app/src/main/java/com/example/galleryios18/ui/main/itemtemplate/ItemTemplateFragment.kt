@@ -4,13 +4,19 @@ import android.os.Bundle
 import android.view.View
 import com.example.galleryios18.R
 import com.example.galleryios18.common.Constant
+import com.example.galleryios18.data.models.template_item.Item
 import com.example.galleryios18.data.models.template_item.Template
 import com.example.galleryios18.databinding.FragmentItemTemplateBinding
 import com.example.galleryios18.ui.base.BaseBindingFragment
+import com.google.gson.Gson
+import kotlin.compareTo
 import kotlin.math.max
+import kotlin.text.get
 
 class ItemTemplateFragment :
     BaseBindingFragment<FragmentItemTemplateBinding, ItemTemplateViewModel>() {
+    private var item: Item? = null
+    private var itemString: String? = null
 
     companion object {
         fun newIns(
@@ -40,8 +46,24 @@ class ItemTemplateFragment :
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         pathImageBegin = requireArguments().getString(Constant.PATH_MEDIA_FROM_GALLERY, "")
 //        templateString = requireArguments().getString(Constant.TEMPLATE_STRING, "")
+        mainViewModel.listItemJsonLiveData.observe(viewLifecycleOwner) {
+            if (item == null) {
+                val pos = requireArguments().getInt(Constant.CURRENT_POS_TEMPLATE, 0)
+                if (pos >= 0 && it.isNotEmpty()) {
+                    itemString = it[pos]
+                }
+                item = if (itemString?.isNotEmpty() == true) {
+                    Gson().fromJson(itemString, Item::class.java)
+                } else {
+                    Item()
+                }
+            }
 
+            binding.templateView.setupTemplate(item, false)
+            isCreatedView = true
+        }
     }
+
 
     override fun observerData() {
     }

@@ -7,7 +7,6 @@ package com.filter.helper;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import com.filter.R;
 import com.filter.transition.GLFilter;
 import com.filter.transition.glCanvas.GlScaleImage;
 import com.filter.transition.glFilter.GPUImageVignetteFilter;
@@ -41,6 +40,7 @@ import com.filter.transition.glFilter.MagicWaldenFilter;
 import com.filter.transition.glFilter.MagicWarmFilter;
 import com.filter.transition.glFilter.MagicWhiteCatFilter;
 import com.filter.transition.glFilter.MagicXproIIFilter;
+import com.transition.R;
 
 
 public class FilterManager {

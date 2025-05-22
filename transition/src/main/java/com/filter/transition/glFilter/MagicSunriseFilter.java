@@ -6,8 +6,6 @@ package com.filter.transition.glFilter;
 import android.content.Context;
 import android.opengl.GLES20;
 
-import com.filter.R;
-import com.filter.base.GPUImageFilter;
 import com.filter.base.OpenGlUtils;
 import com.filter.helper.FilterManager;
 import com.filter.transition.GLFilter;
@@ -25,9 +23,9 @@ public class MagicSunriseFilter extends GLFilter {
     private int mToneCurveTextureUniformLocation;
     private Context context;
 
-    public MagicSunriseFilter( ) {
-        super( loadShaderFromAssets(FilterManager.getContext(),"filter_shader/sunrise.glsl"));
-        this.context =  FilterManager.getContext();
+    public MagicSunriseFilter() {
+        super(loadShaderFromAssets(FilterManager.getContext(), "filter_shader/sunrise.glsl"));
+        this.context = FilterManager.getContext();
     }
 
     public void onDestroy() {

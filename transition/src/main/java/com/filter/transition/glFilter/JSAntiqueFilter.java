@@ -5,9 +5,7 @@ package com.filter.transition.glFilter;
 
 import android.opengl.GLES20;
 
-import com.filter.R;
-import com.filter.base.GPUImageFilter;
-import com.filter.base.OpenGlUtils;
+
 import com.filter.helper.FilterManager;
 import com.filter.transition.GLFilter;
 

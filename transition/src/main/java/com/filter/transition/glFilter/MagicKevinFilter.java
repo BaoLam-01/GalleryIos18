@@ -6,8 +6,6 @@ package com.filter.transition.glFilter;
 import android.content.Context;
 import android.opengl.GLES20;
 
-import com.filter.R;
-import com.filter.base.GPUImageFilter;
 import com.filter.base.OpenGlUtils;
 import com.filter.helper.FilterManager;
 import com.filter.transition.GLFilter;
@@ -18,9 +16,9 @@ public class MagicKevinFilter extends GLFilter {
     private int mGLStrengthLocation;
     private Context context;
 
-    public MagicKevinFilter( ) {
-        super( loadShaderFromAssets(FilterManager.getContext(),"filter_shader/kevin_new.glsl"));
-        this.context =  FilterManager.getContext();
+    public MagicKevinFilter() {
+        super(loadShaderFromAssets(FilterManager.getContext(), "filter_shader/kevin_new.glsl"));
+        this.context = FilterManager.getContext();
     }
 
     public void onDestroy() {

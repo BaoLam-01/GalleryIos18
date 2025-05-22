@@ -5,9 +5,6 @@ package com.filter.transition.glFilter;
 
 import android.opengl.GLES20;
 
-import com.filter.R;
-import com.filter.base.GPUImageFilter;
-import com.filter.base.OpenGlUtils;
 import com.filter.helper.FilterManager;
 import com.filter.transition.GLFilter;
 
@@ -18,7 +15,7 @@ public class MagicEmeraldFilter extends GLFilter {
     private int mToneCurveTextureUniformLocation;
 
     public MagicEmeraldFilter() {
-        super( loadShaderFromAssets(FilterManager.getContext(),"filter_shader/emerald.glsl"));
+        super(loadShaderFromAssets(FilterManager.getContext(), "filter_shader/emerald.glsl"));
     }
 
     public void onDestroy() {

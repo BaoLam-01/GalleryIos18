@@ -2,11 +2,7 @@ package com.example.galleryios18.feature;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,7 +10,6 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -66,10 +61,7 @@ import com.base.capva.text.text_effect.ShadowTextEffect;
 import com.base.capva.text.text_effect.SpliceTextEffect;
 import com.base.capva.utils.CapVaGravity;
 import com.base.capva.utils.ImageAnimate;
-import com.base.capva.utils.MatrixUtils;
 import com.base.capva.utils.MethodUtils;
-import com.base.capva.utils.MultiLevelList;
-import com.base.capva.utils.ShapeStyle;
 import com.base.capva.utils.TextAnimate;
 import com.base.capva.utils.TextEffect;
 import com.bumptech.glide.Glide;
@@ -175,166 +167,74 @@ public class TemplateView extends RelativeLayout {
         this.onInitTemplateListener = onInitTemplateListener;
     }
 
-    public void setupTemplate(Template template, boolean isSave) {
+    public void setupTemplate(Item item, boolean isSave) {
         itemCount = 0;
         count = 0;
         this.isSave = isSave;
         views.clear();
         removeAllViews();
-        this.template = template;
-        setBackgroundAnimate(template.getTemplateItem().getBackground().getAnimate());
-        TemplateItem templateItem = template.getTemplateItem();
+//        this.template = template;
+//        setBackgroundAnimate(template.getTemplateItem().getBackground().getAnimate());
+//        TemplateItem templateItem = template.getTemplateItem();
+//
+//        setDuration(templateItem.getBackground().getDuration());
+//
+//        ViewGroup.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//
+//        background = new CapVaImageView(getContext(), false, true);
+//        addView(background, params);
+//
+//        background.post(() -> {
+//            if (!isAttachedToWindow()) {
+//                return;
+//            }
+//            Background bg = templateItem.getBackground();
+//            this.duration = bg.getDuration();
+//            Src src = bg.getSrc();
+//            if (src.getType().equals(Common.TYPE_IMAGE)) {
+//                String uri = src.getSrc();
+//                if (uri.startsWith(template.getNameCategory().split(" ")[0])) {
+//                    uri = getContext().getFilesDir() + Common.PATH_FOLDER_UNZIP_THEME + File.separator + src.getSrc();
+//                }
+//                String finalUri = uri;
+//                loadThumb(uri, new OnLoadThumbListener() {
+//                    @Override
+//                    public void onSuccess(Bitmap bitmap) {
+//                        background.setMedia(bitmap, finalUri, 0);
+//                        Crop crop = bg.getCrop();
+//                        if (!crop.isDefault()) {
+//                            background.setImageRect(crop.getRect());
+//                        }
+//                        AdjustFilter adjustFilter = getAdjustFilter(bg.getFilter(), bg.getAdjust());
+//                        background.setAdjustFilter(adjustFilter);
+//                        background.setFlip(bg.getFlip().getH(), bg.getFlip().getV());
+//                        background.setTransparent(bg.getTransparency());
+//                    }
+//
+//                    @Override
+//                    public void onFailure() {
+//
+//                    }
+//                });
+//            } else if (src.getType().equals(Common.TYPE_COLOR)) {
+//                background.setBackgroundColor(src.getSrc());
+//            }
+//        });
 
-        setDuration(templateItem.getBackground().getDuration());
+        addImage(item);
 
-        ViewGroup.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        background = new CapVaImageView(getContext(), false, true);
-        addView(background, params);
-
-        background.post(() -> {
-            if (!isAttachedToWindow()) {
-                return;
-            }
-            Background bg = templateItem.getBackground();
-            this.duration = bg.getDuration();
-            Src src = bg.getSrc();
-            if (src.getType().equals(Common.TYPE_IMAGE)) {
-                String uri = src.getSrc();
-                if (uri.startsWith(template.getNameCategory().split(" ")[0])) {
-                    uri = getContext().getFilesDir() + Common.PATH_FOLDER_UNZIP_THEME + File.separator + src.getSrc();
-                }
-                String finalUri = uri;
-                loadThumb(uri, new OnLoadThumbListener() {
-                    @Override
-                    public void onSuccess(Bitmap bitmap) {
-                        background.setMedia(bitmap, finalUri, 0);
-                        Crop crop = bg.getCrop();
-                        if (!crop.isDefault()) {
-                            background.setImageRect(crop.getRect());
-                        }
-                        AdjustFilter adjustFilter = getAdjustFilter(bg.getFilter(), bg.getAdjust());
-                        background.setAdjustFilter(adjustFilter);
-                        background.setFlip(bg.getFlip().getH(), bg.getFlip().getV());
-                        background.setTransparent(bg.getTransparency());
-                    }
-
-                    @Override
-                    public void onFailure() {
-
-                    }
-                });
-            } else if (src.getType().equals(Common.TYPE_COLOR)) {
-                background.setBackgroundColor(src.getSrc());
-            }
-        });
-
-        ArrayList<Item> items = templateItem.getItem();
-        itemCount = items.size();
-        for (int i = 0; i < items.size(); i++) {
-            Item item = items.get(i);
-            switch (item.getType()) {
-                case Common.TYPE_IMAGE:
-                    if (!item.getFolderFrame().equals("")) {
-                        countItemNeedPreload++;
-                    }
-                    addImage(item);
-                    break;
-                case Common.TYPE_TEXT:
-                    addText(item);
-                    break;
-            }
-        }
-        if (itemCount == 0 && !template.getStrJson().equals("")) {
-            handlerSetTimeDelay.sendEmptyMessage(0);
-        }
+//        if (itemCount == 0 && !template.getStrJson().equals("")) {
+//            handlerSetTimeDelay.sendEmptyMessage(0);
+//        }
         if (onPreloadFrameListener != null && countItemNeedPreload == 0) {
             onPreloadFrameListener.onPreloadSuccess();
         }
-
-        capVaEditText = new CapVaEditText(getContext());
-        capVaEditText.setVisibility(INVISIBLE);
-        addView(capVaEditText, params);
+//
+//        capVaEditText = new CapVaEditText(getContext());
+//        capVaEditText.setVisibility(INVISIBLE);
+//        addView(capVaEditText, params);
     }
 
-    private void addText(Item item) {
-        CapVaTextView capVaTextView = new CapVaTextView(getContext());
-        addTextDefault(item, capVaTextView);
-        capVaTextView.post(() -> {
-            if (!isAttachedToWindow()) {
-                return;
-            }
-            LayoutParams p = (LayoutParams) capVaTextView.getLayoutParams();
-            p.width = capVaTextView.getWidth();
-            capVaTextView.setLayoutParams(p);
-
-            capVaTextView.invalidate();
-            float scale;
-            if (capVaTextView.getShapeStyle() == ShapeStyle.CIRCLE) {
-                float w = capVaTextView.getRadiusWithHeightText() * 2;
-                scale = item.getScale() * getWidth() / w;
-                capVaTextView.postTranslate((w - capVaTextView.getWidth()) / 2, (w - capVaTextView.getHeight()) / 2);
-            } else {
-                scale = item.getScale() * getWidth() / capVaTextView.getWidth();
-            }
-            capVaTextView.postScale(scale);
-            capVaTextView.postTranslate(item.getLeft() * getWidth(), item.getTop() * getHeight());
-
-            capVaTextView.postDelayed(() -> {
-                if (isAttachedToWindow()) {
-                    capVaTextView.postRotate(item.getRotate());
-                    capVaTextView.setVisibility(VISIBLE);
-                    capVaTextView.invalidate();
-                    handlerSetTimeDelay.sendEmptyMessage(0);
-                }
-            }, 1000);
-        });
-    }
-
-    private void addTextDefault(Item item, CapVaTextView capVaTextView) {
-        capVaTextView.setVisibility(INVISIBLE);
-
-        capVaTextView.setAllCap(item.getFormat().getAllCap());
-
-        capVaTextView.setText(item.getText());
-
-        capVaTextView.setTextColor(Color.parseColor(item.getTextColor()));
-
-        capVaTextView.setGravity(getGravityItem(item.getFormat().getGravity()));
-
-        capVaTextView.setLineSpacing(item.getSpacing().getLine());
-
-        capVaTextView.setLetterSpacing(item.getSpacing().getLetter());
-
-        capVaTextView.setTextStyle(item.getFormat().getBold(), item.getFormat().getItalic(), item.getFormat().getUnderLine());
-
-        Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/" + item.getFont());
-        capVaTextView.setTypeface(item.getFont(), typeface);
-
-        BaseTextAnimate animate = getTextAnimate(item.getAnimate());
-        capVaTextView.setAnimate(animate);
-
-        capVaTextView.setTransparent(item.getTransparent());
-
-        BaseTextEffect effect = getTextEffect(item.getEffect().getStyle(), capVaTextView.getTextView().getPaint());
-        capVaTextView.setEffect(effect);
-
-        capVaTextView.setMultiLevelList(MultiLevelList.valueOf(item.getFormat().getMultilevelList()));
-
-        ShapeStyle style = ShapeStyle.valueOf(item.getEffect().getShape().getType());
-        capVaTextView.setShapeStyle(style);
-
-        if (style == ShapeStyle.CIRCLE) {
-            capVaTextView.setPercentCircle(item.getEffect().getShape().getCurve()/* * getWidth()*/);
-            animate.setCircleReverse(item.getEffect().getShape().getReverse());
-        }
-        LayoutParams params = new LayoutParams((int) item.getWidth(), (int) item.getHeight());
-        int gap = (int) capVaTextView.getTextView().getPaint().measureText(item.getText());
-        params.rightMargin = -gap;
-        addView(capVaTextView, params);
-
-        views.add(capVaTextView);
-    }
 
     private BaseTextEffect getTextEffect(Style style, Paint paint) {
         Options options = style.getOptions();
@@ -452,52 +352,21 @@ public class TemplateView extends RelativeLayout {
                 return;
             }
             String uri = item.getSrc();
-            if (uri.startsWith(template.getNameCategory().split(" ")[0])) {
-                uri = getContext().getFilesDir() + Common.PATH_FOLDER_UNZIP_THEME + File.separator + item.getSrc();
-            }
+//            if (uri.startsWith(template.getNameCategory().split(" ")[0])) {
+//                uri = getContext().getFilesDir() + Common.PATH_FOLDER_UNZIP_THEME + File.separator + item.getSrc();
+//            }
             String finalUri = uri;
             loadThumb(uri, new OnLoadThumbListener() {
                 @Override
                 public void onSuccess(Bitmap bitmap) {
-                    if (!item.getClip().isEmpty()) {
-                        capVaImageView.setClip(item.getClip());
-                    }
-                    capVaImageView.setCornerClip(item.getCorner() * getWidth());
 
                     capVaImageView.setMedia(bitmap, finalUri, item.getVideoTimeEnd() - item.getVideoTimeStart());
-                    capVaImageView.setFlip(item.getFlip().getH(), item.getFlip().getV());
-                    capVaImageView.postTranslate(item.getLeft() * getWidth(), item.getTop() * getHeight());
-
-                    capVaImageView.postScale(item.getScale(), item.getLeft() * getWidth(), item.getTop() * getHeight());
-
-                    capVaImageView.setTransparent(item.getTransparent());
                     capVaImageView.setTimeVideo(item.getVideoTimeStart(), item.getVideoTimeEnd());
 
-                    Crop crop = item.getCrop();
-                    if (!crop.isDefault()) {
-                        capVaImageView.setImageRect(crop.getRect());
-                    }
-
-                    capVaImageView.setAdjustFilter(getAdjustFilter(item.getFilter(), item.getAdjust()));
-
                     capVaImageView.setAnimate(getImageAnimate(item.getAnimate()));
-                    capVaImageView.setTransparent(item.getTransparent());
-
                     capVaImageView.setFolderFrame(item.getFolderFrame(), isSave);
-                    capVaImageView.setDisableEdit(item.getDisableEdit());
-                    capVaImageView.setDisableEditSize(item.getDisableEditSize());
-                    capVaImageView.setBorder(item.getBorder());
 
                     capVaImageView.invalidate();
-
-                    capVaImageView.postDelayed(() -> {
-                        if (isAttachedToWindow()) {
-                            capVaImageView.postRotate(item.getRotate());
-                            capVaImageView.invalidate();
-                            capVaImageView.setVisibility(VISIBLE);
-                            handlerSetTimeDelay.sendEmptyMessage(0);
-                        }
-                    }, 1000);
                 }
 
                 @Override
@@ -677,24 +546,8 @@ public class TemplateView extends RelativeLayout {
                     Item item = new Item();
                     CapVaImageView capVaImageView = (CapVaImageView) view;
 
-                    float rotate = capVaImageView.getRotate();
-                    item.setRotate(-rotate);
-
-                    PointF center = capVaImageView.getMappedCenterPoint();
-
-                    Matrix matrix = capVaImageView.getMatrix();
-                    matrix.postRotate(rotate, center.x, center.y);
-
-                    item.setType(Common.TYPE_IMAGE);
-
                     item.setWidth((float) capVaImageView.getWidth() / (float) getWidth());
                     item.setHeight((float) capVaImageView.getHeight() / (float) getHeight());
-
-                    float[] lt = MatrixUtils.getTranslate(matrix);
-                    item.setLeft(lt[0] / (float) getWidth());
-                    item.setTop(lt[1] / (float) getHeight());
-
-                    item.setScale(capVaImageView.getScale());
 
                     item.setVideo(capVaImageView.isVideo());
 
@@ -704,75 +557,18 @@ public class TemplateView extends RelativeLayout {
 
                     item.setVideoTimeEnd(capVaImageView.getTimeEnd());
 
-                    item.setFilter(getFilterFromView(capVaImageView));
-
-                    item.setAdjust(getAdjustFromView(capVaImageView));
-
-                    Crop crop = getCropFromView(capVaImageView);
-                    item.setCrop(crop);
-
-                    item.setFlip(getFlipFromView(capVaImageView));
-
-                    item.setTransparent(capVaImageView.getTransparent());
                     if (capVaImageView.getAnimate() != null)
                         item.setAnimate(capVaImageView.getAnimate().getName());
-
-                    item.setBorder(capVaImageView.getBorder());
-                    item.setClip(capVaImageView.getClip());
-                    item.setCorner(capVaImageView.getCornerClip() / (float) getWidth());
                     item.setFolderFrame(capVaImageView.getFolderFrame());
-                    item.setDisableEdit(capVaImageView.isDisableEdit());
-                    item.setDisableEditSize(capVaImageView.isDisableEditSize());
-
-                    matrix.postRotate(-rotate, center.x, center.y);
 
                     items.add(item);
                 } else if (view instanceof CapVaTextView) {
                     Item item = new Item();
                     CapVaTextView capVaTextView = (CapVaTextView) view;
-
-                    float rotate = capVaTextView.getRotate();
-                    PointF center = capVaTextView.getMappedCenterPoint();
-
-                    Matrix matrix = capVaTextView.getMatrix();
-                    matrix.postRotate(rotate, center.x, center.y);
-
-                    item.setType(Common.TYPE_TEXT);
-
                     item.setWidth((float) capVaTextView.getWidth());
                     item.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                    item.setRotate(-rotate);
-
-                    item.setText(capVaTextView.getText());
-
-                    item.setFont(capVaTextView.getFontName());
-
-                    item.setTextColor(MethodUtils.convertColorToString(capVaTextView.getTextColor()));
-
-                    item.setFormat(getFormatFromView(capVaTextView));
-
-                    item.setSpacing(getSpacingFromView(capVaTextView));
-
-                    item.setEffect(getEffectFromView(capVaTextView));
-
                     item.setAnimate(capVaTextView.getAnimate().getName());
 
-                    item.setTransparent(capVaTextView.getTransparent());
-
-                    float[] tl = MatrixUtils.getTranslate(matrix);
-                    if (ShapeStyle.valueOf(item.getEffect().getShape().getType()) == ShapeStyle.CIRCLE) {
-                        float w = capVaTextView.getRadiusWithHeightText() * 2;
-                        item.setScale(capVaTextView.getScale() * w / getWidth());
-                        item.setLeft((tl[0] - ((w - (float) capVaTextView.getWidth()) / 2f) * capVaTextView.getScale()) / (float) (getWidth()));
-                        item.setTop((tl[1] - ((w - (float) capVaTextView.getHeight()) / 2f) * capVaTextView.getScale()) / (float) getHeight());
-                    } else {
-                        item.setScale(capVaTextView.getScale() * (float) capVaTextView.getWidth() / (float) getWidth());
-                        item.setLeft(tl[0] / (float) getWidth());
-                        item.setTop(tl[1] / (float) getHeight());
-                    }
-
-                    matrix.postRotate(-rotate, center.x, center.y);
                     items.add(item);
                 }
             }

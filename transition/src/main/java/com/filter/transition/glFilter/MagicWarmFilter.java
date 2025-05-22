@@ -6,8 +6,6 @@ package com.filter.transition.glFilter;
 import android.content.Context;
 import android.opengl.GLES20;
 
-import com.filter.R;
-import com.filter.base.GPUImageFilter;
 import com.filter.base.OpenGlUtils;
 import com.filter.helper.FilterManager;
 import com.filter.transition.GLFilter;
@@ -23,9 +21,9 @@ public class MagicWarmFilter extends GLFilter {
     private int mMaskGrey2UniformLocation;
     private Context context;
 
-    public MagicWarmFilter( ) {
-        super( loadShaderFromAssets(FilterManager.getContext(),"filter_shader/warm.glsl"));
-        this.context =  FilterManager.getContext();
+    public MagicWarmFilter() {
+        super(loadShaderFromAssets(FilterManager.getContext(), "filter_shader/warm.glsl"));
+        this.context = FilterManager.getContext();
     }
 
     public void onDestroy() {

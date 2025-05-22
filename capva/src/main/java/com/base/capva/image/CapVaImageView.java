@@ -882,7 +882,7 @@ public class CapVaImageView extends BaseView {
                         return;
                     }
                     Bitmap bitmap = decodeBitmapWithOptimize(frames.get(count));
-                    imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap,bmOriginal.getWidth(),bmOriginal.getHeight(),true));
+                    imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, bmOriginal.getWidth(), bmOriginal.getHeight(), true));
 //                    Glide.with(getContext()).asBitmap().load(frames.get(count))
 //                            .override(bmOriginal.getWidth(), bmOriginal.getHeight())
 //                            .into(new CustomTarget<Bitmap>() {
@@ -1104,7 +1104,9 @@ public class CapVaImageView extends BaseView {
                 }
             }
         } else {
-            onCapVaImageListener.onPreloadFrameSuccess();
+            if (onCapVaImageListener != null) {
+                onCapVaImageListener.onPreloadFrameSuccess();
+            }
         }
     }
 

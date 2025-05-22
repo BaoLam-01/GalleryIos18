@@ -14,6 +14,7 @@ import com.example.galleryios18.R
 import com.example.galleryios18.interfaces.OnSaveVideoListener
 import com.example.galleryios18.utils.createvideo.BitmapToVideoEncoder
 import kotlinx.coroutines.Runnable
+import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.Calendar
@@ -119,6 +120,8 @@ class CreateVideoManager(
 //        }
 //        return bitmap
 
+        Timber.e("LamPro | getBitmap - view width: ${view.layoutParams.width}")
+        Timber.e("LamPro | getBitmap - view width: ${view.width}")
         val b = Bitmap.createBitmap(
             view.layoutParams.width,
             view.layoutParams.height,

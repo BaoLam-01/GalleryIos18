@@ -13,12 +13,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
-import com.filter.R;
 
 import java.io.File;
 
 
 import static com.filter.base.GPUImage.SURFACE_TYPE_SURFACE_VIEW;
+
+import com.transition.R;
 
 public class GPUImageView extends FrameLayout {
 

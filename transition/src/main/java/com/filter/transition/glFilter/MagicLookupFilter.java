@@ -5,7 +5,6 @@ package com.filter.transition.glFilter;
 
 import android.opengl.GLES20;
 
-import com.filter.base.GPUImageFilter;
 import com.filter.base.OpenGlUtils;
 import com.filter.helper.FilterManager;
 import com.filter.transition.GLFilter;
@@ -66,7 +65,7 @@ public class MagicLookupFilter extends GLFilter {
         super.onInitialized();
         runOnDraw(new Runnable() {
             public void run() {
-                mLookupSourceTexture = OpenGlUtils.loadTexture( FilterManager.getContext(), table);
+                mLookupSourceTexture = OpenGlUtils.loadTexture(FilterManager.getContext(), table);
             }
         });
     }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import android.widget.VideoView
@@ -12,12 +13,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.example.galleryios18.R
+import com.example.galleryios18.common.models.Media
+import com.example.galleryios18.data.models.template_item.Item
 import com.example.galleryios18.databinding.FragmentMakeStoryBinding
 import com.example.galleryios18.interfaces.OnSaveVideoListener
 import com.example.galleryios18.ui.adapter.TemplateViewPager
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.utils.CreateVideoManager
-import com.example.galleryios18.utils.Utils
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -29,7 +32,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
-import kotlin.compareTo
 
 class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStoryViewModel>(),
     OnSaveVideoListener {
@@ -40,17 +42,94 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
     private var templateViewPager: TemplateViewPager? = null
     private var createVideoManager: CreateVideoManager? = null
     private var listTemplate = ArrayList<String>()
+    var listItemJson: List<String> = emptyList()
 
     private val pickMediaLauncher = registerForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments()
     ) { uris ->
         if (!uris.isNullOrEmpty()) {
-            mediaUris.clear()
-            mediaUris.addAll(uris)
-            Toast.makeText(requireContext(), "Đã chọn ${uris.size} media", Toast.LENGTH_SHORT)
-                .show()
-            listTemplate.addAll(uris.map { it.toString() })
+//            mediaUris.clear()
+//            mediaUris.addAll(uris)
+//            Toast.makeText(requireContext(), "Đã chọn ${uris.size} media", Toast.LENGTH_SHORT)
+//                .show()
+//            listTemplate.addAll(uris.map { it.toString() })
+            templateViewPager!!.initList(listTemplate)
+            listItemJson = getMediaMetadata(requireContext(), uris)
+            mainViewModel.listItemJsonLiveData.value = listItemJson
+            templateViewPager!!.initList(listItemJson)
         }
+    }
+
+    fun getMediaMetadata(context: Context, uris: List<Uri>): List<String> {
+        val projection = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DISPLAY_NAME,
+            MediaStore.Images.Media.DATA,
+            MediaStore.Images.Media.BUCKET_ID,
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Images.Media.DATE_ADDED,
+            MediaStore.Images.Media.DATE_TAKEN,
+            MediaStore.Images.Media.DATE_MODIFIED,
+            MediaStore.Images.Media.WIDTH,
+            MediaStore.Images.Media.HEIGHT,
+            MediaStore.Images.Media.SIZE,
+            MediaStore.Video.Media.DURATION
+        )
+        val resolver = context.contentResolver
+        val metadataList: MutableList<String> = mutableListOf()
+
+        for (uri in uris) {
+            Timber.e("LamPro | getMediaMetadata - uri: $uri")
+            val mimeType = resolver.getType(uri)
+            val type = when {
+                mimeType?.startsWith("image/") == true -> "image"
+                mimeType?.startsWith("video/") == true -> "video"
+                else -> "other"
+            }
+
+            resolver.query(uri, projection, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+
+                    val media = Media(
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID))
+                            ?: 0,
+                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME))
+                            ?: "",
+                        uri.toString(),
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID))
+                            ?: 0,
+                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
+                            ?: "",
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)),
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)),
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)),
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
+                        type != "video",
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
+                    )
+                    Timber.e("LamPro | getMediaMetadata - media: $media")
+
+                    val item = Item()
+                    item.width = media.width.toFloat()
+                    item.height = media.height.toFloat()
+                    item.isVideo = !media.isImage
+                    item.src = media.path
+                    item.videoTimeStart = 0
+                    item.videoTimeEnd = media.duration.toInt()
+                    item.animate = "NONE"
+                    item.folderFrame = ""
+
+                    val itemString = Gson().toJson(item)
+                    Timber.e("LamPro | getMediaMetadata - item string: $itemString")
+
+                    metadataList.add(itemString)
+                }
+            }
+        }
+
+        return metadataList
     }
 
 
@@ -63,6 +142,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         setupLayout()
+        initViewPager()
 //        videoView = binding.videoView
 
         binding.btnPickMedia.setOnClickListener {
@@ -80,7 +160,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         templateViewPager = TemplateViewPager(childFragmentManager, lifecycle, "")
         binding.container.post {
             binding.vpTemplate.requestLayout()
-            templateViewPager!!.initList(listTemplate)
+            templateViewPager!!.initList(listItemJson)
             binding.vpTemplate.post {
                 if (isAdded) {
                     binding.vpTemplate.adapter = templateViewPager
@@ -111,9 +191,16 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
     private fun setupLayout() {
 
         binding.container.post {
-            //todo: set layout params cardView, view
             val params = binding.cardView.layoutParams
+            params.width = binding.container.width
+            params.height = binding.container.height
+            binding.cardView.requestLayout()
+            val paramsView = binding.view.layoutParams
 
+            paramsView.width = binding.container.width
+            paramsView.height = binding.container.height
+
+            binding.view.requestLayout()
             //todo: scale
             scaleCardView()
         }
@@ -136,13 +223,18 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
 
     private fun initCreateVideoManager() {
         if (createVideoManager == null) {
-            createVideoManager = CreateVideoManager(
-                requireActivity(), binding.cardView, 1080, 1920, 10000, this
-            )
-            pathAudio = copyAssetToExternal(requireContext(), "bg_music.mp3", "bg_music.mp3")
-            createVideoManager?.setupAudioPreview(
-                pathAudio, 0, 10000
-            )
+            binding.cardView.visibility = View.VISIBLE
+            Timber.e("LamPro | initCreateVideoManager - width: ${binding.cardView.width}")
+            Timber.e("LamPro | initCreateVideoManager - height: ${binding.cardView.height}")
+            binding.cardView.post {
+                createVideoManager = CreateVideoManager(
+                    requireActivity(), binding.cardView, 1080, 1920, 10000, this
+                )
+                pathAudio = copyAssetToExternal(requireContext(), "bg_music.mp3", "bg_music.mp3")
+                createVideoManager?.setupAudioPreview(
+                    pathAudio, 0, 10000
+                )
+            }
         }
     }
 

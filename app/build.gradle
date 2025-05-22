@@ -127,7 +127,6 @@ dependencies {
     implementation project(':HorizontalWheelView')
     implementation project(':photoview')
     implementation project(':ffmpeg-aar')
-    implementation project(':transition')
     implementation project(':capva')
     implementation project(':filter')
     implementation 'com.mikhaellopez:circularprogressbar:3.1.0'

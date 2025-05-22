@@ -28,7 +28,7 @@ class MediaRepository @Inject constructor() {
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DISPLAY_NAME,
             MediaStore.Images.Media.DATA,
-            MediaStore.Video.Media.BUCKET_ID,
+            MediaStore.Images.Media.BUCKET_ID,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.DATE_TAKEN,

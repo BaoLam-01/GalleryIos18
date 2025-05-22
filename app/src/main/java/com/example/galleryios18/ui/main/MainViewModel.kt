@@ -20,6 +20,7 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
     val mLiveEventNavigateScreen: LiveEvent<Int> = LiveEvent()
     val allMediaLiveData: MutableLiveData<List<Media>> = MutableLiveData()
     val allCollectionLiveData: MutableLiveData<List<CollectionItem>> = MutableLiveData()
+    val listItemJsonLiveData = MutableLiveData<List<String>>()
 
     fun getAllMedia() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->

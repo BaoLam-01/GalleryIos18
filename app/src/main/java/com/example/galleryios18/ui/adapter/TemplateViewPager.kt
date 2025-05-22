@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.galleryios18.ui.main.itemtemplate.ItemTemplateFragment
+import timber.log.Timber
 
 class TemplateViewPager(
     fragmentManager: FragmentManager,
@@ -13,9 +14,10 @@ class TemplateViewPager(
     var pathImage: String,
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    fun initList(templates: ArrayList<String>) {
+    fun initList(templates: List<String>) {
         list.clear()
-        if (templates.size > 0) {
+        if (templates.isNotEmpty()) {
+            Timber.e("LamPro | initList - template size > 0")
             for (i in 0 until templates.size) {
                 list.add(
                     ItemTemplateFragment.newIns(
@@ -25,6 +27,8 @@ class TemplateViewPager(
                 )
             }
         } else {
+            Timber.e("LamPro | initList - template size < 0")
+
             list.add(
                 ItemTemplateFragment.newIns(
                     pathImage,
