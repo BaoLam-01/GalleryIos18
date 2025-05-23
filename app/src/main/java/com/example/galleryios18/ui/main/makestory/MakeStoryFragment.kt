@@ -5,17 +5,23 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.data.models.template_item.Item
+import com.example.galleryios18.data.models.template_item.Template
+import com.example.galleryios18.data.models.template_item.TemplateItem
 import com.example.galleryios18.databinding.FragmentMakeStoryBinding
+import com.example.galleryios18.feature.TemplateView
 import com.example.galleryios18.interfaces.OnSaveVideoListener
 import com.example.galleryios18.ui.adapter.TemplateViewPager
 import com.example.galleryios18.ui.base.BaseBindingFragment
@@ -41,95 +47,33 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
     private lateinit var pathAudio: String
     private var templateViewPager: TemplateViewPager? = null
     private var createVideoManager: CreateVideoManager? = null
-    private var listTemplate = ArrayList<String>()
     var listItemJson: List<String> = emptyList()
+    private var listTemplateView = ArrayList<TemplateView>()
+
 
     private val pickMediaLauncher = registerForActivityResult(
         ActivityResultContracts.OpenMultipleDocuments()
     ) { uris ->
-        if (!uris.isNullOrEmpty()) {
-//            mediaUris.clear()
-//            mediaUris.addAll(uris)
-//            Toast.makeText(requireContext(), "Đã chọn ${uris.size} media", Toast.LENGTH_SHORT)
-//                .show()
-//            listTemplate.addAll(uris.map { it.toString() })
-            templateViewPager!!.initList(listTemplate)
-            listItemJson = getMediaMetadata(requireContext(), uris)
-            mainViewModel.listItemJsonLiveData.value = listItemJson
-            templateViewPager!!.initList(listItemJson)
-        }
     }
 
-    fun getMediaMetadata(context: Context, uris: List<Uri>): List<String> {
-        val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-            MediaStore.Images.Media.DATE_ADDED,
-            MediaStore.Images.Media.DATE_TAKEN,
-            MediaStore.Images.Media.DATE_MODIFIED,
-            MediaStore.Images.Media.WIDTH,
-            MediaStore.Images.Media.HEIGHT,
-            MediaStore.Images.Media.SIZE,
-            MediaStore.Video.Media.DURATION
-        )
-        val resolver = context.contentResolver
-        val metadataList: MutableList<String> = mutableListOf()
+    fun getListMediaJson(context: Context, medias: List<Media>): List<String> {
+        val listMedia = mutableListOf<String>()
 
-        for (uri in uris) {
-            Timber.e("LamPro | getMediaMetadata - uri: $uri")
-            val mimeType = resolver.getType(uri)
-            val type = when {
-                mimeType?.startsWith("image/") == true -> "image"
-                mimeType?.startsWith("video/") == true -> "video"
-                else -> "other"
-            }
+        for (media in medias) {
+            val item = Item()
+            item.width = media.width.toFloat()
+            item.height = media.height.toFloat()
+            item.isVideo = !media.isImage
+            item.src = media.path
+            item.videoTimeStart = 0
+            item.videoTimeEnd = media.duration.toInt()
+            item.animate = "NONE"
+            item.folderFrame = ""
 
-            resolver.query(uri, projection, null, null, null)?.use { cursor ->
-                if (cursor.moveToFirst()) {
-
-                    val media = Media(
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID))
-                            ?: 0,
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME))
-                            ?: "",
-                        uri.toString(),
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID))
-                            ?: 0,
-                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
-                            ?: "",
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)),
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)),
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)),
-                        cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)),
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
-                        type != "video",
-                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
-                    )
-                    Timber.e("LamPro | getMediaMetadata - media: $media")
-
-                    val item = Item()
-                    item.width = media.width.toFloat()
-                    item.height = media.height.toFloat()
-                    item.isVideo = !media.isImage
-                    item.src = media.path
-                    item.videoTimeStart = 0
-                    item.videoTimeEnd = media.duration.toInt()
-                    item.animate = "NONE"
-                    item.folderFrame = ""
-
-                    val itemString = Gson().toJson(item)
-                    Timber.e("LamPro | getMediaMetadata - item string: $itemString")
-
-                    metadataList.add(itemString)
-                }
-            }
+            val itemString = Gson().toJson(item)
+            listMedia.add(itemString)
         }
-
-        return metadataList
+        return listMedia
     }
 
 
@@ -142,25 +86,42 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         setupLayout()
-        initViewPager()
 //        videoView = binding.videoView
-
-        binding.btnPickMedia.setOnClickListener {
-            pickMediaLauncher.launch(arrayOf("image/*", "video/*"))
-        }
 
         binding.btnCreateStory.setOnClickListener {
             saveVideo(pathAudio)
 //            createStoryFromMedia()
         }
+
+        mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
+            Timber.e("LamPro | onCreatedView - all media obsver : ${it.size}")
+            if (it.isNotEmpty()) {
+
+                val listMedia = mutableListOf<Media>()
+                listMedia.add(it[0])
+                listMedia.add(it[1])
+                listMedia.add(it[2])
+                Timber.e("LamPro | onCreatedView - list media: " + listMedia.size)
+                listItemJson = getListMediaJson(requireContext(), listMedia)
+                mainViewModel.listItemJsonLiveData.value = listItemJson
+                initViewPager()
+            }
+        }
+        mainViewModel.getAllMedia()
     }
 
     @SuppressLint("WrongConstant")
     private fun initViewPager() {
+        val pageMarginPx = resources.getDimensionPixelOffset(R.dimen._16sdp) // ví dụ: 16dp
+        val marginTransformer = MarginPageTransformer(pageMarginPx)
+        binding.vpTemplate.setPageTransformer(marginTransformer)
+
         templateViewPager = TemplateViewPager(childFragmentManager, lifecycle, "")
         binding.container.post {
             binding.vpTemplate.requestLayout()
             templateViewPager!!.initList(listItemJson)
+            Log.d("chungvv", "initViewPager: ${listItemJson.size}")
+            Timber.e("LamPro | initViewPager - set list ")
             binding.vpTemplate.post {
                 if (isAdded) {
                     binding.vpTemplate.adapter = templateViewPager
@@ -211,7 +172,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
             val scale = binding.view.width.toFloat() / binding.cardView.width.toFloat()
             binding.cardView.scaleX = scale
             binding.cardView.scaleY = scale
-            binding.cardView.visibility = View.VISIBLE
+//            binding.cardView.visibility = View.VISIBLE
             binding.cardView.postDelayed({
                 if (isAdded) {
                     initCreateVideoManager()
@@ -223,12 +184,18 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
 
     private fun initCreateVideoManager() {
         if (createVideoManager == null) {
-            binding.cardView.visibility = View.VISIBLE
+//            binding.cardView.visibility = View.VISIBLE
             Timber.e("LamPro | initCreateVideoManager - width: ${binding.cardView.width}")
             Timber.e("LamPro | initCreateVideoManager - height: ${binding.cardView.height}")
             binding.cardView.post {
                 createVideoManager = CreateVideoManager(
-                    requireActivity(), binding.cardView, 1080, 1920, 10000, this
+                    requireActivity(),
+                    binding.cardView,
+                    listTemplateView,
+                    1080,
+                    1920,
+                    10000,
+                    this
                 )
                 pathAudio = copyAssetToExternal(requireContext(), "bg_music.mp3", "bg_music.mp3")
                 createVideoManager?.setupAudioPreview(
@@ -238,22 +205,47 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         }
     }
 
+    private fun setupTemplate() {
+        for (i in 0 until listItemJson.size) {
+            val templateView = TemplateView(context)
+            templateView.setOnInitTemplateListener {
+            }
+            templateView.setOnPreloadFrameListener {
+            }
+            binding.cardView.addView(
+                templateView,
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                )
+            )
+            listTemplateView.add(templateView)
+
+            templateView.post {
+                val items = Gson().fromJson(listItemJson[i], Item::class.java)
+                templateView.setupTemplate(items, true)
+                if (i == 0) {
+                    templateView.visibility = View.VISIBLE
+                } else {
+                    templateView.visibility = View.INVISIBLE
+                }
+            }
+        }
+    }
+
     private fun saveVideo(pathAudio: String) {
+        setupTemplate()
         createVideoManager?.let {
             it.setupAudio(
-                pathAudio, 0, 10000, 10000
+                pathAudio,
+                0,
+                10000,
+                10000
             )
-//            val listViews = ArrayList<TemplateView>()
-//            val pages = selectPageAdapter.getPages()
-//            for (i in 0 until pages.size) {
-//                if (pages[i]) {
-//                    listViews.add(listTemplateView[i])
-//                }
-//            }
-//            setTimeDelay(listViews)
-//            val duration = getDurationAllPage(listViews)
-
-
+            it.setupSave(
+                10000,
+                listTemplateView
+            )
             it.startEncoding()
         }
     }

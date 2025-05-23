@@ -2,12 +2,14 @@ package com.example.galleryios18.feature;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -88,6 +90,8 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 public class TemplateView extends RelativeLayout {
     private OnPreloadFrameListener onPreloadFrameListener;
@@ -173,6 +177,7 @@ public class TemplateView extends RelativeLayout {
         this.isSave = isSave;
         views.clear();
         removeAllViews();
+        setBackgroundColor(Color.RED);
 //        this.template = template;
 //        setBackgroundAnimate(template.getTemplateItem().getBackground().getAnimate());
 //        TemplateItem templateItem = template.getTemplateItem();
@@ -220,8 +225,12 @@ public class TemplateView extends RelativeLayout {
 //                background.setBackgroundColor(src.getSrc());
 //            }
 //        });
-
-        addImage(item);
+        post(new Runnable() {
+            @Override
+            public void run() {
+                addImage(item);
+            }
+        });
 
 //        if (itemCount == 0 && !template.getStrJson().equals("")) {
 //            handlerSetTimeDelay.sendEmptyMessage(0);
@@ -340,9 +349,8 @@ public class TemplateView extends RelativeLayout {
     private void addImage(Item item) {
         CapVaImageView capVaImageView = new CapVaImageView(getContext(), isSave);
         capVaImageView.setVisibility(INVISIBLE);
-        int widthImage = (int) (item.getWidth() * getWidth());
-        int heightImage = (int) (item.getHeight() * getHeight());
-
+        int widthImage = (int) (1f * getWidth());
+        int heightImage = (int) (1f * getHeight());
         LayoutParams paramsImage = new LayoutParams(widthImage, heightImage);
         paramsImage.bottomMargin = -heightImage;
         paramsImage.rightMargin = -widthImage;
@@ -352,6 +360,7 @@ public class TemplateView extends RelativeLayout {
                 return;
             }
             String uri = item.getSrc();
+            Timber.e("LamPro | addImage - uri: " + uri);
 //            if (uri.startsWith(template.getNameCategory().split(" ")[0])) {
 //                uri = getContext().getFilesDir() + Common.PATH_FOLDER_UNZIP_THEME + File.separator + item.getSrc();
 //            }
@@ -359,19 +368,20 @@ public class TemplateView extends RelativeLayout {
             loadThumb(uri, new OnLoadThumbListener() {
                 @Override
                 public void onSuccess(Bitmap bitmap) {
-
+                    Log.d("chungvv", "onSuccess: "+bitmap);
                     capVaImageView.setMedia(bitmap, finalUri, item.getVideoTimeEnd() - item.getVideoTimeStart());
                     capVaImageView.setTimeVideo(item.getVideoTimeStart(), item.getVideoTimeEnd());
 
                     capVaImageView.setAnimate(getImageAnimate(item.getAnimate()));
                     capVaImageView.setFolderFrame(item.getFolderFrame(), isSave);
-
                     capVaImageView.invalidate();
+                    capVaImageView.setVisibility(VISIBLE);
+                    Timber.e("LamPro | onSuccess - ");
                 }
 
                 @Override
                 public void onFailure() {
-
+                    Timber.e("LamPro | onFailure - ");
                 }
             });
         });

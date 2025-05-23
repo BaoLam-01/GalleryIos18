@@ -9,6 +9,7 @@ import com.example.galleryios18.data.models.template_item.Template
 import com.example.galleryios18.databinding.FragmentItemTemplateBinding
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.google.gson.Gson
+import timber.log.Timber
 import kotlin.compareTo
 import kotlin.math.max
 import kotlin.text.get
@@ -28,6 +29,7 @@ class ItemTemplateFragment :
             bundle.putString(Constant.PATH_MEDIA_FROM_GALLERY, pathImage)
             bundle.putInt(Constant.CURRENT_POS_TEMPLATE, pos)
             fragment.arguments = bundle
+            Timber.e("LamPro | newIns - pos: $pos")
             return fragment
         }
     }
@@ -47,6 +49,7 @@ class ItemTemplateFragment :
         pathImageBegin = requireArguments().getString(Constant.PATH_MEDIA_FROM_GALLERY, "")
 //        templateString = requireArguments().getString(Constant.TEMPLATE_STRING, "")
         mainViewModel.listItemJsonLiveData.observe(viewLifecycleOwner) {
+            Timber.e("LamPro | onCreatedView - item: ${item.toString()}")
             if (item == null) {
                 val pos = requireArguments().getInt(Constant.CURRENT_POS_TEMPLATE, 0)
                 if (pos >= 0 && it.isNotEmpty()) {
@@ -59,6 +62,7 @@ class ItemTemplateFragment :
                 }
             }
 
+            Timber.e("LamPro | onCreatedView - item: ${item.toString()}")
             binding.templateView.setupTemplate(item, false)
             isCreatedView = true
         }

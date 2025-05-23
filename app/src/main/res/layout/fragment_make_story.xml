@@ -10,20 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btnPickMedia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_40sdp"
-            android:text="Chọn ảnh va video"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnCreateStory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
             android:text="Tạo video story"
-            app:layout_constraintTop_toBottomOf="@id/btnPickMedia" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <RelativeLayout
             android:id="@+id/container"
@@ -42,6 +36,7 @@
                 android:id="@+id/vpTemplate"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/blue"
                 android:layout_centerInParent="true" />
 
             <androidx.cardview.widget.CardView

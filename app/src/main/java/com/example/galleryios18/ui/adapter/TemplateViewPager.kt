@@ -1,5 +1,6 @@
 package com.example.galleryios18.ui.adapter
 
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -49,6 +50,7 @@ class TemplateViewPager(
     }
 
     override fun createFragment(position: Int): Fragment {
+        Log.d("chungvv", "createFragment: $position")
         return list[position]
     }
 

@@ -8,9 +8,11 @@ import android.media.MediaScannerConnection
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import android.widget.FrameLayout
 import com.base.capva.common.Common
 import com.example.galleryios18.R
+import com.example.galleryios18.feature.TemplateView
 import com.example.galleryios18.interfaces.OnSaveVideoListener
 import com.example.galleryios18.utils.createvideo.BitmapToVideoEncoder
 import kotlinx.coroutines.Runnable
@@ -22,6 +24,7 @@ import java.util.Calendar
 class CreateVideoManager(
     val context: Activity,
     private val view: FrameLayout,
+    private var templates: ArrayList<TemplateView>,
     private val width: Int,
     private val height: Int,
     private var duration: Int,
@@ -45,7 +48,7 @@ class CreateVideoManager(
     private var listTemplateSave = ArrayList<Boolean>()
     private var thread: Thread? = null
     private var stopThread = true
-    private val runnableTime = Runnable {
+    private val runnableTime = java.lang.Runnable {
         while (timeFrame < duration && !stopThread) {
             try {
                 timeFrame += durationOneFrame
@@ -63,7 +66,8 @@ class CreateVideoManager(
     }
 
 
-    private val runnable = Runnable {
+    private val runnable = java.lang.Runnable {
+        setFrameInTime()
         if (!isPreview) {
             getFrame()
         } else {
@@ -73,6 +77,17 @@ class CreateVideoManager(
             timeFrame += durationOneFrame
         }
         checkTime()
+    }
+
+    private fun setFrameInTime() {
+        for (t in templates) {
+            if (timeFrame >= t.delayPage && timeFrame <= t.delayPage + t.durationPageSave) {
+                t.visibility = View.VISIBLE
+            } else {
+                t.visibility = View.INVISIBLE
+            }
+            t.setFrameInTime(timeFrame)
+        }
     }
 
 
@@ -120,8 +135,6 @@ class CreateVideoManager(
 //        }
 //        return bitmap
 
-        Timber.e("LamPro | getBitmap - view width: ${view.layoutParams.width}")
-        Timber.e("LamPro | getBitmap - view width: ${view.width}")
         val b = Bitmap.createBitmap(
             view.layoutParams.width,
             view.layoutParams.height,
@@ -172,11 +185,35 @@ class CreateVideoManager(
         }
     }
 
+    fun setupSave( d: Int, t: ArrayList<TemplateView>) {
+        templates = t
+        duration = d
+    }
 
     fun startEncoding() {
         startEncodeVideo()
     }
 
+    private fun saveImage() {
+        val listPath = arrayOfNulls<String>(templates.size)
+        for (i in 0 until templates.size) {
+            showTemplate(i)
+            val bitmap = getBitmap()
+            val path = MethodUtils.saveBitmap(context, bitmap)
+            listPath[i] = path
+        }
+        scanFile(listPath)
+    }
+
+    private fun showTemplate(positionSave: Int) {
+        for (i in 0 until templates.size) {
+            if (i == positionSave) {
+                templates[i].visibility = View.VISIBLE
+            } else {
+                templates[i].visibility = View.INVISIBLE
+            }
+        }
+    }
 
     private fun scanFile(paths: Array<String?>?) {
         if (paths == null) {
@@ -293,7 +330,9 @@ class CreateVideoManager(
     }
 
     fun prepareSave() {
-
+        for (t in templates) {
+            t.prepareSave()
+        }
     }
 
     fun startPreview() {
@@ -336,6 +375,7 @@ class CreateVideoManager(
 
     fun setTimePreview(progress: Int) {
         timeFrame = progress
+        setFrameInTime()
     }
 
     fun abortEncoding() {
@@ -364,7 +404,7 @@ class CreateVideoManager(
     }
 
     private val handlerMedia = Handler(Looper.getMainLooper())
-    private val runnableMedia = Runnable {
+    private val runnableMedia = java.lang.Runnable {
         mediaPlayer?.let {
             if (it.isPlaying) {
                 it.pause()
