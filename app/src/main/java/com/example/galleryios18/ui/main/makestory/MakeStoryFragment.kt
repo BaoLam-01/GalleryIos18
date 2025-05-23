@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.arthenica.ffmpegkit.FFmpegKit
+import com.base.capva.utils.ImageAnimate
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.data.models.template_item.Item
@@ -67,7 +68,7 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
             item.src = media.path
             item.videoTimeStart = 0
             item.videoTimeEnd = media.duration.toInt()
-            item.animate = "NONE"
+            item.animate = ImageAnimate.PHOTO_ZOOM.toString()
             item.folderFrame = ""
 
             val itemString = Gson().toJson(item)

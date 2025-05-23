@@ -47,5 +47,6 @@
     <string name="edit_sort"><![CDATA[Edit & sort]]></string>
     <string name="action">Action</string>
     <string name="error">Error</string>
+    <string name="photo_zoom">Photo Zoom</string>
 
 </resources>
