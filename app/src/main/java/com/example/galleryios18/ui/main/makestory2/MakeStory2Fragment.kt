@@ -7,6 +7,7 @@ import android.os.Environment
 import android.view.View
 import com.example.galleryios18.R
 import com.example.galleryios18.databinding.FragmentMakeStory2Binding
+import com.example.galleryios18.feature.makestory.EglHelper
 import com.example.galleryios18.feature.makestory.MediaDecoder
 import com.example.galleryios18.feature.makestory.MediaEncoder
 import com.example.galleryios18.feature.makestory.TextureRenderer
@@ -24,11 +25,18 @@ class MakeStory2Fragment : BaseBindingFragment<FragmentMakeStory2Binding, MakeSt
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
         val mediaList = mutableListOf<String>()
-        mainViewModel.allMediaLiveData.value?.let {
+        mainViewModel.allMediaLiveData.observe (viewLifecycleOwner){
+            Timber.e("LamPro - path 1: ${mediaList.add(it[0].path)}")
             mediaList.add(it[0].path)
             mediaList.add(it[1].path)
             mediaList.add(it[2].path)
+            createVideo(mediaList)
+
         }
+        mainViewModel.getAllMedia()
+    }
+
+    private fun createVideo(mediaList: MutableList<String>) {
         val bitmaps = mutableListOf<Bitmap>()
         for (media in mediaList) {
             if (media.endsWith(".mp4")) {
@@ -50,19 +58,12 @@ class MakeStory2Fragment : BaseBindingFragment<FragmentMakeStory2Binding, MakeSt
                 outputBitmaps.add(frame)
             }
         }
-//        val encoder = MediaEncoder("output.mp4", 1280, 720)
-//        encoder.encode(outputBitmaps)
-        val externalDir =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)?.absolutePath
-        Timber.e("LamPro | onCreatedView - ex: $")
-        val path = externalDir + "/output.mp4"
-        Timber.e("LamPro | onCreatedView - video path; $path")
-        val file = File(path)
-        if (!file.exists()) {
-            file.mkdirs()
-        }
-        val mediaDecoder = MediaDecoder(requireContext(), path)
-        mediaDecoder.decodeFrames()
+
+        val outputFile = File(requireContext().getExternalFilesDir(null), "output.mp4")
+        val encoder = MediaEncoder(outputFile.absolutePath, 1280, 720)
+        Timber.e("LamPro - outputFile: " + outputFile)
+        Timber.e("LamPro - output bitmap: " + outputBitmaps.size)
+        encoder.encode(outputBitmaps)
     }
 
     override fun observerData() {
