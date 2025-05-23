@@ -177,54 +177,6 @@ public class TemplateView extends RelativeLayout {
         this.isSave = isSave;
         views.clear();
         removeAllViews();
-        setBackgroundColor(Color.RED);
-//        this.template = template;
-//        setBackgroundAnimate(template.getTemplateItem().getBackground().getAnimate());
-//        TemplateItem templateItem = template.getTemplateItem();
-//
-//        setDuration(templateItem.getBackground().getDuration());
-//
-//        ViewGroup.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//
-//        background = new CapVaImageView(getContext(), false, true);
-//        addView(background, params);
-//
-//        background.post(() -> {
-//            if (!isAttachedToWindow()) {
-//                return;
-//            }
-//            Background bg = templateItem.getBackground();
-//            this.duration = bg.getDuration();
-//            Src src = bg.getSrc();
-//            if (src.getType().equals(Common.TYPE_IMAGE)) {
-//                String uri = src.getSrc();
-//                if (uri.startsWith(template.getNameCategory().split(" ")[0])) {
-//                    uri = getContext().getFilesDir() + Common.PATH_FOLDER_UNZIP_THEME + File.separator + src.getSrc();
-//                }
-//                String finalUri = uri;
-//                loadThumb(uri, new OnLoadThumbListener() {
-//                    @Override
-//                    public void onSuccess(Bitmap bitmap) {
-//                        background.setMedia(bitmap, finalUri, 0);
-//                        Crop crop = bg.getCrop();
-//                        if (!crop.isDefault()) {
-//                            background.setImageRect(crop.getRect());
-//                        }
-//                        AdjustFilter adjustFilter = getAdjustFilter(bg.getFilter(), bg.getAdjust());
-//                        background.setAdjustFilter(adjustFilter);
-//                        background.setFlip(bg.getFlip().getH(), bg.getFlip().getV());
-//                        background.setTransparent(bg.getTransparency());
-//                    }
-//
-//                    @Override
-//                    public void onFailure() {
-//
-//                    }
-//                });
-//            } else if (src.getType().equals(Common.TYPE_COLOR)) {
-//                background.setBackgroundColor(src.getSrc());
-//            }
-//        });
         post(new Runnable() {
             @Override
             public void run() {
