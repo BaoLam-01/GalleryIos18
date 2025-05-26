@@ -15,6 +15,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
+import timber.log.Timber
 
 class StoryView : FrameLayout {
 
@@ -27,12 +28,10 @@ class StoryView : FrameLayout {
         override fun run() {
             if (currentItemShow % 2 == 0) {
                 bindItem(viewItem1)
-                fadeIn(viewItem1)
-                fadeOut(viewItem2)
+                handleTransition(viewItem1, viewItem2)
             } else {
                 bindItem(viewItem2)
-                fadeIn(viewItem2)
-                fadeOut(viewItem1)
+                handleTransition(viewItem2, viewItem1)
             }
             currentItemShow++
             if (currentItemShow >= listItem.size) currentItemShow = 0
@@ -56,10 +55,37 @@ class StoryView : FrameLayout {
         context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int,
-        defStyleRes: Int
+        defStyleRes: Int,
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
+    private fun handleTransition(viewIn: View, viewOut: View) {
+        val random: Int = (0..3).random()
+        Timber.e("LamPro - random: $random")
+        when (random) {
+            NONE -> {
+                viewIn.visibility = VISIBLE
+                viewOut.visibility = GONE
+            }
+
+            FADE -> {
+                fadeIn(viewIn)
+                fadeOut(viewOut)
+            }
+
+            SLIDE -> {
+                slideIn(viewIn)
+                slideOut(viewOut)
+            }
+
+            FADE_ZOOM -> {
+                zoomOut(viewIn)
+                fadeOut(viewOut)
+            }
+        }
+    }
+
     private fun fadeIn(view: View) {
+        view.alpha = 0f
         view.animate().alpha(1f).setDuration(1000).withStartAction {
             view.visibility = VISIBLE
         }.start()
@@ -68,6 +94,29 @@ class StoryView : FrameLayout {
     private fun fadeOut(view: View) {
         view.animate().alpha(0f).setDuration(1000).withEndAction {
             view.visibility = GONE
+            view.alpha = 1f
+        }.start()
+    }
+
+    private fun slideIn(view: View) {
+        view.translationX = view.width.toFloat()
+        view.animate().translationX(0f).setDuration(1000).withStartAction {
+            view.visibility = VISIBLE
+        }.start()
+    }
+
+    private fun slideOut(view: View) {
+        view.animate().translationX(-view.width.toFloat()).setDuration(1000).withEndAction {
+            view.visibility = GONE
+            view.translationX = 0f
+        }.start()
+    }
+
+    private fun zoomOut(view: View) {
+        view.scaleX = 1.2f
+        view.scaleY = 1.2f
+        view.animate().scaleX(1f).scaleY(1f).setDuration(1000).withStartAction {
+            view.visibility = VISIBLE
         }.start()
     }
 
@@ -81,6 +130,9 @@ class StoryView : FrameLayout {
             stop()
             image.visibility = VISIBLE
             video.visibility = GONE
+            image.scaleX = 1.1f
+            image.scaleY = 1.1f
+            image.animate().scaleX(1f).scaleY(1f).setDuration(3000).start()
             Glide.with(image).load(media.path).into(image)
         } else {
             val bitmapPreview = getFirstFrameVideo(media.path)
@@ -103,19 +155,19 @@ class StoryView : FrameLayout {
                     override fun onSurfaceTextureAvailable(
                         surface: android.graphics.SurfaceTexture,
                         width: Int,
-                        height: Int
+                        height: Int,
                     ) {
                         playVideo(media.path, video) {
                             image.visibility = GONE
                             video.alpha = 1f
                         }
-                        video.surfaceTextureListener = null // xóa listener để tránh leak
+                        video.surfaceTextureListener = null
                     }
 
                     override fun onSurfaceTextureSizeChanged(
                         surface: android.graphics.SurfaceTexture,
                         width: Int,
-                        height: Int
+                        height: Int,
                     ) {
                     }
 
@@ -144,7 +196,7 @@ class StoryView : FrameLayout {
             setSurface(Surface(textureView.surfaceTexture))
             setOnPreparedListener {
                 it.start()
-                onStart() // 👈 thông báo video bắt đầu, để ẩn ảnh preview
+                onStart()
             }
             prepareAsync()
         }
@@ -184,6 +236,13 @@ class StoryView : FrameLayout {
             handler.removeCallbacks(runnable)
             handler.post(runnable)
         }
+    }
+
+    companion object TransitionType {
+        const val NONE = 0
+        const val FADE = 1
+        const val SLIDE = 2
+        const val FADE_ZOOM = 3
     }
 
 }
