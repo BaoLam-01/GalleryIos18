@@ -2,7 +2,7 @@ package com.base.capva.common;
 
 public class Common {
     public static final String DOT = "●";
-    public static final int MIN_DURATION_VIDEO = 5000;
+    public static final int MIN_DURATION_VIDEO = 3000;
     public static final int FRAME_RATE = 30;
     public static final int DURATION_ONE_FRAME = 1000 / FRAME_RATE;
     public static final String PATH_FOLDER_UNZIP_THEME = "/templates";
@@ -17,7 +17,7 @@ public class Common {
     public static final String GRAVITY_END = "END";
 
     public static final int TIME_DELAY_ELEMENT = 300;
-    public static final int DEFAULT_DURATION_PAGE = 5000;
+    public static final int DEFAULT_DURATION_PAGE = 3000;
     public static final int  TYPE_SAVE_IMAGE = 0;
     public static final int  TYPE_SAVE_VIDEO = 1;
 }

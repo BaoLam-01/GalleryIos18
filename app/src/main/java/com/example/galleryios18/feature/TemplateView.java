@@ -107,7 +107,7 @@ public class TemplateView extends RelativeLayout {
     private Template template;
 
     private String backgroundAnimate = "";
-    private int duration = 5000;
+    private int duration = 3000;
     private boolean isSave = false;
 
     private int itemCount;

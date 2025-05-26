@@ -39,6 +39,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
+import kotlin.math.max
 
 class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStoryViewModel>(),
     OnSaveVideoListener {
@@ -195,12 +196,12 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                     listTemplateView,
                     1080,
                     1920,
-                    10000,
+                    listTemplateView.size * 3000,
                     this
                 )
                 pathAudio = copyAssetToExternal(requireContext(), "bg_music.mp3", "bg_music.mp3")
                 createVideoManager?.setupAudioPreview(
-                    pathAudio, 0, 10000
+                    pathAudio, 0, listTemplateView.size * 3000
                 )
             }
         }
@@ -240,14 +241,29 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
             it.setupAudio(
                 pathAudio,
                 0,
-                10000,
-                10000
+                listTemplateView.size * 3000,
+                listTemplateView.size * 3000
             )
+            setTimeDelay(listTemplateView)
             it.setupSave(
-                10000,
+                listTemplateView.size * 3000,
                 listTemplateView
             )
             it.startEncoding()
+        }
+    }
+
+
+    private fun setTimeDelay(listViews: ArrayList<TemplateView>) {
+        var timeDelay = 0
+        for (v in listViews) {
+            Timber.e("LamPro | setTimeDelay - $timeDelay")
+            val t = v.setTimeDelay(timeDelay)
+            val f = max(t - timeDelay, v.durationPage)
+//            if (t - timeDelay < v.durationPage/*Constant.DEFAULT_DURATION_PAGE*/) {
+//                t = v.durationPage/*Constant.DEFAULT_DURATION_PAGE*/
+//            }
+            timeDelay += f
         }
     }
 

@@ -10,7 +10,7 @@ class Background {
 
     @SerializedName("duration")
     @Expose
-    var duration: Int = 5000
+    var duration: Int = 3000
 
     @SerializedName("filter")
     @Expose
