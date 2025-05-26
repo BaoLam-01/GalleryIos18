@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_nav"
-    app:startDestination="@id/MakeStory2Fragment">
+    app:startDestination="@id/MakeStory3Fragment">
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.galleryios18.ui.main.splash.SplashFragment"
@@ -44,5 +44,9 @@
         android:id="@+id/MakeStory2Fragment"
         android:name="com.example.galleryios18.ui.main.makestory2.MakeStory2Fragment"
         android:label="MakeStory2Fragment" />
+    <fragment
+        android:id="@+id/MakeStory3Fragment"
+        android:name="com.example.galleryios18.ui.main.makestory3.MakeStory3Fragment"
+        android:label="MakeStory3Fragment" />
 
 </navigation>
