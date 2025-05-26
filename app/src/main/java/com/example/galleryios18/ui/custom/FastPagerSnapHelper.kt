@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager
 
 class FastPagerSnapHelper(private val context: Context) : PagerSnapHelper() {
 
-    override fun createScroller(layoutManager: LayoutManager?): LinearSmoothScroller? {
+    override fun createScroller(layoutManager: LayoutManager): LinearSmoothScroller? {
         if (layoutManager == null) return null
 
         return object : LinearSmoothScroller(context) {
