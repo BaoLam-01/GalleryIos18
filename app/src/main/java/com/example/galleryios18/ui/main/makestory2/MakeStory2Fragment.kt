@@ -1,21 +1,28 @@
 package com.example.galleryios18.ui.main.makestory2
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.os.Environment
+import android.os.Handler
+import android.os.Looper
+import android.view.MotionEvent
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.galleryios18.R
 import com.example.galleryios18.databinding.FragmentMakeStory2Binding
-import com.example.galleryios18.feature.makestory.EglHelper
-import com.example.galleryios18.feature.makestory.MediaDecoder
-import com.example.galleryios18.feature.makestory.MediaEncoder
-import com.example.galleryios18.feature.makestory.TextureRenderer
+import com.example.galleryios18.ui.adapter.SlideAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
-import timber.log.Timber
-import java.io.File
+import com.example.galleryios18.ui.custom.FadeZoomPageTransformer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MakeStory2Fragment : BaseBindingFragment<FragmentMakeStory2Binding, MakeStory2ViewModel>() {
+    private lateinit var slideAdapter: SlideAdapter
+    private val handler = Handler(Looper.getMainLooper())
+    private val autoScrollDelay = 3000L // thời gian giữa các slide
+
+    var isUserScrolling = false
     override fun getViewModel(): Class<MakeStory2ViewModel> {
         return MakeStory2ViewModel::class.java
     }
@@ -24,48 +31,73 @@ class MakeStory2Fragment : BaseBindingFragment<FragmentMakeStory2Binding, MakeSt
         get() = R.layout.fragment_make_story_2
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
-        val mediaList = mutableListOf<String>()
-        mainViewModel.allMediaLiveData.observe (viewLifecycleOwner){
-            Timber.e("LamPro - path 1: ${mediaList.add(it[0].path)}")
-            mediaList.add(it[0].path)
-            mediaList.add(it[1].path)
-            mediaList.add(it[2].path)
-            createVideo(mediaList)
-
+        slideAdapter = SlideAdapter()
+        mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
+            slideAdapter.setData(it)
+            startAutoScroll(binding.vpShowImage)
         }
         mainViewModel.getAllMedia()
-    }
 
-    private fun createVideo(mediaList: MutableList<String>) {
-        val bitmaps = mutableListOf<Bitmap>()
-        for (media in mediaList) {
-            if (media.endsWith(".mp4")) {
-                val decoder = MediaDecoder(requireContext(), media)
-                bitmaps.addAll(decoder.decodeFrames())
-            } else {
-                val bitmap = BitmapFactory.decodeFile(media)
-                bitmaps.add(bitmap)
-            }
-        }
-        val renderer = TextureRenderer(requireContext())
-        val outputBitmaps = mutableListOf<Bitmap>()
-        for (i in 0 until bitmaps.size - 1) {
-            val start = bitmaps[i]
-            val end = bitmaps[i + 1]
-            for (j in 0..30) {
-                val alpha = j / 30f
-                val frame = renderer.drawToBitmap(start, end, alpha, 1280, 720)
-                outputBitmaps.add(frame)
-            }
-        }
+        binding.vpShowImage.adapter = slideAdapter
+        binding.vpShowImage.setPageTransformer(FadeZoomPageTransformer())
 
-        val outputFile = File(requireContext().getExternalFilesDir(null), "output.mp4")
-        val encoder = MediaEncoder(outputFile.absolutePath, 1280, 720)
-        Timber.e("LamPro - outputFile: " + outputFile)
-        Timber.e("LamPro - output bitmap: " + outputBitmaps.size)
-        encoder.encode(outputBitmaps)
+
+//        binding.vpShowImage.registerOnPageChangeCallback(object :
+//            ViewPager2.OnPageChangeCallback() {
+//            override fun onPageScrollStateChanged(state: Int) {
+//
+//                // Nếu người dùng bắt đầu vuốt tay
+//                if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+//                    isUserScrolling = true
+//                    binding.vpShowImage.setPageTransformer(null) // Bỏ hiệu ứng
+//                }
+//
+//                // Khi vuốt xong, quay lại chế độ tự động
+//                if (state == ViewPager2.SCROLL_STATE_IDLE && isUserScrolling) {
+//                    isUserScrolling = false
+//                    binding.vpShowImage.setPageTransformer(FadeZoomPageTransformer()) // Gắn lại hiệu ứng
+//                }
+//                super.onPageScrollStateChanged(state)
+//            }
+//        })
+        binding.vpShowImage
+
     }
 
     override fun observerData() {
     }
+
+    fun startAutoScroll(
+        viewPager: ViewPager2,
+        delayBetweenSlides: Long = 3000L,
+        scrollDuration: Long = 500L
+    ) {
+        val frameRate = 60
+        val steps = frameRate * scrollDuration / 1000
+        val delayPerFrame = 1000L / frameRate
+
+        val scope = CoroutineScope(Dispatchers.Main)
+
+        scope.launch {
+            while (true) {
+                delay(delayBetweenSlides)
+                val width = viewPager.width
+                val distancePerStep = width / steps.toFloat()
+
+                if (viewPager.currentItem < (viewPager.adapter?.itemCount ?: 0) - 1) {
+                    if (viewPager.beginFakeDrag()) {
+                        repeat(steps.toInt()) {
+                            viewPager.fakeDragBy(-distancePerStep)
+                            delay(delayPerFrame)
+                        }
+                        viewPager.endFakeDrag()
+                    }
+                } else {
+                    // Quay về trang đầu sau khi hết
+                    viewPager.setCurrentItem(0, false)
+                }
+            }
+        }
+    }
+
 }

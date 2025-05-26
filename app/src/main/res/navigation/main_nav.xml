@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_nav"
-    app:startDestination="@id/MakeStoryFragment">
+    app:startDestination="@id/MakeStory2Fragment">
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.galleryios18.ui.main.splash.SplashFragment"

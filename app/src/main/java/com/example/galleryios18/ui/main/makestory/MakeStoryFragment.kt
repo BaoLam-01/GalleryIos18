@@ -29,6 +29,8 @@ import com.example.galleryios18.feature.TemplateView
 import com.example.galleryios18.interfaces.OnSaveVideoListener
 import com.example.galleryios18.ui.adapter.TemplateViewPager
 import com.example.galleryios18.ui.base.BaseBindingFragment
+import com.example.galleryios18.ui.custom.FadeZoomPageTransformer
+import com.example.galleryios18.ui.custom.ZoomOutPageTransformer
 import com.example.galleryios18.utils.CreateVideoManager
 import com.example.galleryios18.utils.MethodUtils
 import com.google.gson.Gson
@@ -47,7 +49,7 @@ import kotlin.math.max
 
 class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStoryViewModel>(),
     OnSaveVideoListener {
-
+    private val delayMillis: Long = 3000 // 3 giây
     private lateinit var videoView: VideoView
     private val mediaUris = mutableListOf<Uri>()
     private lateinit var pathAudio: String
@@ -152,6 +154,19 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                 super.onPageSelected(position)
             }
         })
+        // Set hiệu ứng chuyển trang (depth, zoom, fade,...)
+        binding.vpTemplate.setPageTransformer(FadeZoomPageTransformer())
+
+        // Bắt đầu auto-scroll
+        Handler(Looper.getMainLooper()).postDelayed(runnable, delayMillis)
+    }
+
+    private val runnable = object : Runnable {
+        override fun run() {
+            val nextItem = (binding.vpTemplate.currentItem + 1) % listItemJson.size
+            binding.vpTemplate.setCurrentItem(nextItem, true)
+            binding.vpTemplate.postDelayed(this, delayMillis)
+        }
     }
 
 
@@ -203,7 +218,8 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                     listTemplateView.size * 3000,
                     this
                 )
-                pathAudio = copyAssetToExternal(requireContext(), "bg_music.mp3", "bg_music.mp3")
+                pathAudio =
+                    copyAssetToExternal(requireContext(), "bg_music.mp3", "bg_music.mp3")
                 createVideoManager?.setupAudioPreview(
                     pathAudio, 0, listTemplateView.size * 3000
                 )
@@ -425,7 +441,8 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
 
                 if (tempFiles.isEmpty()) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Không xử lý được media", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Không xử lý được media", Toast.LENGTH_SHORT)
+                            .show()
                     }
                     return@withContext
                 }
@@ -480,11 +497,19 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                 runFFmpegAsync(ffmpegCmd) { success ->
                     withContext(Dispatchers.Main) {
                         if (success) {
-                            Toast.makeText(context, "✅ Tạo video thành công!", Toast.LENGTH_SHORT)
+                            Toast.makeText(
+                                context,
+                                "✅ Tạo video thành công!",
+                                Toast.LENGTH_SHORT
+                            )
                                 .show()
                             Timber.e("LamPro | createStoryFromMedia - output path: $outputPath")
                             videoView.setOnErrorListener { mp, what, extra ->
-                                Toast.makeText(context, "Không phát được video", Toast.LENGTH_SHORT)
+                                Toast.makeText(
+                                    context,
+                                    "Không phát được video",
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                                 true
                             }
@@ -546,7 +571,11 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         }
     }
 
-    fun copyAssetToExternal(context: Context, assetName: String, outputFileName: String): String {
+    fun copyAssetToExternal(
+        context: Context,
+        assetName: String,
+        outputFileName: String
+    ): String {
         val outFile = File(context.getExternalFilesDir(null), outputFileName)
         if (!outFile.exists()) {
             context.assets.open(assetName).use { input ->
@@ -644,5 +673,4 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
     override fun onProcessPreview(process: Int) {
         Timber.e("LamPro | onProcessPreview - on process preview")
     }
-
 }
