@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -27,6 +30,7 @@ import com.example.galleryios18.interfaces.OnSaveVideoListener
 import com.example.galleryios18.ui.adapter.TemplateViewPager
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.utils.CreateVideoManager
+import com.example.galleryios18.utils.MethodUtils
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -100,9 +104,9 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
             if (it.isNotEmpty()) {
 
                 val listMedia = mutableListOf<Media>()
-                listMedia.add(it[0])
-                listMedia.add(it[1])
-                listMedia.add(it[2])
+                listMedia.add(it[it.size - 1])
+                listMedia.add(it[it.size - 2])
+                listMedia.add(it[it.size - 3])
                 Timber.e("LamPro | onCreatedView - list media: " + listMedia.size)
                 listItemJson = getListMediaJson(requireContext(), listMedia)
                 mainViewModel.listItemJsonLiveData.value = listItemJson
@@ -175,11 +179,11 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
             binding.cardView.scaleX = scale
             binding.cardView.scaleY = scale
 //            binding.cardView.visibility = View.VISIBLE
-            binding.cardView.postDelayed({
-                if (isAdded) {
-                    initCreateVideoManager()
-                }
-            }, 300)
+//            binding.cardView.postDelayed({
+//                if (isAdded) {
+//                    initCreateVideoManager()
+//                }
+//            }, 300)
         }
     }
 
@@ -211,8 +215,10 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
         for (i in 0 until listItemJson.size) {
             val templateView = TemplateView(context)
             templateView.setOnInitTemplateListener {
+                checkSetTimeDelay()
             }
             templateView.setOnPreloadFrameListener {
+                checkPreloadFrame()
             }
             binding.cardView.addView(
                 templateView,
@@ -232,6 +238,52 @@ class MakeStoryFragment : BaseBindingFragment<FragmentMakeStoryBinding, MakeStor
                     templateView.visibility = View.INVISIBLE
                 }
             }
+        }
+    }
+
+    private var durationAllPage = 0
+    private var durationString = ""
+    private var count = 0
+    private fun checkSetTimeDelay() {
+        count++
+        if (count == listTemplateView.size) {
+            setTimeDelay(listTemplateView)
+
+            durationAllPage = getDurationAllPage(listTemplateView)
+            durationString = MethodUtils.convertDurationAudio(durationAllPage.toLong())
+            initCreateVideoManager()
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                handlerInitTemplate.sendEmptyMessage(0)
+            }, 500)
+        }
+    }
+
+    private var checkInit = 0
+    private var handlerInitTemplate = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            checkInit++
+            if (checkInit == 2) {
+                createVideoManager?.prepareSave()
+            }
+        }
+    }
+
+
+    private fun getDurationAllPage(listTemplateView: ArrayList<TemplateView>): Int {
+        var duration = 0
+        for (v in listTemplateView) {
+            duration += v.durationPage
+        }
+        return duration
+    }
+
+    private var countTemplatePreloaded = 0
+    private fun checkPreloadFrame() {
+        countTemplatePreloaded++
+        if (countTemplatePreloaded == listTemplateView.size) {
+            handlerInitTemplate.sendEmptyMessage(0)
         }
     }
 

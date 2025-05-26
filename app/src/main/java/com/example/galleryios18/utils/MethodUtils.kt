@@ -78,13 +78,15 @@ object MethodUtils {
     }
 
     fun saveBitmap(context: Context, bitmap: Bitmap): String {
-        val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath +
-                File.separator + context.getString(R.string.app_name)
+        val path =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath +
+                    File.separator + context.getString(R.string.app_name)
         val myDir = File(path)
         if (!myDir.exists()) {
             myDir.mkdirs()
         }
-        val file = File(myDir.absolutePath + File.separator + "${context.getString(R.string.app_name)}_${System.currentTimeMillis()}.jpeg")
+        val file =
+            File(myDir.absolutePath + File.separator + "${context.getString(R.string.app_name)}_${System.currentTimeMillis()}.jpeg")
         try {
             val outputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -109,5 +111,36 @@ object MethodUtils {
             stringBuilder.append(arguments[i])
         }
         return stringBuilder.toString()
+    }
+
+    fun convertDurationAudio(duration: Long): String {
+        var out = ""
+        var hours: Long = 0
+        hours = try {
+            duration / 3600000
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            return out
+        }
+        val remainingMinutes = (duration - hours * 3600000) / 60000
+        var minutes = remainingMinutes.toString()
+        if (minutes.length < 2) {
+            minutes = "0$minutes"
+        }
+        val remainingSeconds = duration - hours * 3600000 - remainingMinutes * 60000
+        var seconds = remainingSeconds.toString()
+        seconds = if (seconds.length < 4) {
+            "00." + seconds.substring(0, 1)
+        } else if (seconds.length < 5) {
+            "0" + seconds.substring(0, 1) + "." + seconds.substring(1, 2)
+        } else {
+            seconds.substring(0, 2) + "." + seconds.substring(2, 3)
+        }
+        out = if (hours > 0) {
+            "$hours:$minutes:$seconds"
+        } else {
+            "$minutes:$seconds"
+        }
+        return out
     }
 }
