@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
 import timber.log.Timber
@@ -94,7 +95,7 @@ class StoryView : FrameLayout {
     private fun clearDataView(viewOut: View) {
         val image = viewOut.findViewById<ImageView>(R.id.img)
         val video = viewOut.findViewById<VideoPlayerView>(R.id.video)
-        Glide.with(context).clear(image)
+        Glide.with(this).clear(image)
         video.stop()
     }
 
@@ -143,16 +144,20 @@ class StoryView : FrameLayout {
         val media = listItem[position]
 
         if (media.isImage) {
+            Timber.e("LamPro | bindItem - is image")
             image.visibility = VISIBLE
             video.visibility = INVISIBLE
             image.scaleX = 1.1f
             image.scaleY = 1.1f
             image.animate().scaleX(1f).scaleY(1f).setDuration(3000).start()
-            Glide.with(context).load(media.path).into(image)
+            Glide.with(this).load(media.path)
+                .signature(ObjectKey(media.id))
+                .into(image)
         } else {
+            Timber.e("LamPro | bindItem - is video")
 //            val bitmapPreview = getFirstFrameVideo(media.path)
 //            if (bitmapPreview != null) {
-//                Glide.with(context).load(bitmapPreview).into(image)
+//                Glide.with(this).load(bitmapPreview).into(image)
 //                image.visibility = VISIBLE
 //            } else {
 //                image.visibility = INVISIBLE
@@ -253,36 +258,42 @@ class StoryView : FrameLayout {
                 getCurrentView().translationX = deltaX
 
 
-//                Timber.e("LamPro | onTouchEvent - deltax : $deltaX")
-//                if (abs(deltaX) >= 100) {
-//                    if (deltaX > 0) {
-//                        if (currentItemShow >= 1) {
-//                            val itemPrevious = currentItemShow - 1
-//                            if (itemPrevious % 2 == 0) {
-//                                Timber.e("LamPro | onTouchEvent - viewitme1")
-//                                bindItem(viewItem1, itemPrevious)
-//                                viewItem1.translationX = -viewItem1.width.toFloat() - 100 + deltaX
-//                            } else {
-//                                Timber.e("LamPro | onTouchEvent - viewitme2")
-//                                bindItem(viewItem2, itemPrevious)
-//                                viewItem2.translationX = -viewItem1.width.toFloat() - 100 + deltaX
-//                            }
-//                        }
-//                    } else {
-//                        if (currentItemShow <= listItem.size - 2) {
-//                            val itemNext = currentItemShow + 1
-//                            if (itemNext % 2 == 0) {
-//                                Timber.e("LamPro | onTouchEvent - viewitem1")
-//                                bindItem(viewItem1, itemNext)
-//                                viewItem1.translationX = deltaX + 100 + viewItem1.width
-//                            } else {
-//                                Timber.e("LamPro | onTouchEvent - viewitem2")
-//                                bindItem(viewItem2, itemNext)
-//                                viewItem2.translationX = deltaX + 100 + viewItem2.width
-//                            }
-//                        }
-//                    }
-//                }
+                Timber.e("HaiPd | onTouchEvent - deltax : $deltaX")
+                if (abs(deltaX) >= 50) {
+                    if (deltaX > 0) {
+                        if (currentItemShow >= 1) {
+                            val itemPrevious = currentItemShow - 1
+                            if (itemPrevious % 2 == 0) {
+                                Timber.e("LamPro | onTouchEvent - viewitme1")
+                                bindItem(viewItem1, itemPrevious)
+                                viewItem1.translationX = -viewItem1.width.toFloat() - 50 + deltaX
+                                viewItem1.visibility = VISIBLE
+                            } else {
+                                Timber.e("LamPro | onTouchEvent - viewitme2")
+                                bindItem(viewItem2, itemPrevious)
+                                viewItem2.translationX = -viewItem1.width.toFloat() - 50 + deltaX
+                                viewItem2.visibility = VISIBLE
+                            }
+                        }
+                    } else {
+                        if (currentItemShow <= listItem.size - 2) {
+                            val itemNext = currentItemShow + 1
+                            if (itemNext % 2 == 0) {
+
+                                Timber.e("LamPro | onTouchEvent - viewitem1")
+                                bindItem(viewItem1, itemNext)
+                                viewItem1.translationX = deltaX + 50 + viewItem1.width
+                                viewItem1.visibility = VISIBLE
+                            } else {
+
+                                Timber.e("LamPro | onTouchEvent - viewitem2")
+                                bindItem(viewItem2, itemNext)
+                                viewItem2.translationX = deltaX + 50 + viewItem2.width
+                                viewItem2.visibility = VISIBLE
+                            }
+                        }
+                    }
+                }
                 return true
             }
 
@@ -319,14 +330,10 @@ class StoryView : FrameLayout {
                                 viewItem1.animate().translationX(0f).setDuration(300).start()
                                 viewItem2.animate().translationX(viewItem2.width.toFloat())
                                     .setDuration(300).start()
-                                viewItem2.visibility = INVISIBLE
-                                viewItem2.translationX = 0f
                             } else {
                                 viewItem2.animate().translationX(0f).setDuration(300).start()
                                 viewItem1.animate().translationX(viewItem1.width.toFloat())
                                     .setDuration(300).start()
-                                viewItem1.visibility = INVISIBLE
-                                viewItem1.translationX = 0f
                             }
                         } else {
                             getCurrentView().animate()?.translationX(0f)?.setDuration(300)
@@ -337,6 +344,31 @@ class StoryView : FrameLayout {
                 } else {
                     // Quay về vị trí cũ nếu vuốt không đủ
                     getCurrentView().animate()?.translationX(0f)?.setDuration(300)?.start()
+                    if (deltaX < 0) {
+                        if (currentItemShow < listItem.size - 1) {
+
+                            Timber.e("LamPro | onTouchEvent - curren item show : $currentItemShow")
+                            if (currentItemShow % 2 == 0) {
+                                viewItem2.animate().translationX(viewItem2.width.toFloat())
+                                    .setDuration(300).start()
+                            } else {
+                                viewItem1.animate().translationX(viewItem1.width.toFloat())
+                                    .setDuration(300).start()
+                            }
+                        }
+                    } else {
+                        if (currentItemShow > 0) {
+
+                            Timber.e("LamPro | onTouchEvent - curren item show : $currentItemShow")
+                            if (currentItemShow % 2 == 0) {
+                                viewItem2.animate().translationX(-viewItem2.width.toFloat())
+                                    .setDuration(300).start()
+                            } else {
+                                viewItem1.animate().translationX(-viewItem1.width.toFloat())
+                                    .setDuration(300).start()
+                            }
+                        }
+                    }
                 }
 
                 isSwiping = false
