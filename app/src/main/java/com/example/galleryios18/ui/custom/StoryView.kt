@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.VelocityTracker
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -29,6 +30,9 @@ class StoryView : FrameLayout {
     private var lastPostTime = 0L
     private var delayMillis = 3000L
     private var remainingDelay = delayMillis
+    private var velocityTracker: VelocityTracker? = null
+    private val flingThresholdVelocity = 1000  // đơn vị: px/s
+    private var resetAlphaOneTime = false
 
     private val runnable = object : Runnable {
         override fun run() {
@@ -70,12 +74,14 @@ class StoryView : FrameLayout {
         Timber.e("LamPro - random: $random")
         when (random) {
             NONE -> {
+                resetPositionItemView()
                 viewIn.visibility = VISIBLE
                 viewOut.visibility = INVISIBLE
                 clearDataView(viewOut)
             }
 
             FADE -> {
+                resetPositionItemView()
                 fadeIn(viewIn)
                 fadeOut(viewOut)
             }
@@ -86,10 +92,18 @@ class StoryView : FrameLayout {
             }
 
             FADE_ZOOM -> {
+                resetPositionItemView()
                 zoomOut(viewIn)
                 fadeOut(viewOut)
             }
         }
+    }
+
+    private fun resetPositionItemView() {
+        viewItem1.translationX = 0f
+        viewItem1.translationY = 0f
+        viewItem2.translationX = 0f
+        viewItem2.translationY = 0f
     }
 
     private fun clearDataView(viewOut: View) {
@@ -150,9 +164,7 @@ class StoryView : FrameLayout {
             image.scaleX = 1.1f
             image.scaleY = 1.1f
             image.animate().scaleX(1f).scaleY(1f).setDuration(3000).start()
-            Glide.with(this).load(media.path)
-                .signature(ObjectKey(media.id))
-                .into(image)
+            Glide.with(this).load(media.path).signature(ObjectKey(media.id)).into(image)
         } else {
             Timber.e("LamPro | bindItem - is video")
 //            val bitmapPreview = getFirstFrameVideo(media.path)
@@ -216,7 +228,8 @@ class StoryView : FrameLayout {
         if (listItem.isNotEmpty()) {
             bindFirstItem()
             handler.removeCallbacks(runnable)
-            handler.postDelayed(runnable, 3000)
+            handler.postDelayed(runnable, delayMillis)
+            lastPostTime = System.currentTimeMillis()
         }
     }
 
@@ -230,9 +243,14 @@ class StoryView : FrameLayout {
     private fun stopRunnable() {
         Timber.e("LamPro | stop - ")
         handler.removeCallbacks(runnable)
+        val elapsed = System.currentTimeMillis() - lastPostTime
+        remainingDelay = delayMillis - elapsed
     }
 
     private fun continueRunnable() {
+        if (remainingDelay < 1000) {
+            remainingDelay = 1000
+        }
         handler.postDelayed(runnable, remainingDelay)
     }
 
@@ -242,14 +260,24 @@ class StoryView : FrameLayout {
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                resetAlphaOneTime = false
                 Timber.e("LamPro | onTouchEvent - down")
                 downX = event.x
                 isSwiping = true
                 stopRunnable()
+                cancelAnimate()
+                velocityTracker = VelocityTracker.obtain()
+                velocityTracker?.addMovement(event)
                 return true
             }
 
             MotionEvent.ACTION_MOVE -> {
+                if (resetAlphaOneTime == false) {
+                    resetAlphaWhenMove()
+                    resetAlphaOneTime = true
+                }
+
+                velocityTracker?.addMovement(event)
                 Timber.e("LamPro | onTouchEvent - move")
                 Timber.e("LamPro | onTouchEvent - is swiping: $isSwiping")
                 if (!isSwiping) return false
@@ -267,12 +295,12 @@ class StoryView : FrameLayout {
                                 Timber.e("LamPro | onTouchEvent - viewitme1")
                                 bindItem(viewItem1, itemPrevious)
                                 viewItem1.translationX = -viewItem1.width.toFloat() - 50 + deltaX
-                                viewItem1.visibility = VISIBLE
+
                             } else {
                                 Timber.e("LamPro | onTouchEvent - viewitme2")
                                 bindItem(viewItem2, itemPrevious)
                                 viewItem2.translationX = -viewItem1.width.toFloat() - 50 + deltaX
-                                viewItem2.visibility = VISIBLE
+
                             }
                         }
                     } else {
@@ -283,13 +311,13 @@ class StoryView : FrameLayout {
                                 Timber.e("LamPro | onTouchEvent - viewitem1")
                                 bindItem(viewItem1, itemNext)
                                 viewItem1.translationX = deltaX + 50 + viewItem1.width
-                                viewItem1.visibility = VISIBLE
+
                             } else {
 
                                 Timber.e("LamPro | onTouchEvent - viewitem2")
                                 bindItem(viewItem2, itemNext)
                                 viewItem2.translationX = deltaX + 50 + viewItem2.width
-                                viewItem2.visibility = VISIBLE
+
                             }
                         }
                     }
@@ -298,12 +326,26 @@ class StoryView : FrameLayout {
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                resetAlphaOneTime = false
+                velocityTracker?.addMovement(event)
+                velocityTracker?.computeCurrentVelocity(1000)  // px/s
+                val velocityX = velocityTracker?.xVelocity ?: 0f
+                velocityTracker?.recycle()
+                velocityTracker = null
+                val isFling = abs(velocityX) > flingThresholdVelocity
                 Timber.e("LamPro | onTouchEvent - up")
                 if (!isSwiping) return false
                 val deltaX = event.x - downX
 
-                if (abs(deltaX) > swipeThreshold) {
-
+                // Ưu tiên fling trước nếu đủ nhanh
+                if (isFling) {
+                    if (velocityX < 0) {
+                        // fling sang trái -> next
+                        goToNext()
+                    } else {
+                        goToPrevious()
+                    }
+                } else if (abs(deltaX) > swipeThreshold) {
                     if (deltaX < 0) {
                         if (currentItemShow <= listItem.size - 2) {
 
@@ -319,8 +361,7 @@ class StoryView : FrameLayout {
 
                             }
                         } else {
-                            getCurrentView().animate()?.translationX(0f)?.setDuration(300)
-                                ?.start()
+                            getCurrentView().animate()?.translationX(0f)?.setDuration(300)?.start()
                         }
 
                     } else {
@@ -336,40 +377,16 @@ class StoryView : FrameLayout {
                                     .setDuration(300).start()
                             }
                         } else {
-                            getCurrentView().animate()?.translationX(0f)?.setDuration(300)
-                                ?.start()
+                            getCurrentView().animate()?.translationX(0f)?.setDuration(300)?.start()
                         }
 
                     }
                 } else {
-                    // Quay về vị trí cũ nếu vuốt không đủ
                     getCurrentView().animate()?.translationX(0f)?.setDuration(300)?.start()
-                    if (deltaX < 0) {
-                        if (currentItemShow < listItem.size - 1) {
-
-                            Timber.e("LamPro | onTouchEvent - curren item show : $currentItemShow")
-                            if (currentItemShow % 2 == 0) {
-                                viewItem2.animate().translationX(viewItem2.width.toFloat())
-                                    .setDuration(300).start()
-                            } else {
-                                viewItem1.animate().translationX(viewItem1.width.toFloat())
-                                    .setDuration(300).start()
-                            }
-                        }
-                    } else {
-                        if (currentItemShow > 0) {
-
-                            Timber.e("LamPro | onTouchEvent - curren item show : $currentItemShow")
-                            if (currentItemShow % 2 == 0) {
-                                viewItem2.animate().translationX(-viewItem2.width.toFloat())
-                                    .setDuration(300).start()
-                            } else {
-                                viewItem1.animate().translationX(-viewItem1.width.toFloat())
-                                    .setDuration(300).start()
-                            }
-                        }
-                    }
+                    resetUnusedView(deltaX)
                 }
+                viewItem1.alpha = 1f
+                viewItem2.alpha = 1f
 
                 isSwiping = false
                 continueRunnable()
@@ -380,10 +397,81 @@ class StoryView : FrameLayout {
         return super.onTouchEvent(event)
     }
 
+    private fun resetAlphaWhenMove() {
+        viewItem1.visibility = VISIBLE
+        viewItem1.alpha = 1f
+        viewItem2.visibility = VISIBLE
+        viewItem2.alpha = 1f
+    }
+
+    private fun cancelAnimate() {
+        viewItem1.animate().cancel()
+        viewItem2.animate().cancel()
+    }
+
+    private fun resetAlphaItemView() {
+        viewItem1.alpha = 1f
+        viewItem2.alpha = 1f
+    }
+
+    private fun goToNext() {
+        if (currentItemShow < listItem.size - 1) {
+            currentItemShow++
+            if (currentItemShow % 2 == 0) {
+                viewItem1.animate().translationX(0f).setDuration(300).start()
+                viewItem2.animate().translationX(-viewItem2.width.toFloat()).setDuration(300)
+                    .start()
+            } else {
+                viewItem2.animate().translationX(0f).setDuration(300).start()
+                viewItem1.animate().translationX(-viewItem1.width.toFloat()).setDuration(300)
+                    .start()
+            }
+        } else {
+            getCurrentView().animate()?.translationX(0f)?.setDuration(300)?.start()
+        }
+    }
+
+    private fun goToPrevious() {
+        if (currentItemShow > 0) {
+            currentItemShow--
+            if (currentItemShow % 2 == 0) {
+                viewItem1.animate().translationX(0f).setDuration(300).start()
+                viewItem2.animate().translationX(viewItem2.width.toFloat()).setDuration(300).start()
+            } else {
+                viewItem2.animate().translationX(0f).setDuration(300).start()
+                viewItem1.animate().translationX(viewItem1.width.toFloat()).setDuration(300).start()
+            }
+        } else {
+            getCurrentView().animate()?.translationX(0f)?.setDuration(300)?.start()
+        }
+    }
+
+    private fun resetUnusedView(deltaX: Float) {
+        if (deltaX < 0 && currentItemShow < listItem.size - 1) {
+            if (currentItemShow % 2 == 0) {
+                viewItem2.animate().translationX(viewItem2.width.toFloat()).setDuration(300).start()
+            } else {
+                viewItem1.animate().translationX(viewItem1.width.toFloat()).setDuration(300).start()
+            }
+        } else if (deltaX > 0 && currentItemShow > 0) {
+            if (currentItemShow % 2 == 0) {
+                viewItem2.animate().translationX(-viewItem2.width.toFloat()).setDuration(300)
+                    .start()
+            } else {
+                viewItem1.animate().translationX(-viewItem1.width.toFloat()).setDuration(300)
+                    .start()
+            }
+        }
+    }
+
     private fun getCurrentView(): View {
         return if (currentItemShow % 2 == 0) viewItem1 else viewItem2
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        stopRunnable()
+    }
 
     companion object TransitionType {
         const val NONE = 0
