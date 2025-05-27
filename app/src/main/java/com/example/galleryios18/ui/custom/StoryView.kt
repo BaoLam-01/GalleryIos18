@@ -17,6 +17,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 class StoryView : FrameLayout {
@@ -26,8 +27,14 @@ class StoryView : FrameLayout {
     private lateinit var viewItem2: View
     private val listItem = mutableListOf<Media>()
     private val handler = Handler(Looper.getMainLooper())
+
+    private var lastPostTime = 0L
+    private var delayMillis = 3000L
+    private var remainingDelay = delayMillis
+
     private val runnable = object : Runnable {
         override fun run() {
+            lastPostTime = System.currentTimeMillis()
             if (currentItemShow % 2 == 0) {
                 bindItem(viewItem1)
                 handleTransition(viewItem1, viewItem2)
@@ -37,7 +44,7 @@ class StoryView : FrameLayout {
             }
             currentItemShow++
             if (currentItemShow >= listItem.size) currentItemShow = 0
-            handler.postDelayed(this, 3000)
+            handler.postDelayed(this, delayMillis)
         }
     }
 
@@ -101,7 +108,6 @@ class StoryView : FrameLayout {
     }
 
     private fun slideIn(view: View) {
-        Timber.e("LamPro | slideIn - view width: ${view.width.toFloat()}")
         view.translationX = view.width.toFloat()
         view.animate().translationX(0f).setDuration(1000).withStartAction {
             view.visibility = VISIBLE
@@ -219,6 +225,7 @@ class StoryView : FrameLayout {
     }
 
     fun init() {
+
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         viewItem1 = inflate(context, R.layout.view_item_1, null)
         viewItem2 = inflate(context, R.layout.view_item_2, null)
@@ -235,6 +242,7 @@ class StoryView : FrameLayout {
     }
 
     private fun start() {
+        Timber.e("LamPro | start - ")
         if (listItem.isNotEmpty()) {
             handler.removeCallbacks(runnable)
             handler.post(runnable)
@@ -242,40 +250,12 @@ class StoryView : FrameLayout {
     }
 
     private fun stop() {
+        Timber.e("LamPro | stop - ")
         handler.removeCallbacks(runnable)
     }
 
-    private var downX = 0f
-//
-//    @SuppressLint("ClickableViewAccessibility")
-//    override fun onTouchEvent(event: MotionEvent?): Boolean {
-//        if (event?.action == MotionEvent.ACTION_DOWN) {
-//            stop()
-//            if (currentItemShow % 2 == 0) {
-//                downX = viewItem1.x - event.rawX
-//            } else {
-//                downX = viewItem2.x - event.rawX
-//            }
-//        } else if (event?.action == MotionEvent.ACTION_MOVE) {
-//            translateItemShowing(event)
-//        } else if (event?.action == MotionEvent.ACTION_UP) {
-//            start()
-//        }
-//        return super.onTouchEvent(event)
-//    }
-
-    private fun translateItemShowing(event: MotionEvent) {
-        if (currentItemShow % 2 == 0) {
-            viewItem1.animate()
-                .x(event.rawX + downX)
-                .setDuration(0)
-                .start()
-        } else {
-            viewItem2.animate()
-                .x(event.rawX + downX)
-                .setDuration(0)
-                .start()
-        }
+    private fun continueRunnable() {
+        handler.postDelayed(runnable, remainingDelay)
     }
 
     companion object TransitionType {
