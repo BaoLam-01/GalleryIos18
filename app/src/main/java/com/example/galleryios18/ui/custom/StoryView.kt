@@ -1,5 +1,6 @@
 package com.example.galleryios18.ui.custom
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
@@ -7,6 +8,7 @@ import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.Surface
 import android.view.TextureView
 import android.view.View
@@ -64,7 +66,7 @@ class StoryView : FrameLayout {
         when (random) {
             NONE -> {
                 viewIn.visibility = VISIBLE
-                viewOut.visibility = GONE
+                viewOut.visibility = INVISIBLE
             }
 
             FADE -> {
@@ -93,12 +95,13 @@ class StoryView : FrameLayout {
 
     private fun fadeOut(view: View) {
         view.animate().alpha(0f).setDuration(1000).withEndAction {
-            view.visibility = GONE
+            view.visibility = INVISIBLE
             view.alpha = 1f
         }.start()
     }
 
     private fun slideIn(view: View) {
+        Timber.e("LamPro | slideIn - view width: ${view.width.toFloat()}")
         view.translationX = view.width.toFloat()
         view.animate().translationX(0f).setDuration(1000).withStartAction {
             view.visibility = VISIBLE
@@ -107,7 +110,7 @@ class StoryView : FrameLayout {
 
     private fun slideOut(view: View) {
         view.animate().translationX(-view.width.toFloat()).setDuration(1000).withEndAction {
-            view.visibility = GONE
+            view.visibility = INVISIBLE
             view.translationX = 0f
         }.start()
     }
@@ -127,9 +130,9 @@ class StoryView : FrameLayout {
         val media = listItem[currentItemShow]
 
         if (media.isImage) {
-            stop()
+            stopVideo()
             image.visibility = VISIBLE
-            video.visibility = GONE
+            video.visibility = INVISIBLE
             image.scaleX = 1.1f
             image.scaleY = 1.1f
             image.animate().scaleX(1f).scaleY(1f).setDuration(3000).start()
@@ -140,14 +143,14 @@ class StoryView : FrameLayout {
                 Glide.with(image).load(bitmapPreview).into(image)
                 image.visibility = VISIBLE
             } else {
-                image.visibility = GONE
+                image.visibility = INVISIBLE
             }
             video.visibility = VISIBLE
             video.alpha = 0f
 
             if (video.isAvailable) {
                 playVideo(media.path, video) {
-                    image.visibility = GONE
+                    image.visibility = INVISIBLE
                     video.alpha = 1f
                 }
             } else {
@@ -158,7 +161,7 @@ class StoryView : FrameLayout {
                         height: Int,
                     ) {
                         playVideo(media.path, video) {
-                            image.visibility = GONE
+                            image.visibility = INVISIBLE
                             video.alpha = 1f
                         }
                         video.surfaceTextureListener = null
@@ -203,7 +206,7 @@ class StoryView : FrameLayout {
     }
 
 
-    fun stop() {
+    fun stopVideo() {
         mediaPlayer?.release()
         mediaPlayer = null
     }
@@ -221,8 +224,8 @@ class StoryView : FrameLayout {
         viewItem2 = inflate(context, R.layout.view_item_2, null)
         addView(viewItem1, layoutParams)
         addView(viewItem2, layoutParams)
-        viewItem1.visibility = GONE
-        viewItem2.visibility = GONE
+        viewItem1.visibility = INVISIBLE
+        viewItem2.visibility = INVISIBLE
     }
 
     fun setListItem(listItem: List<Media>) {
@@ -235,6 +238,43 @@ class StoryView : FrameLayout {
         if (listItem.isNotEmpty()) {
             handler.removeCallbacks(runnable)
             handler.post(runnable)
+        }
+    }
+
+    private fun stop() {
+        handler.removeCallbacks(runnable)
+    }
+
+    private var downX = 0f
+//
+//    @SuppressLint("ClickableViewAccessibility")
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        if (event?.action == MotionEvent.ACTION_DOWN) {
+//            stop()
+//            if (currentItemShow % 2 == 0) {
+//                downX = viewItem1.x - event.rawX
+//            } else {
+//                downX = viewItem2.x - event.rawX
+//            }
+//        } else if (event?.action == MotionEvent.ACTION_MOVE) {
+//            translateItemShowing(event)
+//        } else if (event?.action == MotionEvent.ACTION_UP) {
+//            start()
+//        }
+//        return super.onTouchEvent(event)
+//    }
+
+    private fun translateItemShowing(event: MotionEvent) {
+        if (currentItemShow % 2 == 0) {
+            viewItem1.animate()
+                .x(event.rawX + downX)
+                .setDuration(0)
+                .start()
+        } else {
+            viewItem2.animate()
+                .x(event.rawX + downX)
+                .setDuration(0)
+                .start()
         }
     }
 
