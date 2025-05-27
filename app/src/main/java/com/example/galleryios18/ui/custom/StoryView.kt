@@ -4,21 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.Surface
-import android.view.TextureView
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
-import kotlinx.coroutines.delay
 import timber.log.Timber
+import kotlin.math.abs
 
 class StoryView : FrameLayout {
 
@@ -34,30 +31,30 @@ class StoryView : FrameLayout {
 
     private val runnable = object : Runnable {
         override fun run() {
-            lastPostTime = System.currentTimeMillis()
-            if (currentItemShow % 2 == 0) {
-                bindItem(viewItem1)
-                handleTransition(viewItem1, viewItem2)
-            } else {
-                bindItem(viewItem2)
-                handleTransition(viewItem2, viewItem1)
-            }
             currentItemShow++
             if (currentItemShow >= listItem.size) currentItemShow = 0
+            lastPostTime = System.currentTimeMillis()
+            if (currentItemShow % 2 == 0) {
+                bindItem(viewItem1, currentItemShow)
+                handleTransition(viewItem1, viewItem2)
+            } else {
+                bindItem(viewItem2, currentItemShow)
+                handleTransition(viewItem2, viewItem1)
+            }
             handler.postDelayed(this, delayMillis)
         }
     }
 
-    private var mediaPlayer: MediaPlayer? = null
+    private var downX = 0f
+    private var isSwiping = false
+    private var swipeThreshold = 200  // Ngưỡng để chuyển story
 
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
+        context, attrs, defStyleAttr
     )
 
     constructor(
@@ -74,6 +71,7 @@ class StoryView : FrameLayout {
             NONE -> {
                 viewIn.visibility = VISIBLE
                 viewOut.visibility = INVISIBLE
+                clearDataView(viewOut)
             }
 
             FADE -> {
@@ -93,98 +91,79 @@ class StoryView : FrameLayout {
         }
     }
 
-    private fun fadeIn(view: View) {
-        view.alpha = 0f
-        view.animate().alpha(1f).setDuration(1000).withStartAction {
-            view.visibility = VISIBLE
+    private fun clearDataView(viewOut: View) {
+        val image = viewOut.findViewById<ImageView>(R.id.img)
+        val video = viewOut.findViewById<VideoPlayerView>(R.id.video)
+        Glide.with(context).clear(image)
+        video.stop()
+    }
+
+    private fun fadeIn(viewIn: View) {
+        viewIn.alpha = 0f
+        viewIn.animate().alpha(1f).setDuration(1000).withStartAction {
+            viewIn.visibility = VISIBLE
         }.start()
     }
 
-    private fun fadeOut(view: View) {
-        view.animate().alpha(0f).setDuration(1000).withEndAction {
-            view.visibility = INVISIBLE
-            view.alpha = 1f
+    private fun fadeOut(viewOut: View) {
+        viewOut.animate().alpha(0f).setDuration(1000).withEndAction {
+            viewOut.visibility = INVISIBLE
+            viewOut.alpha = 1f
+            clearDataView(viewOut)
         }.start()
     }
 
-    private fun slideIn(view: View) {
-        view.translationX = view.width.toFloat()
-        view.animate().translationX(0f).setDuration(1000).withStartAction {
-            view.visibility = VISIBLE
+    private fun slideIn(viewIn: View) {
+        viewIn.translationX = viewIn.width.toFloat()
+        viewIn.animate().translationX(0f).setDuration(1000).withStartAction {
+            viewIn.visibility = VISIBLE
         }.start()
     }
 
-    private fun slideOut(view: View) {
-        view.animate().translationX(-view.width.toFloat()).setDuration(1000).withEndAction {
-            view.visibility = INVISIBLE
-            view.translationX = 0f
+    private fun slideOut(viewOut: View) {
+        viewOut.animate().translationX(-viewOut.width.toFloat()).setDuration(1000).withEndAction {
+            viewOut.visibility = INVISIBLE
+            viewOut.translationX = 0f
+            clearDataView(viewOut)
         }.start()
     }
 
-    private fun zoomOut(view: View) {
-        view.scaleX = 1.2f
-        view.scaleY = 1.2f
-        view.animate().scaleX(1f).scaleY(1f).setDuration(1000).withStartAction {
-            view.visibility = VISIBLE
+    private fun zoomOut(viewIn: View) {
+        viewIn.scaleX = 1.2f
+        viewIn.scaleY = 1.2f
+        viewIn.animate().scaleX(1f).scaleY(1f).setDuration(1000).withStartAction {
+            viewIn.visibility = VISIBLE
         }.start()
     }
 
 
-    private fun bindItem(view: View) {
-        val image = view.findViewById<ImageView>(R.id.img)
-        val video = view.findViewById<TextureView>(R.id.video)
-        val media = listItem[currentItemShow]
+    private fun bindItem(viewIn: View, position: Int) {
+        val image = viewIn.findViewById<ImageView>(R.id.img)
+        val video = viewIn.findViewById<VideoPlayerView>(R.id.video)
+        val media = listItem[position]
 
         if (media.isImage) {
-            stopVideo()
             image.visibility = VISIBLE
             video.visibility = INVISIBLE
             image.scaleX = 1.1f
             image.scaleY = 1.1f
             image.animate().scaleX(1f).scaleY(1f).setDuration(3000).start()
-            Glide.with(image).load(media.path).into(image)
+            Glide.with(context).load(media.path).into(image)
         } else {
-            val bitmapPreview = getFirstFrameVideo(media.path)
-            if (bitmapPreview != null) {
-                Glide.with(image).load(bitmapPreview).into(image)
-                image.visibility = VISIBLE
-            } else {
-                image.visibility = INVISIBLE
-            }
+//            val bitmapPreview = getFirstFrameVideo(media.path)
+//            if (bitmapPreview != null) {
+//                Glide.with(context).load(bitmapPreview).into(image)
+//                image.visibility = VISIBLE
+//            } else {
+//                image.visibility = INVISIBLE
+//            }
+
+            image.visibility = INVISIBLE
             video.visibility = VISIBLE
             video.alpha = 0f
-
-            if (video.isAvailable) {
-                playVideo(media.path, video) {
-                    image.visibility = INVISIBLE
-                    video.alpha = 1f
-                }
-            } else {
-                video.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-                    override fun onSurfaceTextureAvailable(
-                        surface: android.graphics.SurfaceTexture,
-                        width: Int,
-                        height: Int,
-                    ) {
-                        playVideo(media.path, video) {
-                            image.visibility = INVISIBLE
-                            video.alpha = 1f
-                        }
-                        video.surfaceTextureListener = null
-                    }
-
-                    override fun onSurfaceTextureSizeChanged(
-                        surface: android.graphics.SurfaceTexture,
-                        width: Int,
-                        height: Int,
-                    ) {
-                    }
-
-                    override fun onSurfaceTextureDestroyed(surface: android.graphics.SurfaceTexture): Boolean =
-                        true
-
-                    override fun onSurfaceTextureUpdated(surface: android.graphics.SurfaceTexture) {}
-                }
+            video.playVideo(media.path) {
+                image.visibility = INVISIBLE
+                video.alpha = 1f
             }
         }
     }
@@ -198,25 +177,6 @@ class StoryView : FrameLayout {
     }
 
 
-    fun playVideo(path: String, textureView: TextureView, onStart: () -> Unit) {
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(path)
-            setSurface(Surface(textureView.surfaceTexture))
-            setOnPreparedListener {
-                it.start()
-                onStart()
-            }
-            prepareAsync()
-        }
-    }
-
-
-    fun stopVideo() {
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (!::viewItem1.isInitialized || !::viewItem2.isInitialized) {
@@ -225,7 +185,7 @@ class StoryView : FrameLayout {
     }
 
     fun init() {
-
+        Timber.e("LamPro | init - swipe threshold: $swipeThreshold")
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         viewItem1 = inflate(context, R.layout.view_item_1, null)
         viewItem2 = inflate(context, R.layout.view_item_2, null)
@@ -233,6 +193,11 @@ class StoryView : FrameLayout {
         addView(viewItem2, layoutParams)
         viewItem1.visibility = INVISIBLE
         viewItem2.visibility = INVISIBLE
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        swipeThreshold = width / 2
     }
 
     fun setListItem(listItem: List<Media>) {
@@ -244,12 +209,20 @@ class StoryView : FrameLayout {
     private fun start() {
         Timber.e("LamPro | start - ")
         if (listItem.isNotEmpty()) {
+            bindFirstItem()
             handler.removeCallbacks(runnable)
-            handler.post(runnable)
+            handler.postDelayed(runnable, 3000)
         }
     }
 
-    private fun stop() {
+    private fun bindFirstItem() {
+        bindItem(viewItem1, currentItemShow)
+        viewItem1.visibility = VISIBLE
+        viewItem2.visibility = INVISIBLE
+    }
+
+
+    private fun stopRunnable() {
         Timber.e("LamPro | stop - ")
         handler.removeCallbacks(runnable)
     }
@@ -257,6 +230,128 @@ class StoryView : FrameLayout {
     private fun continueRunnable() {
         handler.postDelayed(runnable, remainingDelay)
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (listItem.isEmpty()) return false
+
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                Timber.e("LamPro | onTouchEvent - down")
+                downX = event.x
+                isSwiping = true
+                stopRunnable()
+                return true
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                Timber.e("LamPro | onTouchEvent - move")
+                Timber.e("LamPro | onTouchEvent - is swiping: $isSwiping")
+                if (!isSwiping) return false
+                val deltaX = event.x - downX
+                Timber.e("LamPro | onTouchEvent - deltax : $deltaX")
+                getCurrentView().translationX = deltaX
+
+
+//                Timber.e("LamPro | onTouchEvent - deltax : $deltaX")
+//                if (abs(deltaX) >= 100) {
+//                    if (deltaX > 0) {
+//                        if (currentItemShow >= 1) {
+//                            val itemPrevious = currentItemShow - 1
+//                            if (itemPrevious % 2 == 0) {
+//                                Timber.e("LamPro | onTouchEvent - viewitme1")
+//                                bindItem(viewItem1, itemPrevious)
+//                                viewItem1.translationX = -viewItem1.width.toFloat() - 100 + deltaX
+//                            } else {
+//                                Timber.e("LamPro | onTouchEvent - viewitme2")
+//                                bindItem(viewItem2, itemPrevious)
+//                                viewItem2.translationX = -viewItem1.width.toFloat() - 100 + deltaX
+//                            }
+//                        }
+//                    } else {
+//                        if (currentItemShow <= listItem.size - 2) {
+//                            val itemNext = currentItemShow + 1
+//                            if (itemNext % 2 == 0) {
+//                                Timber.e("LamPro | onTouchEvent - viewitem1")
+//                                bindItem(viewItem1, itemNext)
+//                                viewItem1.translationX = deltaX + 100 + viewItem1.width
+//                            } else {
+//                                Timber.e("LamPro | onTouchEvent - viewitem2")
+//                                bindItem(viewItem2, itemNext)
+//                                viewItem2.translationX = deltaX + 100 + viewItem2.width
+//                            }
+//                        }
+//                    }
+//                }
+                return true
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                Timber.e("LamPro | onTouchEvent - up")
+                if (!isSwiping) return false
+                val deltaX = event.x - downX
+
+                if (abs(deltaX) > swipeThreshold) {
+
+                    if (deltaX < 0) {
+                        if (currentItemShow <= listItem.size - 2) {
+
+                            currentItemShow++
+                            if (currentItemShow % 2 == 0) {
+                                viewItem1.animate().translationX(0f).setDuration(300).start()
+                                viewItem2.animate().translationX(-viewItem2.width.toFloat())
+                                    .setDuration(300).start()
+                            } else {
+                                viewItem2.animate().translationX(0f).setDuration(300).start()
+                                viewItem1.animate().translationX(-viewItem1.width.toFloat())
+                                    .setDuration(300).start()
+
+                            }
+                        } else {
+                            getCurrentView().animate()?.translationX(0f)?.setDuration(300)
+                                ?.start()
+                        }
+
+                    } else {
+                        if (currentItemShow >= 1) {
+                            currentItemShow--
+                            if (currentItemShow % 2 == 0) {
+                                viewItem1.animate().translationX(0f).setDuration(300).start()
+                                viewItem2.animate().translationX(viewItem2.width.toFloat())
+                                    .setDuration(300).start()
+                                viewItem2.visibility = INVISIBLE
+                                viewItem2.translationX = 0f
+                            } else {
+                                viewItem2.animate().translationX(0f).setDuration(300).start()
+                                viewItem1.animate().translationX(viewItem1.width.toFloat())
+                                    .setDuration(300).start()
+                                viewItem1.visibility = INVISIBLE
+                                viewItem1.translationX = 0f
+                            }
+                        } else {
+                            getCurrentView().animate()?.translationX(0f)?.setDuration(300)
+                                ?.start()
+                        }
+
+                    }
+                } else {
+                    // Quay về vị trí cũ nếu vuốt không đủ
+                    getCurrentView().animate()?.translationX(0f)?.setDuration(300)?.start()
+                }
+
+                isSwiping = false
+                continueRunnable()
+                return true
+            }
+        }
+
+        return super.onTouchEvent(event)
+    }
+
+    private fun getCurrentView(): View {
+        return if (currentItemShow % 2 == 0) viewItem1 else viewItem2
+    }
+
 
     companion object TransitionType {
         const val NONE = 0
