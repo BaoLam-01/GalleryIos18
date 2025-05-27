@@ -167,30 +167,33 @@ class StoryView : FrameLayout {
             Glide.with(this).load(media.path).signature(ObjectKey(media.id)).into(image)
         } else {
             Timber.e("LamPro | bindItem - is video")
-//            val bitmapPreview = getFirstFrameVideo(media.path)
-//            if (bitmapPreview != null) {
-//                Glide.with(this).load(bitmapPreview).into(image)
-//                image.visibility = VISIBLE
-//            } else {
-//                image.visibility = INVISIBLE
-//            }
+            val bitmapPreview = getFirstFrameVideo(media.path)
+            if (bitmapPreview != null) {
+                Glide.with(this).load(bitmapPreview).signature(ObjectKey(media.id)).into(image)
+                image.visibility = VISIBLE
+            } else {
+                image.visibility = INVISIBLE
+            }
 
-            image.visibility = INVISIBLE
             video.visibility = VISIBLE
             video.alpha = 0f
             video.playVideo(media.path) {
-                image.visibility = INVISIBLE
                 video.alpha = 1f
+                image.visibility = INVISIBLE
             }
         }
     }
 
     private fun getFirstFrameVideo(path: String): Bitmap? {
         val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(path)
-        val bitmap = retriever.getFrameAtTime(0)
-        retriever.release()
-        return bitmap
+        return try {
+            retriever.setDataSource(path)
+            retriever.getFrameAtTime(1_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+        } catch (e: Exception) {
+            null
+        } finally {
+            retriever.release()
+        }
     }
 
 
