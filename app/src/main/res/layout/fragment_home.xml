@@ -16,19 +16,20 @@
             android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constrainScroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcvMedia"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcvCollection"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
                     app:layout_constraintTop_toBottomOf="@id/rcvMedia" />
 
                 <View
@@ -57,6 +58,15 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/color_transparent_blur"
+            app:layout_constraintBottom_toBottomOf="@id/viewBlurHeader"
+            app:layout_constraintEnd_toEndOf="@id/viewBlurHeader"
+            app:layout_constraintStart_toStartOf="@id/viewBlurHeader"
+            app:layout_constraintTop_toTopOf="@id/viewBlurHeader" />
+
         <com.github.mmin18.widget.RealtimeBlurView
             android:id="@+id/viewBlurHeader"
             android:layout_width="match_parent"
@@ -65,7 +75,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:realtimeBlurRadius="2dp"
             app:realtimeDownsampleFactor="2"
-            app:realtimeOverlayColor="#36000000" />
+            app:realtimeOverlayColor="@color/transparent" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -74,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_16sdp"
             android:text="Photos"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/_20ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -84,6 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 item"
+            android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/tvTitle"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
@@ -98,15 +109,19 @@
             app:layout_constraintTop_toTopOf="@id/tvTitle"
             app:shapeAppearanceOverlay="@style/Circle" />
 
-        <View
+        <com.github.mmin18.widget.RealtimeBlurView
             android:id="@+id/bgBtnChose"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/bg_btn_chose"
+            android:clipToOutline="true"
             app:layout_constraintBottom_toBottomOf="@id/tvChose"
             app:layout_constraintEnd_toEndOf="@id/tvChose"
             app:layout_constraintStart_toStartOf="@id/tvChose"
-            app:layout_constraintTop_toTopOf="@id/tvChose" />
+            app:layout_constraintTop_toTopOf="@id/tvChose"
+            app:realtimeBlurRadius="4dp"
+            app:realtimeDownsampleFactor="2"
+            app:realtimeOverlayColor="#85585858" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvChose"
@@ -148,53 +163,35 @@
             app:shapeAppearanceOverlay="@style/Circle" />
 
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cvBottom"
-            android:layout_width="wrap_content"
+        <com.github.mmin18.widget.RealtimeBlurView
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:clipToPadding="true"
-            android:elevation="0dp"
-            android:shadowColor="@color/transparent"
-            app:cardCornerRadius="@dimen/_100sdp"
+            android:background="@drawable/bg_circle"
+            android:clipToOutline="true"
+            app:layout_constraintBottom_toBottomOf="@id/tlBottom"
+            app:layout_constraintEnd_toEndOf="@id/tlBottom"
+            app:layout_constraintStart_toStartOf="@id/tlBottom"
+            app:layout_constraintTop_toTopOf="@id/tlBottom"
+            app:realtimeBlurRadius="5dp"
+            app:realtimeDownsampleFactor="2" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tlBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_circle"
             app:layout_constraintBottom_toBottomOf="@id/imgSort"
             app:layout_constraintEnd_toStartOf="@id/imgClose"
             app:layout_constraintStart_toEndOf="@id/imgSort"
-            app:layout_constraintTop_toTopOf="@id/imgSort">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <!--                <com.github.mmin18.widget.RealtimeBlurView-->
-                <!--                    android:layout_width="0dp"-->
-                <!--                    android:layout_height="0dp"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                <!--                    app:realtimeBlurRadius="5dp"-->
-                <!--                    app:realtimeDownsampleFactor="2" />-->
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tlBottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@color/color_8ceeeeee"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tabGravity="fill"
-                    app:tabIndicator="@drawable/tab_indicator"
-                    app:tabIndicatorColor="@color/color_8c767680"
-                    app:tabIndicatorFullWidth="true"
-                    app:tabIndicatorGravity="stretch"
-                    app:tabMode="auto"
-                    app:tabRippleColor="@color/transparent"
-                    app:tabSelectedTextAppearance="@style/TextTabLayoutCategory" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="@id/imgSort"
+            app:tabGravity="fill"
+            app:tabIndicator="@drawable/tab_indicator"
+            app:tabIndicatorColor="@color/color_8c767680"
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorGravity="stretch"
+            app:tabMode="auto"
+            app:tabRippleColor="@color/transparent"
+            app:tabSelectedTextAppearance="@style/TextTabLayoutCategory" />
 
 
         <com.google.android.material.imageview.ShapeableImageView

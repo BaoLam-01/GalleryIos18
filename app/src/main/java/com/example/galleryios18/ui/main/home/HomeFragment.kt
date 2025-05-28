@@ -2,15 +2,23 @@ package com.example.galleryios18.ui.main.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ActionBar
+import android.graphics.LinearGradient
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.os.Build
 import android.os.Bundle
+import android.view.DragEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.galleryios18.App
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
@@ -30,6 +38,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private var requestPermission = true
     private lateinit var mediaAdapter: MediaAdapter
     private lateinit var collectionAdapter: CollectionAdapter
+    private var isRcvMediaOverScroll = false
+    private var isRcvMediaTop = true
 
     private val multiplePermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -148,12 +158,19 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initView() {
-//        binding.rvPhotos.layoutParams.let {
-//            val layoutParams = it as ConstraintLayout.LayoutParams
-//            layoutParams.height =
-//                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight + 10
-//            binding.rvPhotos.layoutParams = layoutParams
-//        }
+
+        binding.rcvMedia.layoutParams.let {
+            val layoutParams = it as ConstraintLayout.LayoutParams
+            layoutParams.height =
+                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
+            binding.rcvMedia.layoutParams = layoutParams
+        }
+        binding.rcvCollection.layoutParams.let {
+            val layoutParams = it as ConstraintLayout.LayoutParams
+            layoutParams.height =
+                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
+            binding.rcvCollection.layoutParams = layoutParams
+        }
 
         mediaAdapter = MediaAdapter()
         binding.rcvMedia.apply {
@@ -173,6 +190,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         ViewUtils.adjustViewWithSystemBar(
             binding.tvTitle, binding.imgSort, requireActivity() as MainActivity
         )
+
+
     }
 
     private fun initTabLayout() {
@@ -186,7 +205,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         changeTabLayout(TabImage.TAB_ALL_PHOTO)
         binding.tlBottom.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                val tabCurrent = tab.getPosition()
+                val tabCurrent = tab.position
                 changeTabLayout(tabCurrent)
             }
 
@@ -235,7 +254,115 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 navigateScreen(null, R.id.showMediaFragment)
             }
         })
+        binding.rcvMedia.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
 
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+                if (lastVisibleItem == totalItemCount - 1) {
+                    isRcvMediaOverScroll = true
+                    binding.rcvMedia.requestDisallowInterceptTouchEvent(true)
+                } else {
+                    binding.rcvMedia.requestDisallowInterceptTouchEvent(false)
+                    isRcvMediaOverScroll = false
+                }
+                Timber.e("LamPro | onScrolled - is rcv media over scroll : $isRcvMediaOverScroll")
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if(isRcvMediaOverScroll) {
+                        binding.rcvMedia.requestDisallowInterceptTouchEvent(true)
+                    } else {
+                        binding.rcvMedia.requestDisallowInterceptTouchEvent(false)
+                    }
+                }
+            }
+        })
+//
+//        binding.nestedScrollView.setOnTouchListener(object : View.OnTouchListener {
+//            override fun onTouch(
+//                v: View?,
+//                event: MotionEvent?
+//            ): Boolean {
+//                Timber.e("LamPro | onTouch - nested Scroll view ontouch")
+//                return false
+//            }
+//
+//        })
+//        binding.constrainScroll.setOnTouchListener(object : View.OnTouchListener {
+//            override fun onTouch(
+//                v: View?,
+//                event: MotionEvent?
+//            ): Boolean {
+//                Timber.e("LamPro | onTouch - constrain scroll ontouch")
+//                return false
+//            }
+//        })
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+//                val viewTop = binding.rcvMedia.top
+//                if (viewTop - scrollY == 0) {
+//                    isRcvMediaTop = true
+//                } else {
+//                    isRcvMediaTop = false
+//                }
+//                Timber.e("LamPro | listener - isRcvMediaTop: $isRcvMediaTop")
+//            }
+//        }
+//
+//        binding.rcvMedia.setOnTouchListener(object : View.OnTouchListener {
+//            override fun onTouch(
+//                v: View?,
+//                event: MotionEvent?
+//            ): Boolean {
+//                Timber.e("LamPro | onTouch - rv media ontouch")
+//                event?.let {
+//                    when (event.action) {
+//                        MotionEvent.ACTION_DOWN -> {
+//                            Timber.e("LamPro | onTouch - rcv media down")
+//                            return true
+//                        }
+//
+//                        MotionEvent.ACTION_MOVE -> {
+//                            Timber.e("LamPro | onTouch - rcv media move")
+//                            if (!isRcvMediaOverScroll) {
+//                                return true
+//                            } else {
+//                                return false
+//                            }
+//                        }
+//
+//                        MotionEvent.ACTION_UP -> {
+//                            Timber.e("LamPro | onTouch - rcv media up")
+//                            return true
+//                        }
+//
+//                        else -> {
+//                            return true
+//                        }
+//                    }
+//                }
+//                return false
+//            }
+//
+//        })
+//
+//        binding.rcvCollection.setOnTouchListener(object : View.OnTouchListener {
+//            override fun onTouch(
+//                v: View?,
+//                event: MotionEvent?
+//            ): Boolean {
+//                Timber.e("LamPro | onTouch - rcv collection.ontouch")
+//                return false
+//            }
+//
+//        })
     }
 
     private fun getAllMedia() {
