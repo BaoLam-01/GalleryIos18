@@ -254,35 +254,35 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 navigateScreen(null, R.id.showMediaFragment)
             }
         })
-        binding.rcvMedia.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val totalItemCount = layoutManager.itemCount
-                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-
-                if (lastVisibleItem == totalItemCount - 1) {
-                    isRcvMediaOverScroll = true
-                    binding.rcvMedia.requestDisallowInterceptTouchEvent(true)
-                } else {
-                    binding.rcvMedia.requestDisallowInterceptTouchEvent(false)
-                    isRcvMediaOverScroll = false
-                }
-                Timber.e("LamPro | onScrolled - is rcv media over scroll : $isRcvMediaOverScroll")
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if(isRcvMediaOverScroll) {
-                        binding.rcvMedia.requestDisallowInterceptTouchEvent(true)
-                    } else {
-                        binding.rcvMedia.requestDisallowInterceptTouchEvent(false)
-                    }
-                }
-            }
-        })
+//        binding.rcvMedia.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//
+//                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                val totalItemCount = layoutManager.itemCount
+//                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+//
+//                if (lastVisibleItem == totalItemCount - 1) {
+//                    isRcvMediaOverScroll = true
+//                    binding.rcvMedia.requestDisallowInterceptTouchEvent(true)
+//                } else {
+//                    binding.rcvMedia.requestDisallowInterceptTouchEvent(false)
+//                    isRcvMediaOverScroll = false
+//                }
+//                Timber.e("LamPro | onScrolled - is rcv media over scroll : $isRcvMediaOverScroll")
+//            }
+//
+//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                super.onScrollStateChanged(recyclerView, newState)
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                    if(isRcvMediaOverScroll) {
+//                        binding.rcvMedia.requestDisallowInterceptTouchEvent(true)
+//                    } else {
+//                        binding.rcvMedia.requestDisallowInterceptTouchEvent(false)
+//                    }
+//                }
+//            }
+//        })
 //
 //        binding.nestedScrollView.setOnTouchListener(object : View.OnTouchListener {
 //            override fun onTouch(
