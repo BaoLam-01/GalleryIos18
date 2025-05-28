@@ -6,6 +6,10 @@ import com.example.galleryios18.R
 import com.example.galleryios18.databinding.FragmentMakeStory2Binding
 import com.example.galleryios18.databinding.FragmentMakeStory3Binding
 import com.example.galleryios18.ui.base.BaseBindingFragment
+import com.example.galleryios18.ui.main.MainActivity
+import com.example.galleryios18.utils.Utils
+import com.example.galleryios18.utils.ViewUtils
+import com.google.android.gms.internal.measurement.zznm
 import timber.log.Timber
 
 class MakeStory3Fragment : BaseBindingFragment<FragmentMakeStory3Binding, MakeStory3ViewModel>() {
@@ -18,6 +22,8 @@ class MakeStory3Fragment : BaseBindingFragment<FragmentMakeStory3Binding, MakeSt
         get() = R.layout.fragment_make_story_3
 
     override fun onCreatedView(view: View?, savedInstanceState: Bundle?) {
+        ViewUtils.adjustViewWithSystemBar(binding.imgBack, binding.imgAddMusic, requireActivity() as MainActivity)
+
         mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
             Timber.e("LamPro | onCreatedView - all media obsver : ${it.size}")
             if (it.isNotEmpty()) {

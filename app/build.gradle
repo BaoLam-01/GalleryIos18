@@ -136,5 +136,4 @@ dependencies {
     implementation('com.arthenica:smart-exception-java:0.2.1')
     implementation('com.arthenica:smart-exception-common:0.2.1')
     implementation("com.google.android.exoplayer:exoplayer:2.18.7")
-//    kapt 'com.github.bumptech.glide:compiler:4.16.0'
 }
