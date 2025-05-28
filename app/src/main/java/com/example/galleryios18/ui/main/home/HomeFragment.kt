@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,6 +41,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private lateinit var collectionAdapter: CollectionAdapter
     private var isRcvMediaOverScroll = false
     private var isRcvMediaTop = true
+    private var isRcvCollectionTop = true
 
     private val multiplePermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -263,114 +265,52 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 } else {
                     isRcvMediaTop = false
                 }
-                Timber.e("LamPro - isRcvMediaTop: $isRcvMediaTop")
-                val view = binding.nestedScrollView.getChildAt(0)
-                val diff = view.bottom - (binding.nestedScrollView.height + scrollY)
-
                 // Nếu nestedScrollView cuộn đến cuối, cho phép rcvMedia cuộn
                 binding.rcvMedia.isScrollEnabled = isRcvMediaTop == true
+
+//                val rvCollectionTop = binding.rcvCollection.top
+//                if (rvCollectionTop - scrollY <= 0) {
+//                    isRcvCollectionTop = true
+//                } else {
+//                    isRcvCollectionTop = false
+//                }
+//                Timber.e("LamPro - isRcvCollectionTop: $isRcvCollectionTop")
+//                binding.rcvCollection.isScrollEnabled = isRcvCollectionTop == true
+
+
+                val rcvCollectionTop = binding.rcvCollection.top
+
+                // Nếu rcvCollection đã chạm top màn hình
+                val isRcvCollectionVisibleAtTop = rcvCollectionTop - scrollY <= 0
+                if (isRcvCollectionVisibleAtTop) {
+                    // Bật cuộn cho rcvCollection
+                    binding.rcvCollection.isScrollEnabled = true
+
+                    // Dừng fling của NestedScrollView nếu đang cuộn
+                    stopNestedScrollImmediately(binding.nestedScrollView)
+                } else {
+                    // Ngược lại: cho phép nestedScrollView cuộn
+                    binding.rcvCollection.isScrollEnabled = false
+                }
+                // Optional: tắt NestedScrollView khi rcvCollection ở top
+                binding.nestedScrollView.setOnTouchListener { _, _ ->
+                    // Khi rcvCollection đang cuộn, ta "ngăn" NestedScrollView cuộn bằng cách consume sự kiện
+                    isRcvCollectionVisibleAtTop
+                }
+
+
+
+                Timber.d("rcvCollectionTop: $rcvCollectionTop, scrollY: $scrollY -> ${isRcvCollectionVisibleAtTop}")
+
             }
         }
-//        binding.rcvMedia.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//
-//                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-//                val totalItemCount = layoutManager.itemCount
-//                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-//
-//                if (lastVisibleItem == totalItemCount - 1) {
-//                    isRcvMediaOverScroll = true
-//                    binding.rcvMedia.requestDisallowInterceptTouchEvent(true)
-//                } else {
-//                    binding.rcvMedia.requestDisallowInterceptTouchEvent(false)
-//                    isRcvMediaOverScroll = false
-//                }
-//                Timber.e("LamPro | onScrolled - is rcv media over scroll : $isRcvMediaOverScroll")
-//            }
-//
-//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-//                super.onScrollStateChanged(recyclerView, newState)
-//                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//                    if(isRcvMediaOverScroll) {
-//                        binding.rcvMedia.requestDisallowInterceptTouchEvent(true)
-//                    } else {
-//                        binding.rcvMedia.requestDisallowInterceptTouchEvent(false)
-//                    }
-//                }
-//            }
-//        })
-//
-//        binding.nestedScrollView.setOnTouchListener(object : View.OnTouchListener {
-//            override fun onTouch(
-//                v: View?,
-//                event: MotionEvent?
-//            ): Boolean {
-//                Timber.e("LamPro | onTouch - nested Scroll view ontouch")
-//                return false
-//            }
-//
-//        })
-//        binding.constrainScroll.setOnTouchListener(object : View.OnTouchListener {
-//            override fun onTouch(
-//                v: View?,
-//                event: MotionEvent?
-//            ): Boolean {
-//                Timber.e("LamPro | onTouch - constrain scroll ontouch")
-//                return false
-//            }
-//        })
-//
-
-//
-//        binding.rcvMedia.setOnTouchListener(object : View.OnTouchListener {
-//            override fun onTouch(
-//                v: View?,
-//                event: MotionEvent?
-//            ): Boolean {
-//                Timber.e("LamPro | onTouch - rv media ontouch")
-//                event?.let {
-//                    when (event.action) {
-//                        MotionEvent.ACTION_DOWN -> {
-//                            Timber.e("LamPro | onTouch - rcv media down")
-//                            return true
-//                        }
-//
-//                        MotionEvent.ACTION_MOVE -> {
-//                            Timber.e("LamPro | onTouch - rcv media move")
-//                            if (!isRcvMediaOverScroll) {
-//                                return true
-//                            } else {
-//                                return false
-//                            }
-//                        }
-//
-//                        MotionEvent.ACTION_UP -> {
-//                            Timber.e("LamPro | onTouch - rcv media up")
-//                            return true
-//                        }
-//
-//                        else -> {
-//                            return true
-//                        }
-//                    }
-//                }
-//                return false
-//            }
-//
-//        })
-//
-//        binding.rcvCollection.setOnTouchListener(object : View.OnTouchListener {
-//            override fun onTouch(
-//                v: View?,
-//                event: MotionEvent?
-//            ): Boolean {
-//                Timber.e("LamPro | onTouch - rcv collection.ontouch")
-//                return false
-//            }
-//
-//        })
     }
+
+    fun stopNestedScrollImmediately(scrollView: NestedScrollView) {
+        scrollView.fling(0) // dừng vận tốc
+        scrollView.stopNestedScroll() // dừng nested scroll
+    }
+
 
     private fun getAllMedia() {
         Timber.e("LamPro | getAllMedia - ")
