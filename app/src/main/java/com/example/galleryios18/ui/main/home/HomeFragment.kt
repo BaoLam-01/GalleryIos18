@@ -254,6 +254,23 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 navigateScreen(null, R.id.showMediaFragment)
             }
         })
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+                val viewTop = binding.rcvMedia.top
+                if (viewTop - scrollY == 0) {
+                    isRcvMediaTop = true
+                } else {
+                    isRcvMediaTop = false
+                }
+                Timber.e("LamPro - isRcvMediaTop: $isRcvMediaTop")
+                val view = binding.nestedScrollView.getChildAt(0)
+                val diff = view.bottom - (binding.nestedScrollView.height + scrollY)
+
+                // Nếu nestedScrollView cuộn đến cuối, cho phép rcvMedia cuộn
+                binding.rcvMedia.isScrollEnabled = isRcvMediaTop == true
+            }
+        }
 //        binding.rcvMedia.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 //            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 //                super.onScrolled(recyclerView, dx, dy)
@@ -304,17 +321,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 //            }
 //        })
 //
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-//                val viewTop = binding.rcvMedia.top
-//                if (viewTop - scrollY == 0) {
-//                    isRcvMediaTop = true
-//                } else {
-//                    isRcvMediaTop = false
-//                }
-//                Timber.e("LamPro | listener - isRcvMediaTop: $isRcvMediaTop")
-//            }
-//        }
+
 //
 //        binding.rcvMedia.setOnTouchListener(object : View.OnTouchListener {
 //            override fun onTouch(

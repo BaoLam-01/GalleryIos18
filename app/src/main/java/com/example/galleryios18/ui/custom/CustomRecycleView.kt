@@ -38,51 +38,33 @@ class CustomRecycleView : RecyclerView, RecyclerView.OnItemTouchListener {
         gestureDetector = GestureDetector(context, gestureListener)
         addOnItemTouchListener(this)
 
-        addOnScrollListener(object : OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val layoutManager = layoutManager ?: return
-                val totalItemCount = layoutManager.itemCount
-                val lastCompletelyVisibleItem = when (layoutManager) {
-                    is LinearLayoutManager -> layoutManager.findLastCompletelyVisibleItemPosition()
-                    is GridLayoutManager -> layoutManager.findLastCompletelyVisibleItemPosition()
-                    is StaggeredGridLayoutManager -> {
-                        val positions = layoutManager.findLastCompletelyVisibleItemPositions(null)
-                        positions.maxOrNull() ?: RecyclerView.NO_POSITION
-                    }
-
-                    else -> RecyclerView.NO_POSITION
-                }
-
-                if (lastCompletelyVisibleItem == totalItemCount - 1) {
-                    setIsScrollOver(true)
-                } else {
-                    setIsScrollOver(false)
-                }
-                Timber.e("LamPro | onScrollStateChanged - is scroll over: ${lastCompletelyVisibleItem == totalItemCount - 1}")
-            }
-        })
     }
 
-    fun setIsScrollOver(isScrollOver: Boolean) {
-        gestureListener.isScrollOver = isScrollOver
+    var isScrollEnabled = false
+
+    override fun onInterceptTouchEvent(e: MotionEvent?): Boolean {
+        return isScrollEnabled && super.onInterceptTouchEvent(e)
+    }
+
+    override fun onTouchEvent(e: MotionEvent?): Boolean {
+        return isScrollEnabled && super.onTouchEvent(e)
     }
 
     override fun fling(velocityX: Int, velocityY: Int): Boolean {
-        var velocityY = velocityY
-        velocityY = (velocityY * 0.7).toInt()
-        return super.fling(velocityX, velocityY)
+        return isScrollEnabled && super.fling(velocityX, velocityY)
     }
 
-    override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-        if (gestureDetector != null) {
-            gestureDetector!!.onTouchEvent(e)
-        }
-        return false
+    override fun onInterceptTouchEvent(
+        rv: RecyclerView,
+        e: MotionEvent,
+    ): Boolean {
+        return true
     }
 
-    override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+    override fun onTouchEvent(
+        rv: RecyclerView,
+        e: MotionEvent,
+    ) {
     }
 
     override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
@@ -108,7 +90,7 @@ class CustomRecycleView : RecyclerView, RecyclerView.OnItemTouchListener {
             e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
-            distanceY: Float
+            distanceY: Float,
         ): Boolean {
             condition(isScrollOver)
 
