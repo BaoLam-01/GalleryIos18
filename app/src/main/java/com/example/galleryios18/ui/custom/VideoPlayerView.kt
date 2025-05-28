@@ -32,6 +32,7 @@ class VideoPlayerView : FrameLayout {
         super.onAttachedToWindow()
         init()
     }
+
     private fun init() {
         textureView.layoutParams =
             LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -39,15 +40,14 @@ class VideoPlayerView : FrameLayout {
     }
 
 
-    fun playVideo(path: String, onStart: () -> Unit) {
+    fun setDataVideo(path: String, ready: () -> Unit) {
         if (textureView.isAvailable) {
             mediaPlayer?.release()
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(path)
                 setSurface(Surface(textureView.surfaceTexture))
                 setOnPreparedListener {
-                    it.start()
-                    onStart()
+                    ready()
                 }
                 prepareAsync()
             }
@@ -63,8 +63,7 @@ class VideoPlayerView : FrameLayout {
                         setDataSource(path)
                         setSurface(Surface(textureView.surfaceTexture))
                         setOnPreparedListener {
-                            it.start()
-                            onStart()
+                            ready()
                         }
                         prepareAsync()
                     }
@@ -85,6 +84,14 @@ class VideoPlayerView : FrameLayout {
             }
         }
 
+    }
+
+    fun start() {
+        mediaPlayer?.start()
+    }
+
+    fun pause() {
+        mediaPlayer?.pause()
     }
 
     fun stop() {
