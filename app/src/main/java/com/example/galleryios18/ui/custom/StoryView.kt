@@ -34,7 +34,6 @@ class StoryView : FrameLayout {
     private val flingThresholdVelocity = 1000  // đơn vị: px/s
     private var resetAlphaOneTime = false
     private var bindItemWhenMoveChange = 0
-    private var isTouching = false
 
     private val runnable = object : Runnable {
         override fun run() {
@@ -54,7 +53,7 @@ class StoryView : FrameLayout {
 
     private var downX = 0f
     private var isSwiping = false
-    private var swipeThreshold = 200  // Ngưỡng để chuyển story
+    private var swipeThreshold = 200
 
     constructor(context: Context) : super(context)
 
@@ -187,7 +186,7 @@ class StoryView : FrameLayout {
             video.setDataVideo(media.path) {
                 video.alpha = 1f
                 image.visibility = INVISIBLE
-                if (!isTouching) {
+                if (!isSwiping) {
                     video.start()
                 }
             }
@@ -275,7 +274,6 @@ class StoryView : FrameLayout {
             MotionEvent.ACTION_DOWN -> {
                 resetAlphaOneTime = false
                 bindItemWhenMoveChange = 0
-                isTouching = true
                 Timber.e("LamPro | onTouchEvent - down")
                 downX = event.x
                 isSwiping = true
@@ -288,16 +286,13 @@ class StoryView : FrameLayout {
             }
 
             MotionEvent.ACTION_MOVE -> {
+                if (!isSwiping) return false
+
                 if (resetAlphaOneTime == false) {
                     resetViewWhenMove()
                     resetAlphaOneTime = true
                 }
-                isTouching = true
-
                 velocityTracker?.addMovement(event)
-                Timber.e("LamPro | onTouchEvent - move")
-                Timber.e("LamPro | onTouchEvent - is swiping: $isSwiping")
-                if (!isSwiping) return false
                 val deltaX = event.x - downX
                 Timber.e("LamPro | onTouchEvent - deltax : $deltaX")
                 getCurrentView().translationX = deltaX
@@ -305,53 +300,19 @@ class StoryView : FrameLayout {
                 Timber.e("HaiPd | onTouchEvent - deltax : $deltaX")
                 if (abs(deltaX) >= 50) {
                     if (deltaX > 0) {
-                        if (currentItemShow >= 1) {
-                            val itemPrevious = currentItemShow - 1
-                            if (itemPrevious % 2 == 0) {
-                                Timber.e("LamPro | onTouchEvent - viewitme1")
-                                if (bindItemWhenMoveChange == 0 || bindItemWhenMoveChange < 0) {
-                                    bindItem(viewItem1, itemPrevious)
-                                }
-                                viewItem1.translationX = -viewItem1.width.toFloat() - 50 + deltaX
-
-                            } else {
-                                Timber.e("LamPro | onTouchEvent - viewitme2")
-                                if (bindItemWhenMoveChange == 0 || bindItemWhenMoveChange < 0) {
-                                    bindItem(viewItem2, itemPrevious)
-                                }
-                                viewItem2.translationX = -viewItem1.width.toFloat() - 50 + deltaX
-                            }
-                            bindItemWhenMoveChange = 1
-                        }
+                        showItemLeft(deltaX)
                     } else {
-                        if (currentItemShow <= listItem.size - 2) {
-                            val itemNext = currentItemShow + 1
-                            if (itemNext % 2 == 0) {
-                                Timber.e("LamPro | onTouchEvent - viewitem1")
-                                if (bindItemWhenMoveChange == 0 || bindItemWhenMoveChange > 0) {
-                                    bindItem(viewItem1, itemNext)
-                                }
-                                viewItem1.translationX = deltaX + 50 + viewItem1.width
-
-                            } else {
-
-                                Timber.e("LamPro | onTouchEvent - viewitem2")
-                                if (bindItemWhenMoveChange == 0 || bindItemWhenMoveChange > 0) {
-                                    bindItem(viewItem2, itemNext)
-                                }
-                                viewItem2.translationX = deltaX + 50 + viewItem2.width
-                            }
-                            bindItemWhenMoveChange = -1
-                        }
+                        showItemRight(deltaX)
                     }
                 }
                 return true
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (!isSwiping) return false
+                isSwiping = false
                 resetAlphaOneTime = false
                 bindItemWhenMoveChange = 0
-                isTouching = false
 
                 velocityTracker?.addMovement(event)
                 velocityTracker?.computeCurrentVelocity(1000)  // px/s
@@ -361,8 +322,7 @@ class StoryView : FrameLayout {
                 val isFling = abs(velocityX) > flingThresholdVelocity
 
                 Timber.e("LamPro | onTouchEvent - up")
-                if (!isSwiping) return false
-                isSwiping = false
+
 
                 val deltaX = event.x - downX
                 if (isFling) {
@@ -391,6 +351,49 @@ class StoryView : FrameLayout {
         }
 
         return super.onTouchEvent(event)
+    }
+
+    private fun showItemRight(deltaX: Float) {
+        if (currentItemShow <= listItem.size - 2) {
+            val itemNext = currentItemShow + 1
+            if (itemNext % 2 == 0) {
+                Timber.e("LamPro | onTouchEvent - viewitem1")
+                if (bindItemWhenMoveChange == 0 || bindItemWhenMoveChange > 0) {
+                    bindItem(viewItem1, itemNext)
+                }
+                viewItem1.translationX = deltaX + 50 + viewItem1.width
+
+            } else {
+
+                Timber.e("LamPro | onTouchEvent - viewitem2")
+                if (bindItemWhenMoveChange == 0 || bindItemWhenMoveChange > 0) {
+                    bindItem(viewItem2, itemNext)
+                }
+                viewItem2.translationX = deltaX + 50 + viewItem2.width
+            }
+            bindItemWhenMoveChange = -1
+        }
+    }
+
+    private fun showItemLeft(deltaX: Float) {
+        if (currentItemShow >= 1) {
+            val itemPrevious = currentItemShow - 1
+            if (itemPrevious % 2 == 0) {
+                Timber.e("LamPro | onTouchEvent - viewitme1")
+                if (bindItemWhenMoveChange == 0 || bindItemWhenMoveChange < 0) {
+                    bindItem(viewItem1, itemPrevious)
+                }
+                viewItem1.translationX = -viewItem1.width.toFloat() - 50 + deltaX
+
+            } else {
+                Timber.e("LamPro | onTouchEvent - viewitme2")
+                if (bindItemWhenMoveChange == 0 || bindItemWhenMoveChange < 0) {
+                    bindItem(viewItem2, itemPrevious)
+                }
+                viewItem2.translationX = -viewItem1.width.toFloat() - 50 + deltaX
+            }
+            bindItemWhenMoveChange = 1
+        }
     }
 
     private fun stopVideo() {
