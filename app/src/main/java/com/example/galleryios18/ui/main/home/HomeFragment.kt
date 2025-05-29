@@ -270,7 +270,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             requireContext(),
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-                    accumulatedScale = 1f // reset lại khi bắt đầu zoom
+                    accumulatedScale = 1f
                     return true
                 }
 

@@ -66,5 +66,4 @@ class CustomRecycleView : RecyclerView, RecyclerView.OnItemTouchListener {
 
     override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
     }
-
 }
