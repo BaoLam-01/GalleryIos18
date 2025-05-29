@@ -2,6 +2,7 @@ package com.example.galleryios18.ui.main.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.ScaleGestureDetector
@@ -20,6 +21,7 @@ import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.MediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
+import com.example.galleryios18.ui.custom.GroupHeaderDecoration
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.Utils
 import com.example.galleryios18.utils.ViewUtils
@@ -107,6 +109,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun observerData() {
         mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
+            Timber.e("LamPro | observerData - size media: ${it.size}")
             mediaAdapter.setData(it)
             binding.rcvMedia.scrollToPosition(it.size - 1)
         }
@@ -155,39 +158,66 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initView() {
-
-        binding.rcvMedia.layoutParams.let {
-            val layoutParams = it as ConstraintLayout.LayoutParams
-            layoutParams.height =
-                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
-            binding.rcvMedia.layoutParams = layoutParams
-        }
-//        binding.rcvCollection.layoutParams.let {
-//            val layoutParams = it as ConstraintLayout.LayoutParams
-//            layoutParams.height =
-//                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight + 100
-//            binding.rcvCollection.layoutParams = layoutParams
-//        }
-
-        mediaAdapter = MediaAdapter()
-        binding.rcvMedia.apply {
-            layoutManager =
-                GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
-            adapter = mediaAdapter
-        }
-
-        collectionAdapter = CollectionAdapter()
-        binding.rcvCollection.apply {
-            layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            adapter = collectionAdapter
-        }
+        initRcvMedia()
+        initRcvCollection()
         initTabLayout()
 
         ViewUtils.adjustViewWithSystemBar(
             binding.tvTitle, binding.imgSort, requireActivity() as MainActivity
         )
 
+    }
+
+    private fun initRcvMedia() {
+        mediaAdapter = MediaAdapter()
+        mediaAdapter.setSize(MediaAdapter.SizeAllMedia.MEDIUM)
+        binding.viewBgGradient.post {
+            binding.rcvMedia.setPadding(
+                binding.rcvMedia.paddingLeft,
+                binding.tvCountItem.bottom + 20,
+                binding.rcvMedia.paddingRight,
+                binding.rcvMedia.paddingBottom
+            )
+        }
+        binding.rcvMedia.clipToPadding = false
+        binding.rcvMedia.layoutParams.let {
+            val layoutParams = it as ConstraintLayout.LayoutParams
+            layoutParams.height =
+                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
+            binding.rcvMedia.layoutParams = layoutParams
+        }
+        binding.rcvMedia.layoutManager =
+            GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
+//        binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
+//            Timber.e("LamPro | initRcvMedia - position : $position")
+//            if (currentSpanCount == 14) {
+//                mediaAdapter.getItemTime(position)
+//            } else {
+//                ""
+//            }
+//        })
+        binding.rcvMedia.apply {
+            layoutManager =
+                GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
+            adapter = mediaAdapter
+        }
+    }
+
+    private fun initRcvCollection() {
+        collectionAdapter = CollectionAdapter()
+
+        //        binding.rcvCollection.layoutParams.let {
+        //            val layoutParams = it as ConstraintLayout.LayoutParams
+        //            layoutParams.height =
+        //                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight + 100
+        //            binding.rcvCollection.layoutParams = layoutParams
+        //        }
+
+        binding.rcvCollection.apply {
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            adapter = collectionAdapter
+        }
     }
 
     private fun initTabLayout() {
@@ -209,21 +239,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun changeTabLayout(position: Int) {
         when (position) {
             TabImage.TAB_MONTH -> {
+                binding.rcvMedia.visibility = View.GONE
 //                binding.rcvMedia.layoutManager =
 //                    GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
 //                binding.rcvMedia.scheduleLayoutAnimation()
-
             }
 
             TabImage.TAB_ALL_PHOTO -> {
-                binding.rcvMedia.layoutManager =
-                    GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
-                mediaAdapter.setSize(MediaAdapter.SizeAllMedia.MEDIUM)
-//                binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
-//                    mediaAdapter.getItemTime(position)
-//                })
-                binding.rcvMedia.scheduleLayoutAnimation()
-
+                binding.rcvMedia.visibility = View.VISIBLE
             }
         }
     }
@@ -267,8 +290,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         scaleGestureDetector = ScaleGestureDetector(
-            requireContext(),
-            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
                     accumulatedScale = 1f
                     return true
@@ -303,27 +325,33 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         val layoutManager = binding.rcvMedia.layoutManager as GridLayoutManager
         when (mediaAdapter.getSize()) {
             MediaAdapter.SizeAllMedia.SMALLEST -> {
-                currentSpanCount = 16
+                currentSpanCount = 14
+                binding.rcvMedia.setItemViewCacheSize(100)
             }
 
             MediaAdapter.SizeAllMedia.SMALL -> {
                 currentSpanCount = 5
+                binding.rcvMedia.setItemViewCacheSize(60)
+
             }
 
             MediaAdapter.SizeAllMedia.MEDIUM -> {
                 currentSpanCount = 3
+                binding.rcvMedia.setItemViewCacheSize(20)
+
             }
 
             MediaAdapter.SizeAllMedia.LARGE -> {
                 currentSpanCount = 1
+                binding.rcvMedia.setItemViewCacheSize(5)
+
             }
 
             else -> currentSpanCount = 3
         }
         layoutManager.spanCount = currentSpanCount
         binding.rcvMedia.adapter?.notifyItemRangeChanged(
-            0,
-            binding.rcvMedia.adapter?.itemCount ?: 0
+            0, binding.rcvMedia.adapter?.itemCount ?: 0
         )
     }
 

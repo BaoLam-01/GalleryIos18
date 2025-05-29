@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
@@ -82,13 +83,14 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     inner class MediaViewHolder(private val binding: ItemMediaBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindData(media: Media, position: Int) {
+            Timber.e("LamPro | bindData - ")
 
             val widthImage: Int
             val heightImage: Int
 
             when (size) {
                 SizeAllMedia.SMALLEST -> {
-                    widthImage = Utils.getScreenWidth(binding.imgThumbMedia.context) / 16
+                    widthImage = Utils.getScreenWidth(binding.imgThumbMedia.context) / 14
                     heightImage = widthImage
                     binding.root.setPadding(1)
                     binding.tvDuration.visibility = View.GONE
@@ -156,6 +158,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
                 .signature(ObjectKey(media.id)).placeholder(R.color.transparent)
                 .error(R.color.transparent)
                 .centerCrop()
+                .thumbnail(0.1f)
                 .override(widthImage / 2, heightImage / 2)
                 .into(binding.imgThumbMedia)
             val duration = media.duration
