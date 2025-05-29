@@ -2,24 +2,17 @@ package com.example.galleryios18.ui.main.home
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActionBar
-import android.graphics.LinearGradient
-import android.graphics.RenderEffect
-import android.graphics.Shader
 import android.os.Build
 import android.os.Bundle
-import android.view.DragEvent
-import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.galleryios18.App
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
@@ -27,7 +20,6 @@ import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.MediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
-import com.example.galleryios18.ui.custom.GroupHeaderDecoration
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.Utils
 import com.example.galleryios18.utils.ViewUtils
@@ -40,9 +32,11 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private var requestPermission = true
     private lateinit var mediaAdapter: MediaAdapter
     private lateinit var collectionAdapter: CollectionAdapter
-    private var isRcvMediaOverScroll = false
     private var isRcvMediaTop = true
-    private var isRcvCollectionTop = true
+
+    private var scaleGestureDetector: ScaleGestureDetector? = null
+    private var currentSpanCount = 3 // Số cột hiện tại
+    private var accumulatedScale = 1f
 
     private val multiplePermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -215,16 +209,16 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun changeTabLayout(position: Int) {
         when (position) {
             TabImage.TAB_MONTH -> {
-                binding.rcvMedia.layoutManager =
-                    GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
-                binding.rcvMedia.scheduleLayoutAnimation()
+//                binding.rcvMedia.layoutManager =
+//                    GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
+//                binding.rcvMedia.scheduleLayoutAnimation()
 
             }
 
             TabImage.TAB_ALL_PHOTO -> {
                 binding.rcvMedia.layoutManager =
                     GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
-                mediaAdapter.setStyle(MediaAdapter.StyleRecycler.MEDIUM)
+                mediaAdapter.setSize(MediaAdapter.SizeAllMedia.MEDIUM)
 //                binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
 //                    mediaAdapter.getItemTime(position)
 //                })
@@ -271,8 +265,67 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
             }
         }
+
+        scaleGestureDetector = ScaleGestureDetector(
+            requireContext(),
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+                    accumulatedScale = 1f // reset lại khi bắt đầu zoom
+                    return true
+                }
+
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    accumulatedScale *= detector.scaleFactor
+                    return true
+                }
+
+                override fun onScaleEnd(detector: ScaleGestureDetector) {
+                    Timber.e("LamPro | onScaleEnd - accumulated scale: $accumulatedScale")
+                    Timber.e("LamPro | onScaleEnd - size: ${mediaAdapter.getSize()}")
+
+                    if (accumulatedScale > 1.03f && mediaAdapter.getSize() < 3) {
+                        mediaAdapter.setSize(mediaAdapter.getSize() + 1)
+                        updateGridSpan()
+                    } else if (accumulatedScale < 0.97f && mediaAdapter.getSize() > 0) {
+                        mediaAdapter.setSize(mediaAdapter.getSize() - 1)
+                        updateGridSpan()
+                    }
+                }
+            })
+
+        binding.rcvMedia.setOnTouchListener { _, event ->
+            scaleGestureDetector?.onTouchEvent(event)
+            false
+        }
     }
 
+    private fun updateGridSpan() {
+        val layoutManager = binding.rcvMedia.layoutManager as GridLayoutManager
+        when (mediaAdapter.getSize()) {
+            MediaAdapter.SizeAllMedia.SMALLEST -> {
+                currentSpanCount = 16
+            }
+
+            MediaAdapter.SizeAllMedia.SMALL -> {
+                currentSpanCount = 5
+            }
+
+            MediaAdapter.SizeAllMedia.MEDIUM -> {
+                currentSpanCount = 3
+            }
+
+            MediaAdapter.SizeAllMedia.LARGE -> {
+                currentSpanCount = 1
+            }
+
+            else -> currentSpanCount = 3
+        }
+        layoutManager.spanCount = currentSpanCount
+        binding.rcvMedia.adapter?.notifyItemRangeChanged(
+            0,
+            binding.rcvMedia.adapter?.itemCount ?: 0
+        )
+    }
 
     private fun getAllMedia() {
         Timber.e("LamPro | getAllMedia - ")

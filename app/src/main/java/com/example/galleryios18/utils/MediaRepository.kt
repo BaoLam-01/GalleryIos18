@@ -1,6 +1,7 @@
 package com.example.galleryios18.utils
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.core.database.getStringOrNull
@@ -115,6 +116,7 @@ class MediaRepository @Inject constructor() {
                     continue
                 }
 
+                val (realWidth, realHeight) = getRealVideoSize(file.path)
                 val media = Media(
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)),
                     cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)),
@@ -124,8 +126,8 @@ class MediaRepository @Inject constructor() {
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)),
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)),
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)),
-                    cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)),
-                    cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)),
+                    realWidth,
+                    realHeight,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
                     false,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
@@ -143,6 +145,26 @@ class MediaRepository @Inject constructor() {
         return listSort
     }
 
+    fun getRealVideoSize(path: String): Pair<Int, Int> {
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(path)
+            val width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull() ?: 0
+            val height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull() ?: 0
+            val rotation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)?.toIntOrNull() ?: 0
+
+            if (rotation == 90 || rotation == 270) {
+                Pair(height, width)
+            } else {
+                Pair(width, height)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Pair(0, 0)
+        } finally {
+            retriever.release()
+        }
+    }
 
     fun sortVideosByCreatedDateAscending(list: ArrayList<Media>) {
         list.sortBy { it.dateAdded }
