@@ -36,7 +36,7 @@ class CustomRecycleView : RecyclerView, RecyclerView.OnItemTouchListener {
         addOnItemTouchListener(this)
     }
 
-    var isScrollEnabled = false
+    var isScrollEnabled = true
 
     override fun onInterceptTouchEvent(e: MotionEvent?): Boolean {
         return isScrollEnabled && super.onInterceptTouchEvent(e)
