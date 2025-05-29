@@ -186,8 +186,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
             binding.rcvMedia.layoutParams = layoutParams
         }
-        binding.rcvMedia.layoutManager =
-            GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
+        val gridLayout = GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
+        gridLayout.isItemPrefetchEnabled = true
+        binding.rcvMedia.layoutManager = gridLayout
+
 //        binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
 //            Timber.e("LamPro | initRcvMedia - position : $position")
 //            if (currentSpanCount == 14) {
@@ -326,24 +328,20 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         when (mediaAdapter.getSize()) {
             MediaAdapter.SizeAllMedia.SMALLEST -> {
                 currentSpanCount = 14
-                binding.rcvMedia.setItemViewCacheSize(100)
             }
 
             MediaAdapter.SizeAllMedia.SMALL -> {
                 currentSpanCount = 5
-                binding.rcvMedia.setItemViewCacheSize(60)
 
             }
 
             MediaAdapter.SizeAllMedia.MEDIUM -> {
                 currentSpanCount = 3
-                binding.rcvMedia.setItemViewCacheSize(20)
 
             }
 
             MediaAdapter.SizeAllMedia.LARGE -> {
                 currentSpanCount = 1
-                binding.rcvMedia.setItemViewCacheSize(5)
 
             }
 
