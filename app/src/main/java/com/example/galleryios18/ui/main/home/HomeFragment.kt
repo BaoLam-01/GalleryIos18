@@ -27,6 +27,7 @@ import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.MediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
+import com.example.galleryios18.ui.custom.GroupHeaderDecoration
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.Utils
 import com.example.galleryios18.utils.ViewUtils
@@ -193,7 +194,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             binding.tvTitle, binding.imgSort, requireActivity() as MainActivity
         )
 
-
     }
 
     private fun initTabLayout() {
@@ -205,18 +205,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         )
         binding.tlBottom.selectTab(binding.tlBottom.getTabAt(TabImage.TAB_ALL_PHOTO))
         changeTabLayout(TabImage.TAB_ALL_PHOTO)
-        binding.tlBottom.addOnTabSelectedListener(object : OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val tabCurrent = tab.position
-                changeTabLayout(tabCurrent)
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-            }
-        })
 
         for (i in 0 until binding.tlBottom.getTabCount()) {
             val tabView = (binding.tlBottom.getChildAt(0) as ViewGroup).getChildAt(i)
@@ -229,19 +217,19 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             TabImage.TAB_MONTH -> {
                 binding.rcvMedia.layoutManager =
                     GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
-                mediaAdapter.setStyle(MediaAdapter.StyleRecycler.MONTH)
                 binding.rcvMedia.scheduleLayoutAnimation()
 
-//                    binding.rvPhotos.scrollToPosition(it.size - 1)
             }
 
             TabImage.TAB_ALL_PHOTO -> {
                 binding.rcvMedia.layoutManager =
                     GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
+                mediaAdapter.setStyle(MediaAdapter.StyleRecycler.MEDIUM)
+//                binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
+//                    mediaAdapter.getItemTime(position)
+//                })
+                binding.rcvMedia.scheduleLayoutAnimation()
 
-                mediaAdapter.setStyle(MediaAdapter.StyleRecycler.ALL)
-
-//                    binding.rvPhotos.scrollToPosition(it.size - 1)
             }
         }
     }
@@ -257,6 +245,19 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         })
 
+        binding.tlBottom.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val tabCurrent = tab.position
+                changeTabLayout(tabCurrent)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+        })
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
                 val viewTop = binding.rcvMedia.top
@@ -265,8 +266,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 } else {
                     isRcvMediaTop = false
                 }
-                // Nếu nestedScrollView cuộn đến cuối, cho phép rcvMedia cuộn
                 binding.rcvMedia.isScrollEnabled = isRcvMediaTop == true
+                Timber.e("LamPro | listener - iisRcvMediaTop : $isRcvMediaTop")
 
             }
         }
