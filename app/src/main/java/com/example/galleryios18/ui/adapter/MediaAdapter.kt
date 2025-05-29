@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder
 import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
@@ -20,9 +21,12 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+
 class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     private var size = SizeAllMedia.MEDIUM
     private var listenter: IMediaClick? = null
+    private var widthImage: Int = 0
+    private var heightImage: Int = 0
 
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
         override fun areItemsTheSame(
@@ -84,9 +88,6 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
         RecyclerView.ViewHolder(binding.root) {
         fun bindData(media: Media, position: Int) {
             Timber.e("LamPro | bindData - ")
-
-            val widthImage: Int
-            val heightImage: Int
 
             when (size) {
                 SizeAllMedia.SMALLEST -> {
@@ -152,15 +153,17 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             Timber.e("LamPro | bindData - width image: $widthImage")
             Timber.e("LamPro | bindData - height image: $heightImage")
 
-//            binding.imgThumbMedia.post {
+            try {
 
-            Glide.with(binding.imgThumbMedia.context).load(media.path)
-                .signature(ObjectKey(media.id)).placeholder(R.color.transparent)
-                .error(R.color.transparent)
-                .centerCrop()
-                .thumbnail(0.1f)
-                .override(widthImage / 2, heightImage / 2)
-                .into(binding.imgThumbMedia)
+                Glide.with(binding.imgThumbMedia.context).load(media.path)
+                    .signature(ObjectKey(media.id)).placeholder(R.color.transparent)
+                    .error(R.color.transparent)
+                    .thumbnail(0.1f)
+                    .override(widthImage / 2, heightImage / 2)
+                    .into(binding.imgThumbMedia)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             val duration = media.duration
             val minute: Long = duration / 1000 / 60
             val second: Long = duration / 1000 % 60
@@ -169,7 +172,6 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             binding.root.setOnClickListener {
                 listenter?.onMediaClick(media, position)
             }
-//            }
         }
 
     }
@@ -177,7 +179,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
 
     fun getItemTime(position: Int): String {
         val formatter = SimpleDateFormat("MMM yyyy", Locale.getDefault())
-        val monthYear = formatter.format(Date(listMedia.currentList[position].dateAdded * 1000))
+        val monthYear = formatter.format(Date(listMedia.currentList[position].dateTaken))
         return monthYear
     }
 

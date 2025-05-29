@@ -190,14 +190,13 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         gridLayout.isItemPrefetchEnabled = true
         binding.rcvMedia.layoutManager = gridLayout
 
-//        binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
-//            Timber.e("LamPro | initRcvMedia - position : $position")
-//            if (currentSpanCount == 14) {
-//                mediaAdapter.getItemTime(position)
-//            } else {
-//                ""
-//            }
-//        })
+        binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
+            if (currentSpanCount == 3) {
+                mediaAdapter.getItemTime(position)
+            } else {
+                ""
+            }
+        })
         binding.rcvMedia.apply {
             layoutManager =
                 GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)

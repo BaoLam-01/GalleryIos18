@@ -81,9 +81,9 @@ class MediaRepository @Inject constructor() {
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)),
                     cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
                         ?: "",
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)),
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)) * 1000,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)),
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)),
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)) * 1000,
                     cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)),
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
@@ -94,7 +94,12 @@ class MediaRepository @Inject constructor() {
                     media.bucketName = "No Name"
                 }
 
-//                    Timber.e("LamPro | getListMedia - media image: $media")
+//                Timber.e("LamPro | getListMedia - media image: $media")
+                if (media.dateTaken == 0L) {
+                    media.dateTaken = media.dateAdded
+                }
+
+                Timber.e("LamPro - uri: ${media.path}")
                 listImage.add(media)
             }
             cursor.close()
@@ -125,9 +130,9 @@ class MediaRepository @Inject constructor() {
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)),
                     cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
                         ?: "",
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)),
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)) * 1000,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)),
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)),
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)) * 1000,
                     realWidth,
                     realHeight,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
@@ -138,12 +143,17 @@ class MediaRepository @Inject constructor() {
                     media.bucketName = "No Name"
                 }
 //                    Timber.e("LamPro | getListMedia - media video: $media")
+                if (media.dateTaken == 0L) {
+                    media.dateTaken = media.dateAdded
+                }
+                Timber.e("LamPro - uri: ${media.path}")
+               
                 listVideo.add(media)
             }
             cursor.close()
             listMedia.addAll(listVideo)
         }
-        val listSort = listMedia.sortedBy { it.dateAdded }
+        val listSort = listMedia.sortedBy { it.dateTaken }
         return listSort
     }
 

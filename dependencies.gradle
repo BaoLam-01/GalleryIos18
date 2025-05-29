@@ -28,7 +28,7 @@ ext {
             realmVersion              : '10.1.0',
 
             /*other*/
-            glideVersion              : '4.12.0',
+            glideVersion              : '4.16.0',
             transformationGlideVersion: '4.3.0',
             coroutineVersion          : '1.4.2',
             rxJava                    : '3.0.0',
