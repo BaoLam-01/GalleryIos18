@@ -167,12 +167,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
             binding.rcvMedia.layoutParams = layoutParams
         }
-        binding.rcvCollection.layoutParams.let {
-            val layoutParams = it as ConstraintLayout.LayoutParams
-            layoutParams.height =
-                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
-            binding.rcvCollection.layoutParams = layoutParams
-        }
+//        binding.rcvCollection.layoutParams.let {
+//            val layoutParams = it as ConstraintLayout.LayoutParams
+//            layoutParams.height =
+//                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight + 100
+//            binding.rcvCollection.layoutParams = layoutParams
+//        }
 
         mediaAdapter = MediaAdapter()
         binding.rcvMedia.apply {
@@ -268,47 +268,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 // Nếu nestedScrollView cuộn đến cuối, cho phép rcvMedia cuộn
                 binding.rcvMedia.isScrollEnabled = isRcvMediaTop == true
 
-//                val rvCollectionTop = binding.rcvCollection.top
-//                if (rvCollectionTop - scrollY <= 0) {
-//                    isRcvCollectionTop = true
-//                } else {
-//                    isRcvCollectionTop = false
-//                }
-//                Timber.e("LamPro - isRcvCollectionTop: $isRcvCollectionTop")
-//                binding.rcvCollection.isScrollEnabled = isRcvCollectionTop == true
-
-
-                val rcvCollectionTop = binding.rcvCollection.top
-
-                // Nếu rcvCollection đã chạm top màn hình
-                val isRcvCollectionVisibleAtTop = rcvCollectionTop - scrollY <= 0
-                if (isRcvCollectionVisibleAtTop) {
-                    // Bật cuộn cho rcvCollection
-                    binding.rcvCollection.isScrollEnabled = true
-
-                    // Dừng fling của NestedScrollView nếu đang cuộn
-                    stopNestedScrollImmediately(binding.nestedScrollView)
-                } else {
-                    // Ngược lại: cho phép nestedScrollView cuộn
-                    binding.rcvCollection.isScrollEnabled = false
-                }
-                // Optional: tắt NestedScrollView khi rcvCollection ở top
-                binding.nestedScrollView.setOnTouchListener { _, _ ->
-                    // Khi rcvCollection đang cuộn, ta "ngăn" NestedScrollView cuộn bằng cách consume sự kiện
-                    isRcvCollectionVisibleAtTop
-                }
-
-
-
-                Timber.d("rcvCollectionTop: $rcvCollectionTop, scrollY: $scrollY -> ${isRcvCollectionVisibleAtTop}")
-
             }
         }
-    }
-
-    fun stopNestedScrollImmediately(scrollView: NestedScrollView) {
-        scrollView.fling(0) // dừng vận tốc
-        scrollView.stopNestedScroll() // dừng nested scroll
     }
 
 
