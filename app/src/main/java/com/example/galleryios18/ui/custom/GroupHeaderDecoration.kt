@@ -5,10 +5,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.recyclerview.widget.RecyclerView
+import timber.log.Timber
 import kotlin.math.max
 
 class GroupHeaderDecoration(
-    private val getGroup: (position: Int) -> String
+    private val getGroup: (position: Int) -> String,
 ) : RecyclerView.ItemDecoration() {
 
     private val listGroup = mutableListOf<String>()
@@ -36,6 +37,7 @@ class GroupHeaderDecoration(
             var lastGroup = ""
 
             if (group !in listGroup) {
+                Timber.e("LamPro - !in: $group")
                 val top = view.top.toFloat().coerceAtLeast(0f)
 
 

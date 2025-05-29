@@ -98,8 +98,6 @@ class MediaRepository @Inject constructor() {
                 if (media.dateTaken == 0L) {
                     media.dateTaken = media.dateAdded
                 }
-
-                Timber.e("LamPro - uri: ${media.path}")
                 listImage.add(media)
             }
             cursor.close()
@@ -146,8 +144,6 @@ class MediaRepository @Inject constructor() {
                 if (media.dateTaken == 0L) {
                     media.dateTaken = media.dateAdded
                 }
-                Timber.e("LamPro - uri: ${media.path}")
-               
                 listVideo.add(media)
             }
             cursor.close()
