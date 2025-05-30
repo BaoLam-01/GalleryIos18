@@ -31,7 +31,7 @@ class GroupHeaderDecoration(
         if (childCount == 0) return
 
         var lastGroup = ""
-        var lastHeaderTop = -1f // lưu vị trí top header cuối cùng đã vẽ
+        var lastHeaderTop = -1f
 
         for (i in 0 until childCount) {
             val view = parent.getChildAt(i)
@@ -45,9 +45,7 @@ class GroupHeaderDecoration(
             if (group != lastGroup) {
                 val top = view.top.toFloat().coerceAtLeast(0f)
 
-                // Nếu header ở cùng vị trí top hoặc rất gần với header trước đó => bỏ qua (để tránh chồng)
                 if (lastHeaderTop != -1f && kotlin.math.abs(top - lastHeaderTop) < 10f) {
-                    // Đã vẽ header ở vị trí này rồi, bỏ qua
                     continue
                 }
 
@@ -72,7 +70,7 @@ class GroupHeaderDecoration(
                 c.drawText(text, bgLeft + horizontalPadding, textBaseline, textPaint)
 
                 lastGroup = group
-                lastHeaderTop = top // cập nhật vị trí header mới vừa vẽ
+                lastHeaderTop = top
             }
         }
     }

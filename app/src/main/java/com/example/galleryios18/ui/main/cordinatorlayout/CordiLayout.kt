@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.galleryios18.R
 import com.example.galleryios18.databinding.CordilatorLayoutBinding
-import com.example.galleryios18.ui.adapter.MediaAdapter
+import com.example.galleryios18.ui.adapter.AllMediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.utils.Utils
 
 class CordiLayout : BaseBindingFragment<CordilatorLayoutBinding, CordiViewModel>() {
-    private lateinit var mediaAdapter: MediaAdapter
+    private lateinit var allMediaAdapter: AllMediaAdapter
 
     override fun getViewModel(): Class<CordiViewModel> {
         return CordiViewModel::class.java
@@ -32,11 +32,11 @@ class CordiLayout : BaseBindingFragment<CordilatorLayoutBinding, CordiViewModel>
             binding.recyclerView.layoutParams = layoutParams
         }
 
-        mediaAdapter = MediaAdapter()
+        allMediaAdapter = AllMediaAdapter()
         binding.recyclerView.apply {
             layoutManager =
                 GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
-            adapter = mediaAdapter
+            adapter = allMediaAdapter
         }
         mainViewModel.getAllMedia()
 
@@ -73,7 +73,7 @@ class CordiLayout : BaseBindingFragment<CordilatorLayoutBinding, CordiViewModel>
 
     override fun observerData() {
         mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
-            mediaAdapter.setData(it)
+            allMediaAdapter.setData(it)
             binding.recyclerView.scrollToPosition(it.size - 1)
         }
     }

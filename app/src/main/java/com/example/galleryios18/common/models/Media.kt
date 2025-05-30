@@ -1,7 +1,5 @@
 package com.example.galleryios18.common.models
 
-import com.example.galleryios18.ui.adapter.MediaAdapter
-
 data class Media(
     var id: Long,
     var name: String = "",

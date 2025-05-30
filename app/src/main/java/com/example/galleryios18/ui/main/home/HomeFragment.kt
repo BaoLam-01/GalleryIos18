@@ -2,9 +2,9 @@ package com.example.galleryios18.ui.main.home
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.View.OnLongClickListener
@@ -20,7 +20,7 @@ import com.example.galleryios18.common.Constant
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.CollectionAdapter
-import com.example.galleryios18.ui.adapter.MediaAdapter
+import com.example.galleryios18.ui.adapter.AllMediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.custom.GroupHeaderDecoration
 import com.example.galleryios18.ui.main.MainActivity
@@ -33,9 +33,9 @@ import timber.log.Timber
 
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private var requestPermission = true
-    private lateinit var mediaAdapter: MediaAdapter
+    private lateinit var allMediaAdapter: AllMediaAdapter
     private lateinit var collectionAdapter: CollectionAdapter
-    private var isRcvMediaTop = true
+    private var isRcvAllMediaTop = true
 
     private var scaleGestureDetector: ScaleGestureDetector? = null
     private var currentSpanCount = 3 // Số cột hiện tại
@@ -111,8 +111,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun observerData() {
         mainViewModel.allMediaLiveData.observe(viewLifecycleOwner) {
             Timber.e("LamPro | observerData - size media: ${it.size}")
-            mediaAdapter.setData(it)
-            binding.rcvMedia.scrollToPosition(it.size - 1)
+            allMediaAdapter.setData(it)
+            binding.rcvAllMedia.scrollToPosition(it.size - 1)
         }
 
         mainViewModel.allCollectionLiveData.observe(viewLifecycleOwner) {
@@ -159,7 +159,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initView() {
-        initRcvMedia()
+        initRcvAllMedia()
         initRcvCollection()
         initTabLayout()
 
@@ -169,40 +169,40 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     }
 
-    private fun initRcvMedia() {
-        mediaAdapter = MediaAdapter()
-        mediaAdapter.setSize(MediaAdapter.SizeAllMedia.MEDIUM, requireContext())
+    private fun initRcvAllMedia() {
+        allMediaAdapter = AllMediaAdapter()
+        allMediaAdapter.setSize(AllMediaAdapter.SizeAllMedia.MEDIUM, requireContext())
         binding.viewBgGradient.post {
-            binding.rcvMedia.setPadding(
-                binding.rcvMedia.paddingLeft,
+            binding.rcvAllMedia.setPadding(
+                binding.rcvAllMedia.paddingLeft,
                 binding.tvCountItem.bottom + 20,
-                binding.rcvMedia.paddingRight,
-                binding.rcvMedia.paddingBottom
+                binding.rcvAllMedia.paddingRight,
+                binding.rcvAllMedia.paddingBottom
             )
         }
-        binding.rcvMedia.clipToPadding = false
-        binding.rcvMedia.layoutParams.let {
+        binding.rcvAllMedia.layoutParams.let {
             val layoutParams = it as ConstraintLayout.LayoutParams
             layoutParams.height =
                 Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
-            binding.rcvMedia.layoutParams = layoutParams
+            binding.rcvAllMedia.layoutParams = layoutParams
         }
-        val gridLayout = GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
-        gridLayout.isItemPrefetchEnabled = true
-        binding.rcvMedia.layoutManager = gridLayout
-
-        binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
-            if (currentSpanCount == Constant.SPAN_COUNT_SMALLEST) {
-                mediaAdapter.getItemTime(position)
-            } else {
-                ""
-            }
-        })
-        binding.rcvMedia.apply {
-            layoutManager =
+        binding.rcvAllMedia.apply {
+            clipToPadding = false
+            val gridLayout =
                 GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
-            adapter = mediaAdapter
+            gridLayout.isItemPrefetchEnabled = true
+            layoutManager = gridLayout
+
+            addItemDecoration(GroupHeaderDecoration { position ->
+                if (currentSpanCount == Constant.SPAN_COUNT_SMALLEST) {
+                    allMediaAdapter.getItemTime(position)
+                } else {
+                    ""
+                }
+            })
+            adapter = allMediaAdapter
         }
+        TransitionManager.beginDelayedTransition(binding.rcvAllMedia)
     }
 
     private fun initRcvCollection() {
@@ -241,21 +241,21 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun changeTabLayout(position: Int) {
         when (position) {
             TabImage.TAB_MONTH -> {
-                binding.rcvMedia.visibility = View.GONE
-//                binding.rcvMedia.layoutManager =
+                binding.rcvAllMedia.visibility = View.GONE
+//                binding.rcvAllMedia.layoutManager =
 //                    GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
-//                binding.rcvMedia.scheduleLayoutAnimation()
+//                binding.rcvAllMedia.scheduleLayoutAnimation()
             }
 
             TabImage.TAB_ALL_PHOTO -> {
-                binding.rcvMedia.visibility = View.VISIBLE
+                binding.rcvAllMedia.visibility = View.VISIBLE
             }
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun listener() {
-        mediaAdapter.setListener(object : MediaAdapter.IMediaClick {
+        allMediaAdapter.setListener(object : AllMediaAdapter.IMediaClick {
             override fun onMediaClick(media: Media, position: Int) {
                 if (!checkClick()) return
                 App.instance.currentMediaShow = media
@@ -279,14 +279,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-                val viewTop = binding.rcvMedia.top
+                val viewTop = binding.rcvAllMedia.top
                 if (viewTop - scrollY == 0) {
-                    isRcvMediaTop = true
+                    isRcvAllMediaTop = true
                 } else {
-                    isRcvMediaTop = false
+                    isRcvAllMediaTop = false
                 }
-                binding.rcvMedia.isScrollEnabled = isRcvMediaTop == true
-                Timber.e("LamPro | listener - iisRcvMediaTop : $isRcvMediaTop")
+                binding.rcvAllMedia.isScrollEnabled = isRcvAllMediaTop == true
+                Timber.e("LamPro | listener - iisrcvAllMediaTop : $isRcvAllMediaTop")
 
             }
         }
@@ -305,48 +305,48 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
                 override fun onScaleEnd(detector: ScaleGestureDetector) {
                     Timber.e("LamPro | onScaleEnd - accumulated scale: $accumulatedScale")
-                    Timber.e("LamPro | onScaleEnd - size: ${mediaAdapter.getSize()}")
+                    Timber.e("LamPro | onScaleEnd - size: ${allMediaAdapter.getSize()}")
 
-                    if (accumulatedScale > 1.03f && mediaAdapter.getSize() < 3) {
-                        mediaAdapter.setSize(mediaAdapter.getSize() + 1, requireContext())
+                    if (accumulatedScale > 1.03f && allMediaAdapter.getSize() < 3) {
+                        allMediaAdapter.setSize(allMediaAdapter.getSize() + 1, requireContext())
                         updateGridSpan()
-                    } else if (accumulatedScale < 0.97f && mediaAdapter.getSize() > 0) {
-                        mediaAdapter.setSize(mediaAdapter.getSize() - 1, requireContext())
+                    } else if (accumulatedScale < 0.97f && allMediaAdapter.getSize() > 0) {
+                        allMediaAdapter.setSize(allMediaAdapter.getSize() - 1, requireContext())
                         updateGridSpan()
                     }
                 }
             })
 
-        binding.rcvMedia.setOnTouchListener { _, event ->
+        binding.rcvAllMedia.setOnTouchListener { _, event ->
             scaleGestureDetector?.onTouchEvent(event)
             false
         }
     }
 
     private fun updateGridSpan() {
-        val layoutManager = binding.rcvMedia.layoutManager as GridLayoutManager
-        when (mediaAdapter.getSize()) {
-            MediaAdapter.SizeAllMedia.SMALLEST -> {
+        val layoutManager = binding.rcvAllMedia.layoutManager as GridLayoutManager
+        when (allMediaAdapter.getSize()) {
+            AllMediaAdapter.SizeAllMedia.SMALLEST -> {
                 currentSpanCount = Constant.SPAN_COUNT_SMALLEST
             }
 
-            MediaAdapter.SizeAllMedia.SMALL -> {
+            AllMediaAdapter.SizeAllMedia.SMALL -> {
                 currentSpanCount = Constant.SPAN_COUNT_SMALL
             }
 
-            MediaAdapter.SizeAllMedia.MEDIUM -> {
+            AllMediaAdapter.SizeAllMedia.MEDIUM -> {
                 currentSpanCount = Constant.SPAN_COUNT_MEDIUM
             }
 
-            MediaAdapter.SizeAllMedia.LARGE -> {
+            AllMediaAdapter.SizeAllMedia.LARGE -> {
                 currentSpanCount = Constant.SPAN_COUNT_LARGE
             }
 
             else -> currentSpanCount = 3
         }
         layoutManager.spanCount = currentSpanCount
-        binding.rcvMedia.adapter?.notifyItemRangeChanged(
-            0, binding.rcvMedia.adapter?.itemCount ?: 0
+        binding.rcvAllMedia.adapter?.notifyItemRangeChanged(
+            0, binding.rcvAllMedia.adapter?.itemCount ?: 0
         )
     }
 

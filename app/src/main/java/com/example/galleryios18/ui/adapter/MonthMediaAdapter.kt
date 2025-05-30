@@ -11,11 +11,9 @@ import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.ItemMediaMonthBinding
-import com.example.galleryios18.ui.adapter.MediaAdapter.IMediaClick
 import com.example.galleryios18.utils.Utils
 
 class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewHolder>() {
-    private var listenter: IMediaClick? = null
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
         override fun areItemsTheSame(
             oldItem: Media,
@@ -39,10 +37,6 @@ class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewH
         this.mDiffer.submitList(listMedia)
     }
 
-
-    fun setListener(iMediaClick: IMediaClick) {
-        this.listenter = iMediaClick
-    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -75,7 +69,6 @@ class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewH
                 .override(Utils.getScreenWidth(binding.imgThumbMedia.context))
                 .into(binding.imgThumbMedia)
             binding.root.setOnClickListener {
-                listenter?.onMediaClick(media, position)
             }
         }
     }
