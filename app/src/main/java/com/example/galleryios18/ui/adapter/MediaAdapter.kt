@@ -2,7 +2,9 @@ package com.example.galleryios18.ui.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +14,15 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
 import com.example.galleryios18.common.Constant
@@ -119,6 +127,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
 
     inner class MediaViewHolder(private val binding: ItemMediaBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("CheckResult")
         fun bindData(media: Media, position: Int) {
             Timber.e("LamPro | bindData - ")
 
@@ -178,21 +187,44 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             Timber.e("LamPro | bindData - height image: $heightImage")
 
 
-            try {
-                Glide.with(binding.imgThumbMedia.context).load(media.path)
-                    .signature(ObjectKey(media.id))
-                    .error(R.color.gray)
-                    .apply(
-                        RequestOptions()
-                            .format(DecodeFormat.PREFER_RGB_565)
-                            .override(widthImage, heightImage)
-                    )
-                    .thumbnail(0.1f)
-                    .into(binding.imgThumbMedia)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            binding.imgThumbMedia.post {
 
+                try {
+                    Glide.with(binding.imgThumbMedia.context)
+                        .asBitmap()
+                        .load(media.path)
+                        .signature(ObjectKey(media.id))
+                        .error(R.color.gray)
+                        .apply(
+                            RequestOptions()
+                                .format(DecodeFormat.PREFER_RGB_565)
+                                .override(widthImage, heightImage)
+                        )
+                        .thumbnail(0.1f)
+                        .into(object : CustomTarget<Bitmap>() {
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                // Khi target bị clear (vd: view bị destroy)
+                            }
+
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: Transition<in Bitmap>?
+                            ) {
+                                // Load thành công, set bitmap vào imageView
+                                Timber.e("LamPro | onResourceReady - w: ${resource.width}, h: ${resource.height}")
+                                binding.imgThumbMedia.setImageBitmap(resource)
+                            }
+
+                            override fun onLoadFailed(errorDrawable: Drawable?) {
+                                super.onLoadFailed(errorDrawable)
+                                // Load thất bại
+                            }
+                        })
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            }
             val duration = media.duration
             val minute: Long = duration / 1000 / 60
             val second: Long = duration / 1000 % 60
