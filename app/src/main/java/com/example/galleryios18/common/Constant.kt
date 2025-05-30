@@ -34,4 +34,8 @@ object Constant {
     const val PATH_MEDIA_FROM_GALLERY = "PATH_IMAGE_FROM_GALLERY"
     const val CURRENT_POS_TEMPLATE = "CURRENT_POS_TEMPLATE"
     const val ITEM_STRING = "ITEM_STRING"
+    const val SPAN_COUNT_SMALLEST = 10
+    const val SPAN_SMALL = 5
+    const val SPAN_MEDIUM = 3
+    const val SPAN_LARGE = 1
 }

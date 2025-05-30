@@ -1,6 +1,8 @@
 package com.example.galleryios18.ui.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +12,12 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
+import com.example.galleryios18.common.Constant
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.ItemMediaBinding
 import com.example.galleryios18.utils.Utils
@@ -52,8 +57,36 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
         this.listMedia.submitList(listMedia)
     }
 
-    fun setSize(size: Int) {
+    fun setSize(size: Int, context: Context) {
         this.size = size
+
+        when (size) {
+            SizeAllMedia.SMALLEST -> {
+                widthImage = Utils.getScreenWidth(context) / Constant.SPAN_COUNT_SMALLEST
+                heightImage = widthImage
+            }
+
+            SizeAllMedia.SMALL -> {
+                widthImage = Utils.getScreenWidth(context) / 5
+                heightImage = widthImage
+            }
+
+            SizeAllMedia.MEDIUM -> {
+                widthImage = Utils.getScreenWidth(context) / 3
+                heightImage = widthImage
+            }
+
+            SizeAllMedia.LARGE -> {
+                widthImage = Utils.getScreenWidth(context)
+                heightImage = widthImage
+            }
+
+            else -> {
+                widthImage = Utils.getScreenWidth(context) / 3
+                heightImage = widthImage
+            }
+        }
+
     }
 
     fun getSize(): Int {
@@ -91,15 +124,11 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
 
             when (size) {
                 SizeAllMedia.SMALLEST -> {
-                    widthImage = Utils.getScreenWidth(binding.imgThumbMedia.context) / 14
-                    heightImage = widthImage
                     binding.root.setPadding(1)
                     binding.tvDuration.visibility = View.GONE
                 }
 
                 SizeAllMedia.SMALL -> {
-                    widthImage = Utils.getScreenWidth(binding.imgThumbMedia.context) / 5
-                    heightImage = widthImage
                     binding.root.setPadding(5)
                     if (media.isImage) {
                         binding.tvDuration.visibility = View.GONE
@@ -109,8 +138,6 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
                 }
 
                 SizeAllMedia.MEDIUM -> {
-                    widthImage = Utils.getScreenWidth(binding.imgThumbMedia.context) / 3
-                    heightImage = widthImage
                     binding.root.setPadding(5)
                     if (media.isImage) {
                         binding.tvDuration.visibility = View.GONE
@@ -120,7 +147,6 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
                 }
 
                 SizeAllMedia.LARGE -> {
-                    widthImage = Utils.getScreenWidth(binding.imgThumbMedia.context)
                     heightImage =
                         (widthImage * (media.height.toFloat() / media.width.toFloat()).toFloat()).toInt()
                     binding.root.setPadding(0, 5, 0, 5)
@@ -132,8 +158,6 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
                 }
 
                 else -> {
-                    widthImage = Utils.getScreenWidth(binding.imgThumbMedia.context) / 3
-                    heightImage = widthImage
                     binding.root.setPadding(5)
                     if (media.isImage) {
                         binding.tvDuration.visibility = View.GONE
@@ -153,17 +177,22 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             Timber.e("LamPro | bindData - width image: $widthImage")
             Timber.e("LamPro | bindData - height image: $heightImage")
 
-            try {
 
+            try {
                 Glide.with(binding.imgThumbMedia.context).load(media.path)
-                    .signature(ObjectKey(media.id)).placeholder(R.color.transparent)
-                    .error(R.color.transparent)
+                    .signature(ObjectKey(media.id))
+                    .error(R.color.gray)
+                    .apply(
+                        RequestOptions()
+                            .format(DecodeFormat.PREFER_RGB_565)
+                            .override(widthImage, heightImage)
+                    )
                     .thumbnail(0.1f)
-                    .override(widthImage / 2, heightImage / 2)
                     .into(binding.imgThumbMedia)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+
             val duration = media.duration
             val minute: Long = duration / 1000 / 60
             val second: Long = duration / 1000 % 60

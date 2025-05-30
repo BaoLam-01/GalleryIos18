@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.galleryios18.App
 import com.example.galleryios18.R
+import com.example.galleryios18.common.Constant
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.CollectionAdapter
@@ -170,7 +171,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initRcvMedia() {
         mediaAdapter = MediaAdapter()
-        mediaAdapter.setSize(MediaAdapter.SizeAllMedia.MEDIUM)
+        mediaAdapter.setSize(MediaAdapter.SizeAllMedia.MEDIUM, requireContext())
         binding.viewBgGradient.post {
             binding.rcvMedia.setPadding(
                 binding.rcvMedia.paddingLeft,
@@ -307,10 +308,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                     Timber.e("LamPro | onScaleEnd - size: ${mediaAdapter.getSize()}")
 
                     if (accumulatedScale > 1.03f && mediaAdapter.getSize() < 3) {
-                        mediaAdapter.setSize(mediaAdapter.getSize() + 1)
+                        mediaAdapter.setSize(mediaAdapter.getSize() + 1, requireContext())
                         updateGridSpan()
                     } else if (accumulatedScale < 0.97f && mediaAdapter.getSize() > 0) {
-                        mediaAdapter.setSize(mediaAdapter.getSize() - 1)
+                        mediaAdapter.setSize(mediaAdapter.getSize() - 1, requireContext())
                         updateGridSpan()
                     }
                 }
@@ -326,7 +327,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         val layoutManager = binding.rcvMedia.layoutManager as GridLayoutManager
         when (mediaAdapter.getSize()) {
             MediaAdapter.SizeAllMedia.SMALLEST -> {
-                currentSpanCount = 14
+                currentSpanCount = Constant.SPAN_COUNT_SMALLEST
             }
 
             MediaAdapter.SizeAllMedia.SMALL -> {
