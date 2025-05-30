@@ -22,10 +22,11 @@ class GroupHeaderDecoration(
 
     private val backgroundPaint = Paint().apply {
         color = Color.WHITE
-        alpha = 80 // translucent white
+        alpha = 180 // translucent white
     }
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+        Timber.e("LamPro | onDrawOver -")
         val childCount = parent.childCount
         if (childCount == 0) return
 
@@ -34,6 +35,9 @@ class GroupHeaderDecoration(
 
         for (i in 0 until childCount) {
             val view = parent.getChildAt(i)
+            if (view.bottom < parent.paddingTop) {
+                continue
+            }
             val position = parent.getChildAdapterPosition(view)
             if (position == RecyclerView.NO_POSITION) continue
 
