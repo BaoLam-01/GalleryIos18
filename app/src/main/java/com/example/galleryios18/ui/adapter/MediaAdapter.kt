@@ -1,11 +1,16 @@
 package com.example.galleryios18.ui.adapter
 
+import android.R.attr.thumbnail
 import android.annotation.SuppressLint
+import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.media.MediaMetadataRetriever
+import android.os.Build
+import android.provider.MediaStore
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -188,7 +193,6 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             Timber.e("LamPro | bindData - height image: $heightImage")
 
 
-
             try {
                 Glide.with(binding.imgThumbMedia.context)
                     .asBitmap()
@@ -198,7 +202,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
                     .apply(
                         RequestOptions()
                             .format(DecodeFormat.PREFER_RGB_565)
-                            .override(widthImage, heightImage)
+                            .override(widthImage / 2, heightImage / 2)
                     )
                     .thumbnail(0.1f)
                     .listener(object : RequestListener<Bitmap> {

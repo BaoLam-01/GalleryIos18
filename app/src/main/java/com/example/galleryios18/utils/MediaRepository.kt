@@ -27,17 +27,17 @@ class MediaRepository @Inject constructor() {
         setContext()
         val listMedia = java.util.ArrayList<Media>()
         val projectionVideo = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-            MediaStore.Images.Media.DATE_ADDED,
-            MediaStore.Images.Media.DATE_TAKEN,
-            MediaStore.Images.Media.DATE_MODIFIED,
-            MediaStore.Images.Media.WIDTH,
-            MediaStore.Images.Media.HEIGHT,
-            MediaStore.Images.Media.SIZE,
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media.BUCKET_ID,
+            MediaStore.Video.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Video.Media.DATE_ADDED,
+            MediaStore.Video.Media.DATE_TAKEN,
+            MediaStore.Video.Media.DATE_MODIFIED,
+            MediaStore.Video.Media.WIDTH,
+            MediaStore.Video.Media.HEIGHT,
+            MediaStore.Video.Media.SIZE,
             MediaStore.Video.Media.DURATION
         )
 
@@ -115,25 +115,25 @@ class MediaRepository @Inject constructor() {
             )
             while (cursor!!.moveToNext()) {
                 val file =
-                    File(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)))
+                    File(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)))
                 if (!file.exists() || file.length() <= 0) {
                     continue
                 }
 
                 val (realWidth, realHeight) = getRealVideoSize(file.path)
                 val media = Media(
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)),
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)),
-                    cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)),
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_ID)),
+                    cursor.getStringOrNull(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_DISPLAY_NAME))
                         ?: "",
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)) * 1000,
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)),
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)) * 1000,
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED)) * 1000,
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_TAKEN)),
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED)) * 1000,
                     realWidth,
                     realHeight,
-                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
+                    cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)),
                     false,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
                 )
