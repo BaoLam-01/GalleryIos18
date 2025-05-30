@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.media.MediaMetadataRetriever
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -187,44 +188,46 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             Timber.e("LamPro | bindData - height image: $heightImage")
 
 
-            binding.imgThumbMedia.post {
 
-                try {
-                    Glide.with(binding.imgThumbMedia.context)
-                        .asBitmap()
-                        .load(media.path)
-                        .signature(ObjectKey(media.id))
-                        .error(R.color.gray)
-                        .apply(
-                            RequestOptions()
-                                .format(DecodeFormat.PREFER_RGB_565)
-                                .override(widthImage, heightImage)
-                        )
-                        .thumbnail(0.1f)
-                        .into(object : CustomTarget<Bitmap>() {
-                            override fun onLoadCleared(placeholder: Drawable?) {
-                                // Khi target bị clear (vd: view bị destroy)
-                            }
+            try {
+                Glide.with(binding.imgThumbMedia.context)
+                    .asBitmap()
+                    .load(media.path)
+                    .signature(ObjectKey(media.id))
+                    .error(R.color.gray)
+                    .apply(
+                        RequestOptions()
+                            .format(DecodeFormat.PREFER_RGB_565)
+                            .override(widthImage, heightImage)
+                    )
+                    .thumbnail(0.1f)
+                    .listener(object : RequestListener<Bitmap> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Bitmap>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Timber.e("LamPro | onLoadFailed - ${media.path}")
+                            return false
+                        }
 
-                            override fun onResourceReady(
-                                resource: Bitmap,
-                                transition: Transition<in Bitmap>?
-                            ) {
-                                // Load thành công, set bitmap vào imageView
-                                Timber.e("LamPro | onResourceReady - w: ${resource.width}, h: ${resource.height}")
-                                binding.imgThumbMedia.setImageBitmap(resource)
-                            }
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            model: Any,
+                            target: Target<Bitmap>,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            Timber.e("LamPro | onResourceReady - w: ${resource.width}, h: ${resource.height}")
+                            return false
+                        }
 
-                            override fun onLoadFailed(errorDrawable: Drawable?) {
-                                super.onLoadFailed(errorDrawable)
-                                // Load thất bại
-                            }
-                        })
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
+                    }).into(binding.imgThumbMedia)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+
             val duration = media.duration
             val minute: Long = duration / 1000 / 60
             val second: Long = duration / 1000 % 60
