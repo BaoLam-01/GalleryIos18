@@ -202,7 +202,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
                     .apply(
                         RequestOptions()
                             .format(DecodeFormat.PREFER_RGB_565)
-                            .override(widthImage / 2, heightImage / 2)
+                            .override(widthImage, heightImage)
                     )
                     .thumbnail(0.1f)
                     .listener(object : RequestListener<Bitmap> {
