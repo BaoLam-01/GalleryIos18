@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp">
+
+        <include
+            android:id="@+id/layoutType1"
+            layout="@layout/item_month_type_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgMedia1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:src="@color/gray"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="@id/layoutType1"
+            app:layout_constraintTop_toBottomOf="@id/layoutType1"
+            app:layout_constraintWidth_percent="0.32"
+            app:shapeAppearanceOverlay="@style/item_media_month_border_4" />
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgMedia2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/imgMedia1"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/imgMedia3"
+            app:layout_constraintStart_toEndOf="@id/imgMedia1"
+            app:layout_constraintTop_toTopOf="@id/imgMedia1"
+            app:layout_constraintWidth_percent="0.32"
+            app:shapeAppearanceOverlay="@style/item_media_month_border_4" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgMedia3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/imgMedia2"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/imgMedia2"
+            app:layout_constraintWidth_percent="0.32"
+            app:shapeAppearanceOverlay="@style/item_media_month_border_4" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

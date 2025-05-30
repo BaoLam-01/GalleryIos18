@@ -21,6 +21,7 @@ import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.AllMediaAdapter
+import com.example.galleryios18.ui.adapter.MonthMediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.custom.GroupHeaderDecoration
 import com.example.galleryios18.ui.main.MainActivity
@@ -34,6 +35,7 @@ import timber.log.Timber
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private var requestPermission = true
     private lateinit var allMediaAdapter: AllMediaAdapter
+    private lateinit var monthMediaAdapter: MonthMediaAdapter
     private lateinit var collectionAdapter: CollectionAdapter
     private var isRcvAllMediaTop = true
 
@@ -160,6 +162,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initView() {
         initRcvAllMedia()
+        initRcvMonthMedia()
         initRcvCollection()
         initTabLayout()
 
@@ -205,6 +208,32 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         TransitionManager.beginDelayedTransition(binding.rcvAllMedia)
     }
 
+    private fun initRcvMonthMedia() {
+        monthMediaAdapter = MonthMediaAdapter()
+        binding.viewBgGradient.post {
+            binding.rcvMonthMedia.setPadding(
+                binding.rcvMonthMedia.paddingLeft,
+                binding.tvCountItem.bottom + 20,
+                binding.rcvMonthMedia.paddingRight,
+                binding.rcvMonthMedia.paddingBottom
+            )
+        }
+//        binding.rcvMonthMedia.layoutParams.let {
+//            val layoutParams = it as ConstraintLayout.LayoutParams
+//            layoutParams.height =
+//                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight
+//            binding.rcvMonthMedia.layoutParams = layoutParams
+//        }
+        binding.rcvMonthMedia.apply {
+            clipToPadding = false
+            val linearLayout =
+                LinearLayoutManager(requireContext(), GridLayoutManager.VERTICAL, false)
+            layoutManager = linearLayout
+
+            adapter = monthMediaAdapter
+        }
+    }
+
     private fun initRcvCollection() {
         collectionAdapter = CollectionAdapter()
 
@@ -224,6 +253,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initTabLayout() {
         binding.tlBottom.addTab(
+            binding.tlBottom.newTab().setText(getText(R.string.year))
+        )
+        binding.tlBottom.addTab(
             binding.tlBottom.newTab().setText(getText(R.string.month))
         )
         binding.tlBottom.addTab(
@@ -240,15 +272,19 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun changeTabLayout(position: Int) {
         when (position) {
+            TabImage.TAB_YEAR -> {
+                binding.rcvAllMedia.visibility = View.INVISIBLE
+                binding.rcvMonthMedia.visibility = View.VISIBLE
+            }
+
             TabImage.TAB_MONTH -> {
-                binding.rcvAllMedia.visibility = View.GONE
-//                binding.rcvAllMedia.layoutManager =
-//                    GridLayoutManager(requireContext(), 1, GridLayoutManager.VERTICAL, false)
-//                binding.rcvAllMedia.scheduleLayoutAnimation()
+                binding.rcvAllMedia.visibility = View.INVISIBLE
+                binding.rcvMonthMedia.visibility = View.VISIBLE
             }
 
             TabImage.TAB_ALL_PHOTO -> {
                 binding.rcvAllMedia.visibility = View.VISIBLE
+                binding.rcvMonthMedia.visibility = View.INVISIBLE
             }
         }
     }
@@ -363,8 +399,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     object TabImage {
-        const val TAB_MONTH = 0
-        const val TAB_ALL_PHOTO = 1
+        const val TAB_YEAR = 0
+        const val TAB_MONTH = 1
+        const val TAB_ALL_PHOTO = 2
     }
 
 }

@@ -25,6 +25,7 @@
     <string name="languages">Language</string>
     <string name="this_file_is_corrupted_please_choose_another_file">This file is corrupted please choose another file</string>
     <string name="you_need_to_enable_permissions">You need to enable permissions</string>
+    <string name="year">Year</string>
     <string name="month">Month</string>
     <string name="all_photos">All</string>
     <string name="adjust">Adjust</string>

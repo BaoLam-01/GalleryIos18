@@ -25,6 +25,22 @@
                     android:layout_height="0dp"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <com.example.galleryios18.ui.custom.CustomRecycleView
+                    android:id="@+id/rcvMonthMedia"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@id/rcvAllMedia"
+                    app:layout_constraintTop_toTopOf="@id/rcvAllMedia" />
+
+                <com.example.galleryios18.ui.custom.CustomRecycleView
+                    android:id="@+id/rcvYearMedia"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@id/rcvAllMedia"
+                    app:layout_constraintTop_toTopOf="@id/rcvAllMedia" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcvCollection"
                     android:layout_width="match_parent"
@@ -66,17 +82,17 @@
             app:layout_constraintBottom_toBottomOf="@id/tvCountItem"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <com.github.mmin18.widget.RealtimeBlurView-->
-<!--            android:id="@+id/viewBlurHeader"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="0dp"-->
-<!--            app:layout_constraintBottom_toBottomOf="@id/viewBgGradient"-->
-<!--            app:layout_constraintEnd_toEndOf="@id/viewBgGradient"-->
-<!--            app:layout_constraintStart_toStartOf="@id/viewBgGradient"-->
-<!--            app:layout_constraintTop_toTopOf="@id/viewBgGradient"-->
-<!--            app:realtimeBlurRadius="2dp"-->
-<!--            app:realtimeDownsampleFactor="2"-->
-<!--            app:realtimeOverlayColor="@color/transparent" />-->
+        <!--        <com.github.mmin18.widget.RealtimeBlurView-->
+        <!--            android:id="@+id/viewBlurHeader"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="0dp"-->
+        <!--            app:layout_constraintBottom_toBottomOf="@id/viewBgGradient"-->
+        <!--            app:layout_constraintEnd_toEndOf="@id/viewBgGradient"-->
+        <!--            app:layout_constraintStart_toStartOf="@id/viewBgGradient"-->
+        <!--            app:layout_constraintTop_toTopOf="@id/viewBgGradient"-->
+        <!--            app:realtimeBlurRadius="2dp"-->
+        <!--            app:realtimeDownsampleFactor="2"-->
+        <!--            app:realtimeOverlayColor="@color/transparent" />-->
 
 
         <androidx.appcompat.widget.AppCompatTextView
