@@ -12,7 +12,6 @@ class GroupHeaderDecoration(
     private val getGroup: (position: Int) -> String,
 ) : RecyclerView.ItemDecoration() {
 
-    private val listGroup = mutableListOf<String>()
     private val textPadding = 30f
     private val textPaint = Paint().apply {
         color = Color.BLACK
@@ -30,16 +29,23 @@ class GroupHeaderDecoration(
         val childCount = parent.childCount
         if (childCount == 0) return
 
+        var lastGroup = ""
+        var lastHeaderTop = -1f // lưu vị trí top header cuối cùng đã vẽ
+
         for (i in 0 until childCount) {
             val view = parent.getChildAt(i)
             val position = parent.getChildAdapterPosition(view)
-            val group = getGroup(position)
-            var lastGroup = ""
+            if (position == RecyclerView.NO_POSITION) continue
 
-            if (group !in listGroup) {
-                Timber.e("LamPro - !in: $group")
+            val group = getGroup(position)
+            if (group != lastGroup) {
                 val top = view.top.toFloat().coerceAtLeast(0f)
 
+                // Nếu header ở cùng vị trí top hoặc rất gần với header trước đó => bỏ qua (để tránh chồng)
+                if (lastHeaderTop != -1f && kotlin.math.abs(top - lastHeaderTop) < 10f) {
+                    // Đã vẽ header ở vị trí này rồi, bỏ qua
+                    continue
+                }
 
                 val text = group
                 val textWidth = textPaint.measureText(text)
@@ -60,8 +66,11 @@ class GroupHeaderDecoration(
                     bgTop + (bgBottom - bgTop + 10 - textHeight) / 2f - fontMetrics.top
 
                 c.drawText(text, bgLeft + horizontalPadding, textBaseline, textPaint)
-                listGroup.add(group)
+
+                lastGroup = group
+                lastHeaderTop = top // cập nhật vị trí header mới vừa vẽ
             }
         }
     }
+
 }

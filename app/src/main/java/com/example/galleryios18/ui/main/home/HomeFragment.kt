@@ -192,7 +192,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.rcvMedia.layoutManager = gridLayout
 
         binding.rcvMedia.addItemDecoration(GroupHeaderDecoration { position ->
-            if (currentSpanCount == 3) {
+            if (currentSpanCount == Constant.SPAN_COUNT_SMALLEST) {
                 mediaAdapter.getItemTime(position)
             } else {
                 ""
@@ -331,18 +331,15 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             }
 
             MediaAdapter.SizeAllMedia.SMALL -> {
-                currentSpanCount = 5
-
+                currentSpanCount = Constant.SPAN_COUNT_SMALL
             }
 
             MediaAdapter.SizeAllMedia.MEDIUM -> {
-                currentSpanCount = 3
-
+                currentSpanCount = Constant.SPAN_COUNT_MEDIUM
             }
 
             MediaAdapter.SizeAllMedia.LARGE -> {
-                currentSpanCount = 1
-
+                currentSpanCount = Constant.SPAN_COUNT_LARGE
             }
 
             else -> currentSpanCount = 3

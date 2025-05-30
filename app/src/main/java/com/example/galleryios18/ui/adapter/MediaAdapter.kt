@@ -81,12 +81,12 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             }
 
             SizeAllMedia.SMALL -> {
-                widthImage = Utils.getScreenWidth(context) / 5
+                widthImage = Utils.getScreenWidth(context) / Constant.SPAN_COUNT_SMALL
                 heightImage = widthImage
             }
 
             SizeAllMedia.MEDIUM -> {
-                widthImage = Utils.getScreenWidth(context) / 3
+                widthImage = Utils.getScreenWidth(context) / Constant.SPAN_COUNT_MEDIUM
                 heightImage = widthImage
             }
 
@@ -96,7 +96,7 @@ class MediaAdapter : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
             }
 
             else -> {
-                widthImage = Utils.getScreenWidth(context) / 3
+                widthImage = Utils.getScreenWidth(context) / Constant.SPAN_COUNT_MEDIUM
                 heightImage = widthImage
             }
         }

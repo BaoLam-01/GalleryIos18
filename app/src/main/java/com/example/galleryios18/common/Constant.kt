@@ -35,7 +35,7 @@ object Constant {
     const val CURRENT_POS_TEMPLATE = "CURRENT_POS_TEMPLATE"
     const val ITEM_STRING = "ITEM_STRING"
     const val SPAN_COUNT_SMALLEST = 10
-    const val SPAN_SMALL = 5
-    const val SPAN_MEDIUM = 3
-    const val SPAN_LARGE = 1
+    const val SPAN_COUNT_SMALL = 5
+    const val SPAN_COUNT_MEDIUM = 3
+    const val SPAN_COUNT_LARGE = 1
 }
