@@ -45,9 +45,11 @@
     <string name="definition">definition</string>
     <string name="noise_reduction">noise reduction</string>
     <string name="vignette">vignette</string>
-    <string name="edit_sort"><![CDATA[Edit & sort]]></string>
+    <string name="customize_reorder"><![CDATA[Customize & Reorder]]></string>
     <string name="action">Action</string>
     <string name="error">Error</string>
     <string name="photo_zoom">Photo Zoom</string>
+    <string name="reset">Reset</string>
+    <string name="reorder_or_hide_collections_to_personalize_your_view">Reorder or hide collections to personalize your view</string>
 
 </resources>

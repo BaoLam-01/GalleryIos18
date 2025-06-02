@@ -54,18 +54,18 @@
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="@dimen/_16sdp"
                     android:background="@color/gray"
-                    app:layout_constraintBottom_toBottomOf="@id/tvEditCollection"
-                    app:layout_constraintTop_toTopOf="@id/tvEditCollection" />
+                    app:layout_constraintBottom_toBottomOf="@id/tvCustomizeAndReorder"
+                    app:layout_constraintTop_toTopOf="@id/tvCustomizeAndReorder" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvEditCollection"
+                    android:id="@+id/tvCustomizeAndReorder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_80sdp"
-                    android:drawableStart="@drawable/ic_adjust"
+                    android:drawableStart="@drawable/ic_customize"
                     android:drawablePadding="@dimen/_5sdp"
                     android:paddingVertical="@dimen/_5sdp"
-                    android:text="@string/edit_sort"
+                    android:text="@string/customize_reorder"
                     android:textAlignment="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

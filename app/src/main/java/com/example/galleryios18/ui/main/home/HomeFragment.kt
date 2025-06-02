@@ -408,6 +408,11 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             scaleGestureDetector?.onTouchEvent(event)
             false
         }
+
+
+        binding.tvCustomizeAndReorder.setOnClickListener {
+
+        }
     }
 
     private fun updateGridSpan() {
