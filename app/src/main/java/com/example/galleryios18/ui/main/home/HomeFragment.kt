@@ -22,6 +22,7 @@ import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.AllMediaAdapter
 import com.example.galleryios18.ui.adapter.MonthMediaAdapter
+import com.example.galleryios18.ui.adapter.YearMediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.custom.GroupHeaderDecoration
 import com.example.galleryios18.ui.main.MainActivity
@@ -31,11 +32,13 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
 import timber.log.Timber
+import java.util.Calendar
 
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private var requestPermission = true
     private lateinit var allMediaAdapter: AllMediaAdapter
     private lateinit var monthMediaAdapter: MonthMediaAdapter
+    private lateinit var yearMediaAdapter: YearMediaAdapter
     private lateinit var collectionAdapter: CollectionAdapter
     private var isRcvAllMediaTop = true
 
@@ -115,12 +118,33 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             Timber.e("LamPro | observerData - size media: ${it.size}")
             allMediaAdapter.setData(it)
             binding.rcvAllMedia.scrollToPosition(it.size - 1)
+
+            val listMediaYear = getFirstPhotoOfEachYear(it)
+            yearMediaAdapter.setData(listMediaYear)
+            binding.rcvYearMedia.scrollToPosition(listMediaYear.size - 1)
+
         }
 
         mainViewModel.allCollectionLiveData.observe(viewLifecycleOwner) {
             Timber.e("LamPro | observerData - setdata: ${it.size}")
             collectionAdapter.setData(it)
         }
+    }
+
+    fun getFirstPhotoOfEachYear(medias: List<Media>): List<Media> {
+        val sortedPhotos = medias.sortedBy { it.dateTaken }
+
+        val firstPhotosOfYear = sortedPhotos
+            .groupBy { media ->
+                val calendar = Calendar.getInstance().apply { timeInMillis = media.dateTaken }
+                calendar.get(Calendar.YEAR)
+            }
+            .mapValues { it.value.first() }
+            .values
+            .toList()
+
+        Timber.e("LamPro | getFirstPhotoOfEachYear - firstPhotosOfYear size: ${firstPhotosOfYear.size}")
+        return firstPhotosOfYear
     }
 
     @SuppressLint("InlinedApi")
@@ -163,6 +187,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initView() {
         initRcvAllMedia()
         initRcvMonthMedia()
+        initRcvYearMedia()
         initRcvCollection()
         initTabLayout()
 
@@ -234,6 +259,27 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    private fun initRcvYearMedia() {
+        yearMediaAdapter = YearMediaAdapter()
+        binding.viewBgGradient.post {
+            binding.rcvYearMedia.setPadding(
+                binding.rcvYearMedia.paddingLeft,
+                binding.rcvYearMedia.bottom + 20,
+                binding.rcvYearMedia.paddingRight,
+                binding.rcvYearMedia.paddingBottom
+            )
+        }
+
+        binding.rcvYearMedia.apply {
+            clipToPadding = false
+            val linearLayout =
+                LinearLayoutManager(requireContext(), GridLayoutManager.VERTICAL, false)
+            layoutManager = linearLayout
+
+            adapter = yearMediaAdapter
+        }
+    }
+
     private fun initRcvCollection() {
         collectionAdapter = CollectionAdapter()
 
@@ -274,17 +320,20 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         when (position) {
             TabImage.TAB_YEAR -> {
                 binding.rcvAllMedia.visibility = View.INVISIBLE
-                binding.rcvMonthMedia.visibility = View.VISIBLE
+                binding.rcvMonthMedia.visibility = View.INVISIBLE
+                binding.rcvYearMedia.visibility = View.VISIBLE
             }
 
             TabImage.TAB_MONTH -> {
                 binding.rcvAllMedia.visibility = View.INVISIBLE
                 binding.rcvMonthMedia.visibility = View.VISIBLE
+                binding.rcvYearMedia.visibility = View.INVISIBLE
             }
 
             TabImage.TAB_ALL_PHOTO -> {
                 binding.rcvAllMedia.visibility = View.VISIBLE
                 binding.rcvMonthMedia.visibility = View.INVISIBLE
+                binding.rcvYearMedia.visibility = View.INVISIBLE
             }
         }
     }
