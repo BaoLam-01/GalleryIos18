@@ -4,6 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.transition.TransitionManager
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -26,11 +28,13 @@ import com.example.galleryios18.ui.adapter.YearMediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.custom.GroupHeaderDecoration
 import com.example.galleryios18.ui.main.MainActivity
+import com.example.galleryios18.ui.main.custommize.CustomizeBottomSheet
 import com.example.galleryios18.utils.Utils
 import com.example.galleryios18.utils.ViewUtils
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
+import okhttp3.internal.http2.Http2Reader
 import timber.log.Timber
 import java.util.Calendar
 
@@ -45,6 +49,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private var scaleGestureDetector: ScaleGestureDetector? = null
     private var currentSpanCount = 3 // Số cột hiện tại
     private var accumulatedScale = 1f
+
+    private lateinit var customizeBottomSheet: CustomizeBottomSheet
 
     private val multiplePermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -190,6 +196,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         initRcvYearMedia()
         initRcvCollection()
         initTabLayout()
+        initCustomizeBottomSheet()
 
         ViewUtils.adjustViewWithSystemBar(
             binding.tvTitle, binding.imgSort, requireActivity() as MainActivity
@@ -316,6 +323,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
+    private fun initCustomizeBottomSheet() {
+        customizeBottomSheet = CustomizeBottomSheet()
+    }
+
     private fun changeTabLayout(position: Int) {
         when (position) {
             TabImage.TAB_YEAR -> {
@@ -411,7 +422,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
 
         binding.tvCustomizeAndReorder.setOnClickListener {
-
+            customizeBottomSheet.show(childFragmentManager, "customize")
         }
     }
 
