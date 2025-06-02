@@ -1,8 +1,6 @@
 package com.example.galleryios18.feature
 
-import android.graphics.Canvas
 import android.graphics.Color
-import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.galleryios18.R
@@ -31,7 +29,7 @@ class SimpleItemTouchHelperCallback : ItemTouchHelper.Callback() {
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        mListener?.onMove(viewHolder.adapterPosition, target.adapterPosition)
+        mListener?.onMove(viewHolder.absoluteAdapterPosition, target.absoluteAdapterPosition)
         return true
     }
 
@@ -42,20 +40,17 @@ class SimpleItemTouchHelperCallback : ItemTouchHelper.Callback() {
 
         if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder != null) {
             val itemView = viewHolder.itemView
-            // Sử dụng animate() để scale mượt mà trong 0.5s
             itemView.animate()
                 .scaleX(1.03f)
                 .scaleY(1.03f)
                 .setDuration(300) // 500ms = 0.5s
                 .start()
 
-            // Animate elevation
             itemView.animate()
-                .translationZ(40f) // dùng translationZ cho shadow mượt hơn
+                .translationZ(40f)
                 .setDuration(300)
                 .start()
 
-            // Đặt màu nền luôn (ko animate được background color trực tiếp)
             itemView.setBackgroundResource(R.color.color_9CFFFFFF)
         }
     }
@@ -64,7 +59,6 @@ class SimpleItemTouchHelperCallback : ItemTouchHelper.Callback() {
         super.clearView(recyclerView, viewHolder)
 
         val itemView = viewHolder.itemView
-        // Animate trở lại trạng thái ban đầu
         itemView.animate()
             .scaleX(1f)
             .scaleY(1f)

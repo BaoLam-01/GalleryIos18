@@ -12,6 +12,7 @@ data class Media(
     var width: Int,
     var height: Int,
     var size: Long,
+    var isSelfie: Boolean = false,
     var isImage: Boolean = true,
     var duration: Long = 0L,
 ) {

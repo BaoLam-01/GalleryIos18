@@ -1,6 +1,7 @@
 package com.example.galleryios18.utils
 
 import android.content.Context
+import android.media.ExifInterface
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
@@ -11,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 class MediaRepository @Inject constructor() {
@@ -87,9 +89,11 @@ class MediaRepository @Inject constructor() {
                     cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)),
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
+                    isSelfie(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))),
                     true,
                     0L
                 )
+                Timber.e("LamPro | getListMedia - isSelfie: ${media.isSelfie}")
                 if (media.bucketName.isEmpty()) {
                     media.bucketName = "No Name"
                 }
@@ -135,6 +139,7 @@ class MediaRepository @Inject constructor() {
                     realHeight,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)),
                     false,
+                    false,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
                 )
                 if (media.bucketName.isEmpty()) {
@@ -177,6 +182,20 @@ class MediaRepository @Inject constructor() {
             retriever.release()
         }
     }
+
+    private fun isSelfie(imagePath: String): Boolean {
+        try {
+            val exif = ExifInterface(imagePath)
+            val lensFacing = exif.getAttribute("LensFacing")
+            Timber.e("LamProooooooooo | isSelfie true " + lensFacing)
+            return lensFacing == "front"
+        } catch (e: IOException) {
+            Timber.e("LamProooooooooo | getListMedia - isSelfie: ${e}")
+            e.printStackTrace()
+        }
+        return false
+    }
+
 
     fun sortVideosByCreatedDateAscending(list: ArrayList<Media>) {
         list.sortBy { it.dateAdded }
