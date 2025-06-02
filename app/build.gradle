@@ -136,4 +136,8 @@ dependencies {
     implementation('com.arthenica:smart-exception-java:0.2.1')
     implementation('com.arthenica:smart-exception-common:0.2.1')
     implementation("com.google.android.exoplayer:exoplayer:2.18.7")
+
+    implementation 'com.github.MasayukiSuda:GPUVideo-android:v0.1.2'
+    // if apply video filter on ExoPlayer video
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.15.1'
 }

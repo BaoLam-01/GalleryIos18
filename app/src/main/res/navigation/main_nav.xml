@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_nav"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/FilterVideoFragment">
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.galleryios18.ui.main.splash.SplashFragment"
@@ -48,5 +48,10 @@
         android:id="@+id/MakeStory3Fragment"
         android:name="com.example.galleryios18.ui.main.makestory3.MakeStory3Fragment"
         android:label="MakeStory3Fragment" />
+
+    <fragment
+        android:id="@+id/FilterVideoFragment"
+        android:name="com.example.galleryios18.ui.main.filtervideo.FilterVideoFragment"
+        android:label="FilterVideoFragment" />
 
 </navigation>
