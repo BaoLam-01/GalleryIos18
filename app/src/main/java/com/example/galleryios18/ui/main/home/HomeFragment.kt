@@ -264,7 +264,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.viewBgGradient.post {
             binding.rcvYearMedia.setPadding(
                 binding.rcvYearMedia.paddingLeft,
-                binding.rcvYearMedia.bottom + 20,
+                binding.viewBgGradient.bottom + 20,
                 binding.rcvYearMedia.paddingRight,
                 binding.rcvYearMedia.paddingBottom
             )
@@ -371,6 +371,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                     isRcvAllMediaTop = false
                 }
                 binding.rcvAllMedia.isScrollEnabled = isRcvAllMediaTop == true
+                binding.rcvMonthMedia.isScrollEnabled = isRcvAllMediaTop == true
+                binding.rcvYearMedia.isScrollEnabled = isRcvAllMediaTop == true
                 Timber.e("LamPro | listener - iisrcvAllMediaTop : $isRcvAllMediaTop")
 
             }

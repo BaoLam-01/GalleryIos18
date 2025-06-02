@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_nav"
-    app:startDestination="@id/FilterVideoFragment">
+    app:startDestination="@id/homeFragment">
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.galleryios18.ui.main.splash.SplashFragment"
@@ -23,34 +23,34 @@
         android:label="ShowMediaFragment" />
 
     <fragment
-        android:id="@+id/EditImageFragment"
+        android:id="@+id/editImageFragment"
         android:name="com.example.galleryios18.ui.main.editimage.EditImageFragment"
         android:label="EditImageFragment" />
     <fragment
-        android:id="@+id/CoordinatorLayout"
+        android:id="@+id/coordinatorLayout"
         android:name="com.example.galleryios18.ui.main.cordinatorlayout.CordiLayout"
         android:label="CoordinatorLayout" />
 
     <fragment
-        android:id="@+id/DrawToImageFragment"
+        android:id="@+id/drawToImageFragment"
         android:name="com.example.galleryios18.ui.main.drawtoimage.DrawToImageFragment"
         android:label="DrawToImageFragment" />
 
     <fragment
-        android:id="@+id/MakeStoryFragment"
+        android:id="@+id/makeStoryFragment"
         android:name="com.example.galleryios18.ui.main.makestory.MakeStoryFragment"
         android:label="MakeStoryFragment" />
     <fragment
-        android:id="@+id/MakeStory2Fragment"
+        android:id="@+id/makeStory2Fragment"
         android:name="com.example.galleryios18.ui.main.makestory2.MakeStory2Fragment"
         android:label="MakeStory2Fragment" />
     <fragment
-        android:id="@+id/MakeStory3Fragment"
+        android:id="@+id/makeStory3Fragment"
         android:name="com.example.galleryios18.ui.main.makestory3.MakeStory3Fragment"
         android:label="MakeStory3Fragment" />
 
     <fragment
-        android:id="@+id/FilterVideoFragment"
+        android:id="@+id/filterVideoFragment"
         android:name="com.example.galleryios18.ui.main.filtervideo.FilterVideoFragment"
         android:label="FilterVideoFragment" />
 

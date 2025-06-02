@@ -11,6 +11,9 @@ import com.example.galleryios18.databinding.ItemMediaYearBinding
 import com.example.galleryios18.ui.base.BaseBindingAdapter
 import com.example.galleryios18.utils.Utils
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class YearMediaAdapter : BaseBindingAdapter<ItemMediaYearBinding>() {
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
@@ -39,10 +42,15 @@ class YearMediaAdapter : BaseBindingAdapter<ItemMediaYearBinding>() {
         holder: BaseHolder<ItemMediaYearBinding>, position: Int
     ) {
         val media = mDiffer.currentList[position]
+        val formatter = SimpleDateFormat("yyyy", Locale.getDefault())
+        val year = formatter.format(Date(media.dateTaken))
+        holder.binding.tvYear.text = year
+
         Glide.with(holder.binding.imgThumbMedia.context).load(media.path)
             .signature(ObjectKey(media.id)).placeholder(R.color.white).error(R.color.white)
             .override(Utils.getScreenWidth(holder.binding.imgThumbMedia.context))
             .into(holder.binding.imgThumbMedia)
+
         holder.binding.root.setOnClickListener {}
     }
 

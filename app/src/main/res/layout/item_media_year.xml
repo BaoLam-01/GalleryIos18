@@ -14,24 +14,28 @@
         android:layout_marginVertical="@dimen/_5sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvMonth"
+            android:id="@+id/tvYear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_17ssp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="5 2025" />
+            tools:text="2025" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgThumbMedia"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="4:3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvMonth" />
+            app:layout_constraintTop_toBottomOf="@id/tvYear"
+            app:shapeAppearanceOverlay="@style/item_media_month_border_2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

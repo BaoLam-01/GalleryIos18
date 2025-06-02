@@ -119,7 +119,7 @@ class ShowMediaFragment : BaseBindingFragment<FragmentShowMediaBinding, ShowMedi
         }
 
         binding.btnAdjust.setOnClickListener {
-            navigateScreen(null, R.id.EditImageFragment)
+            navigateScreen(null, R.id.editImageFragment)
         }
 
     }
