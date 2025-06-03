@@ -36,6 +36,8 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
         }) {
             val listMedia = libraryViewRepository.getListLibs(false)
             allMediaLiveData.postValue(listMedia)
+            val listLastImage = getAllImageLast30Days(listMedia)
+            Timber.e("LamPro - size list last image: ${listLastImage.size}")
         }
 
     }

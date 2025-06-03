@@ -89,11 +89,9 @@ class MediaRepository @Inject constructor() {
                     cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)),
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)),
-                    isSelfie(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))),
                     true,
                     0L
                 )
-                Timber.e("LamPro | getListMedia - isSelfie: ${media.isSelfie}")
                 if (media.bucketName.isEmpty()) {
                     media.bucketName = "No Name"
                 }
@@ -139,7 +137,6 @@ class MediaRepository @Inject constructor() {
                     realHeight,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)),
                     false,
-                    false,
                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
                 )
                 if (media.bucketName.isEmpty()) {
@@ -149,6 +146,7 @@ class MediaRepository @Inject constructor() {
                 if (media.dateTaken == 0L) {
                     media.dateTaken = media.dateAdded
                 }
+
                 listVideo.add(media)
             }
             cursor.close()
@@ -181,19 +179,6 @@ class MediaRepository @Inject constructor() {
         } finally {
             retriever.release()
         }
-    }
-
-    private fun isSelfie(imagePath: String): Boolean {
-        try {
-            val exif = ExifInterface(imagePath)
-            val lensFacing = exif.getAttribute("LensFacing")
-            Timber.e("LamProooooooooo | isSelfie true " + lensFacing)
-            return lensFacing == "front"
-        } catch (e: IOException) {
-            Timber.e("LamProooooooooo | getListMedia - isSelfie: ${e}")
-            e.printStackTrace()
-        }
-        return false
     }
 
 
