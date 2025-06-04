@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/_5sdp"
-            app:layout_constraintDimensionRatio="3:2"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintTop_toBottomOf="@id/tvMonth">
 
 
@@ -37,9 +37,8 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0"
                 app:layout_constraintWidth_percent="0.66"
@@ -52,7 +51,7 @@
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/imgMedia1"
                 app:layout_constraintWidth_percent="0.32"
                 app:shapeAppearanceOverlay="@style/item_media_month_border_3"
@@ -63,19 +62,46 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="@id/imgMedia1"
+                app:layout_constraintBottom_toTopOf="@id/imgMedia4"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="@id/imgMedia2"
                 app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/imgMedia2"
+                app:layout_constraintTop_toBottomOf="@id/imgMedia2"
                 app:layout_constraintWidth_percent="0.32"
                 app:shapeAppearanceOverlay="@style/item_media_month_border_3"
+                tools:background="@color/gray" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgMedia4"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/imgMedia2"
+                app:layout_constraintWidth_percent="0.32"
+                app:shapeAppearanceOverlay="@style/item_media_month_border_3"
+                tools:background="@color/gray" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgMedia5"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="2.05:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintWidth_percent="0.66"
+                app:shapeAppearanceOverlay="@style/item_media_month_border_4"
                 tools:background="@color/gray" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvDay1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_text_day_type_2"
+                android:background="@drawable/bg_text_day_type_3"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingVertical="@dimen/_8sdp"
                 android:textColor="@color/white"
@@ -110,6 +136,32 @@
                 app:layout_constraintTop_toTopOf="@id/imgMedia3"
                 tools:text="20" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvDay4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_text_day_type_3"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@id/imgMedia4"
+                app:layout_constraintStart_toStartOf="@id/imgMedia4"
+                app:layout_constraintTop_toTopOf="@id/imgMedia4"
+                tools:text="20" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvDay5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_text_day_type_3"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@id/imgMedia5"
+                app:layout_constraintStart_toStartOf="@id/imgMedia5"
+                app:layout_constraintTop_toTopOf="@id/imgMedia5"
+                tools:text="20" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

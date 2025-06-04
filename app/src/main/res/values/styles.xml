@@ -6,19 +6,19 @@
     </style>
 
     <style name="item_media_month_border">
-        <item name="cornerSize">3%</item>
-    </style>
-
-    <style name="item_media_month_border_2">
         <item name="cornerSize">5%</item>
     </style>
 
+    <style name="item_media_month_border_2">
+        <item name="cornerSize">4%</item>
+    </style>
+
     <style name="item_media_month_border_3">
-        <item name="cornerSize">10%</item>
+        <item name="cornerSize">7%</item>
     </style>
 
     <style name="item_media_month_border_4">
-        <item name="cornerSize">8%</item>
+        <item name="cornerSize">10%</item>
     </style>
 
     <style name="item_recent_days_corner">

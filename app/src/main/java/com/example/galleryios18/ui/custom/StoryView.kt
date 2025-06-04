@@ -216,8 +216,8 @@ class StoryView : FrameLayout {
     fun init() {
         Timber.e("LamPro | init - swipe threshold: $swipeThreshold")
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        viewItem1 = inflate(context, R.layout.view_item_1, null)
-        viewItem2 = inflate(context, R.layout.view_item_2, null)
+        viewItem1 = inflate(context, R.layout.view_item_story, null)
+        viewItem2 = inflate(context, R.layout.view_item_story, null)
         addView(viewItem1, layoutParams)
         addView(viewItem2, layoutParams)
         viewItem1.visibility = INVISIBLE

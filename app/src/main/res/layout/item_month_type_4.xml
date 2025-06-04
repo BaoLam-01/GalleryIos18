@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -57,6 +58,44 @@
             app:layout_constraintWidth_percent="0.32"
             app:shapeAppearanceOverlay="@style/item_media_month_border_4" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDay1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_text_day_type_3"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@id/imgMedia1"
+            app:layout_constraintStart_toStartOf="@id/imgMedia1"
+            app:layout_constraintTop_toTopOf="@id/imgMedia1"
+            tools:text="20" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDay2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_text_day_type_3"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@id/imgMedia2"
+            app:layout_constraintStart_toStartOf="@id/imgMedia2"
+            app:layout_constraintTop_toTopOf="@id/imgMedia2"
+            tools:text="20" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDay3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_text_day_type_3"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@id/imgMedia3"
+            app:layout_constraintStart_toStartOf="@id/imgMedia3"
+            app:layout_constraintTop_toTopOf="@id/imgMedia3"
+            tools:text="20" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

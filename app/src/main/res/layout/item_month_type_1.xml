@@ -42,7 +42,7 @@
             android:id="@+id/tvDay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_text_day"
+            android:background="@drawable/bg_text_day_type_1"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:textColor="@color/white"
