@@ -4,8 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.transition.TransitionManager
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -34,7 +32,6 @@ import com.example.galleryios18.utils.ViewUtils
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
-import okhttp3.internal.http2.Http2Reader
 import timber.log.Timber
 import java.util.Calendar
 
@@ -131,9 +128,13 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
         }
 
-        mainViewModel.allCollectionLiveData.observe(viewLifecycleOwner) {
-            Timber.e("LamPro | observerData - setdata: ${it.size}")
-            collectionAdapter.setData(it)
+        mainViewModel.listAlbumLast30Days.observe(viewLifecycleOwner) { list ->
+            mainViewModel.listCollectionItem.forEach {
+                if (it.type == Constant.RECENT_DAY) {
+                    it.listItem = list
+                    collectionAdapter.notifyItemChanged(0)
+                }
+            }
         }
     }
 
@@ -296,7 +297,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         //                Utils.getScreenHeight(requireContext()) + (requireActivity() as MainActivity).navigationBarHeight + (requireActivity() as MainActivity).statusBarHeight + 100
         //            binding.rcvCollection.layoutParams = layoutParams
         //        }
-
+        collectionAdapter.setData(mainViewModel.listCollectionItem)
         binding.rcvCollection.apply {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -456,7 +457,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun getAllMedia() {
         Timber.e("LamPro | getAllMedia - ")
         mainViewModel.getAllMedia()
-        mainViewModel.getAllCollection()
     }
 
     override fun finishRate() {

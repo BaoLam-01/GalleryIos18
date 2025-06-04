@@ -22,9 +22,7 @@ class CustomizeBottomSheet : BaseBottomSheetDialog<BottomSheetCustomizeBinding, 
         get() = R.layout.bottom_sheet_customize
 
     override fun observer() {
-        mainViewModel.allCollectionLiveData.observe(viewLifecycleOwner) {
-            collectionAdapter.setData(it)
-        }
+        collectionAdapter.setData(mainViewModel.listCollectionItem)
     }
 
     override fun onStart() {

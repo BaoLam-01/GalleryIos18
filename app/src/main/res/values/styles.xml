@@ -21,6 +21,10 @@
         <item name="cornerSize">8%</item>
     </style>
 
+    <style name="item_recent_days_corner">
+        <item name="cornerSize">15%</item>
+    </style>
+
     <style name="CircleLeft">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">50%</item>

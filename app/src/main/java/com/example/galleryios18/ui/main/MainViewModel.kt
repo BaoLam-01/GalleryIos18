@@ -2,6 +2,7 @@ package com.example.galleryios18.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.galleryios18.common.Constant
 import com.example.galleryios18.common.LiveEvent
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.data.models.AlbumRecent
@@ -25,8 +26,13 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
     BaseViewModel() {
     val mLiveEventNavigateScreen: LiveEvent<Int> = LiveEvent()
     val allMediaLiveData: MutableLiveData<List<Media>> = MutableLiveData()
-    val allCollectionLiveData: MutableLiveData<List<CollectionItem>> = MutableLiveData()
+    val listCollectionItem: MutableList<CollectionItem> = mutableListOf()
     val listItemJsonLiveData = MutableLiveData<List<String>>()
+    val listAlbumLast30Days = MutableLiveData<List<AlbumRecent>>()
+
+    init {
+        initListCollection()
+    }
 
     fun getAllMedia() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
@@ -36,13 +42,14 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
         }) {
             val listMedia = libraryViewRepository.getListLibs(false)
             allMediaLiveData.postValue(listMedia)
-            val listLastImage = getAllImageLast30Days(listMedia)
+            val listLastImage = getAllMediaLast30Days(listMedia)
             Timber.e("LamPro - size list last image: ${listLastImage.size}")
+            listAlbumLast30Days.postValue(listLastImage)
         }
 
     }
 
-    private fun getAllImageLast30Days(listMedia: List<Media>): List<AlbumRecent> {
+    private fun getAllMediaLast30Days(listMedia: List<Media>): List<AlbumRecent> {
         val calendar = Calendar.getInstance()
 
         calendar.set(Calendar.HOUR_OF_DAY, 0)
@@ -64,32 +71,29 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
             calendar.timeInMillis
         }
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
 
         return imagesGroupedByDay
             .map { (dayMillis, listMedia) ->
                 val dayString = dateFormat.format(Date(dayMillis))
                 AlbumRecent(day = dayString, listMedia = listMedia)
             }
-            .sortedByDescending { it.day }
+            .sortedBy { it.day }
     }
 
-    fun getAllCollection() {
+    fun initListCollection() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->
             run {
                 Timber.e("LamPro: ${throwable.message}")
             }
         }) {
             val listCollection = mutableListOf<CollectionItem>()
-            listCollection.add(CollectionItem(0, "Recent", emptyList()))
-            listCollection.add(CollectionItem(1, "Persons", emptyList()))
-            listCollection.add(CollectionItem(2, "Album", emptyList()))
-            listCollection.add(CollectionItem(3, "History", emptyList()))
-            listCollection.add(CollectionItem(3, "History", emptyList()))
-            listCollection.add(CollectionItem(3, "History", emptyList()))
-            listCollection.add(CollectionItem(3, "History", emptyList()))
-            listCollection.add(CollectionItem(3, "History", emptyList()))
-            allCollectionLiveData.postValue(listCollection)
+            listCollection.add(CollectionItem(Constant.RECENT_DAY, "Recent Days", emptyList()))
+            listCollection.add(CollectionItem(Constant.MEMORIES, "Memories", emptyList()))
+            listCollection.add(CollectionItem(Constant.MEDIA_TYPES, "Media types", emptyList()))
+            listCollection.add(CollectionItem(Constant.UTILITIES, "Utilities", emptyList()))
+            listCollection.add(CollectionItem(Constant.ALBUMS, "Albums", emptyList()))
+            listCollectionItem.addAll(listCollection)
         }
 
     }

@@ -34,8 +34,17 @@ object Constant {
     const val PATH_MEDIA_FROM_GALLERY = "PATH_IMAGE_FROM_GALLERY"
     const val CURRENT_POS_TEMPLATE = "CURRENT_POS_TEMPLATE"
     const val ITEM_STRING = "ITEM_STRING"
+
+    // type span count
     const val SPAN_COUNT_SMALLEST = 10
     const val SPAN_COUNT_SMALL = 5
     const val SPAN_COUNT_MEDIUM = 3
     const val SPAN_COUNT_LARGE = 1
+
+    //type collection
+    const val RECENT_DAY = 0
+    const val MEMORIES = 1
+    const val MEDIA_TYPES = 2
+    const val UTILITIES = 3
+    const val ALBUMS = 4
 }
