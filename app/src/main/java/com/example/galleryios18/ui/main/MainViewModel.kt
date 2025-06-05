@@ -14,11 +14,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,44 +37,13 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
         }) {
             val listMedia = libraryViewRepository.getListLibs(false)
             allMediaLiveData.postValue(listMedia)
-            val listLastImage = getAllMediaLast30Days(listMedia)
+            val listLastImage = libraryViewRepository.getAllAlbumRecent()
             Timber.e("LamPro - size list last image: ${listLastImage.size}")
             listAlbumLast30Days.postValue(listLastImage)
         }
 
     }
 
-    private fun getAllMediaLast30Days(listMedia: List<Media>): List<AlbumRecent> {
-        val calendar = Calendar.getInstance()
-
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        val todayStart = calendar.timeInMillis
-
-        val thirtyDaysAgo = todayStart - TimeUnit.DAYS.toMillis(30)
-
-        val recentImages = listMedia.filter { it.dateTaken >= thirtyDaysAgo }
-
-        val imagesGroupedByDay = recentImages.groupBy { media ->
-            calendar.timeInMillis = media.dateTaken
-            calendar.set(Calendar.HOUR_OF_DAY, 0)
-            calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 0)
-            calendar.set(Calendar.MILLISECOND, 0)
-            calendar.timeInMillis
-        }
-
-        val dateFormat = SimpleDateFormat("dd MMMM", Locale.getDefault())
-
-        return imagesGroupedByDay
-            .map { (dayMillis, listMedia) ->
-                val dayString = dateFormat.format(Date(dayMillis))
-                AlbumRecent(day = dayString, listMedia = listMedia)
-            }
-            .sortedBy { it.day }
-    }
 
     fun initListCollection() {
         viewModelScope.launch(Dispatchers.IO + CoroutineExceptionHandler { _, throwable ->

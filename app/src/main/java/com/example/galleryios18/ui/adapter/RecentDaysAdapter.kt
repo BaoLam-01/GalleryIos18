@@ -9,6 +9,8 @@ import com.example.galleryios18.data.models.AlbumRecent
 import com.example.galleryios18.databinding.ItemRecentDaysBinding
 import com.example.galleryios18.ui.base.BaseBindingAdapter
 import com.example.galleryios18.utils.Utils
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class RecentDaysAdapter : BaseBindingAdapter<ItemRecentDaysBinding>() {
     private val mDiffCallback = object : DiffUtil.ItemCallback<AlbumRecent>() {
@@ -54,12 +56,12 @@ class RecentDaysAdapter : BaseBindingAdapter<ItemRecentDaysBinding>() {
         }
 
         val albumRecent = mDiffer.currentList[position]
-        holder.binding.tvDayMonth.text = albumRecent.day
-        if (albumRecent.listMedia.isNotEmpty()) {
-            Glide.with(holder.binding.imgMedia)
-                .load(albumRecent.listMedia[0].path)
-                .into(holder.binding.imgMedia)
-        }
+        val formatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
+        val textDay = formatter.format(albumRecent.day)
+        holder.binding.tvDayMonth.text = textDay
+        Glide.with(holder.binding.imgMedia)
+            .load(albumRecent.thumb)
+            .into(holder.binding.imgMedia)
     }
 
     override val layoutIdItem: Int
