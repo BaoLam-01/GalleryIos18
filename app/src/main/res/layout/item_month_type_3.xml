@@ -14,7 +14,7 @@
         android:layout_marginBottom="@dimen/_10sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvMonth"
+            android:id="@+id/tvYear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
@@ -29,7 +29,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/_5sdp"
             app:layout_constraintDimensionRatio="3:2"
-            app:layout_constraintTop_toBottomOf="@id/tvMonth">
+            app:layout_constraintTop_toBottomOf="@id/tvYear">
 
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -72,7 +72,7 @@
                 tools:background="@color/gray" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDay1"
+                android:id="@+id/tvCountMedia1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_text_day_type_2"
@@ -85,7 +85,7 @@
                 tools:text="20" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDay2"
+                android:id="@+id/tvCountMedia2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_text_day_type_3"
@@ -98,7 +98,7 @@
                 tools:text="20" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDay3"
+                android:id="@+id/tvCountMedia3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_text_day_type_3"

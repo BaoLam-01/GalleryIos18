@@ -121,11 +121,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             Timber.e("LamPro | observerData - size media: ${it.size}")
             allMediaAdapter.setData(it)
             binding.rcvAllMedia.scrollToPosition(it.size - 1)
+        }
 
-            val listMediaYear = getFirstPhotoOfEachYear(it)
-            yearMediaAdapter.setData(listMediaYear)
-            binding.rcvYearMedia.scrollToPosition(listMediaYear.size - 1)
+        mainViewModel.listItemForYearLiveData.observe(viewLifecycleOwner) {
+            yearMediaAdapter.setData(it)
+        }
 
+        mainViewModel.listItemForMonthLiveData.observe(viewLifecycleOwner) {
+            monthMediaAdapter.setData(it)
         }
 
         mainViewModel.listAlbumLast30Days.observe(viewLifecycleOwner) { list ->
@@ -138,21 +141,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
 
-    fun getFirstPhotoOfEachYear(medias: List<Media>): List<Media> {
-        val sortedPhotos = medias.sortedBy { it.dateTaken }
-
-        val firstPhotosOfYear = sortedPhotos
-            .groupBy { media ->
-                val calendar = Calendar.getInstance().apply { timeInMillis = media.dateTaken }
-                calendar.get(Calendar.YEAR)
-            }
-            .mapValues { it.value.first() }
-            .values
-            .toList()
-
-        Timber.e("LamPro | getFirstPhotoOfEachYear - firstPhotosOfYear size: ${firstPhotosOfYear.size}")
-        return firstPhotosOfYear
-    }
 
     @SuppressLint("InlinedApi")
     override fun onStart() {

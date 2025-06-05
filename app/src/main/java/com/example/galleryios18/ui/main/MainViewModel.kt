@@ -7,6 +7,7 @@ import com.example.galleryios18.common.LiveEvent
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.data.models.AlbumRecent
 import com.example.galleryios18.data.models.CollectionItem
+import com.example.galleryios18.data.models.ItemForMonth
 import com.example.galleryios18.data.repository.LibraryViewRepository
 import com.example.galleryios18.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,8 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
     BaseViewModel() {
     val mLiveEventNavigateScreen: LiveEvent<Int> = LiveEvent()
     val allMediaLiveData: MutableLiveData<List<Media>> = MutableLiveData()
+    val listItemForYearLiveData: MutableLiveData<List<Media>> = MutableLiveData()
+    val listItemForMonthLiveData: MutableLiveData<List<ItemForMonth>> = MutableLiveData()
     val listCollectionItem: MutableList<CollectionItem> = mutableListOf()
     val listItemJsonLiveData = MutableLiveData<List<String>>()
     val listAlbumLast30Days = MutableLiveData<List<AlbumRecent>>()
@@ -35,8 +38,15 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
                 Timber.e("LamPro: ${throwable.message}")
             }
         }) {
-            val listMedia = libraryViewRepository.getListLibs(false)
+            val listMedia = libraryViewRepository.getAllMedia(false)
             allMediaLiveData.postValue(listMedia)
+
+            val firstMediaEachMonth = libraryViewRepository.getFirstMediaOfEachYear()
+            listItemForYearLiveData.postValue(firstMediaEachMonth)
+
+            val listItemForMonth = libraryViewRepository.getListItemForMonth()
+            listItemForMonthLiveData.postValue(listItemForMonth)
+
             val listLastImage = libraryViewRepository.getAllAlbumRecent()
             Timber.e("LamPro - size list last image: ${listLastImage.size}")
             listAlbumLast30Days.postValue(listLastImage)
@@ -61,4 +71,5 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
         }
 
     }
+
 }

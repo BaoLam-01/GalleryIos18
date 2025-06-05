@@ -59,10 +59,10 @@
             app:shapeAppearanceOverlay="@style/item_media_month_border_4" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvDay1"
+            android:id="@+id/tvCountMedia1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_text_day_type_3"
+            android:background="@drawable/bg_text_day_type_4"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:textColor="@color/white"
@@ -72,10 +72,10 @@
             tools:text="20" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvDay2"
+            android:id="@+id/tvCountMedia2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_text_day_type_3"
+            android:background="@drawable/bg_text_day_type_4"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:textColor="@color/white"
@@ -85,10 +85,10 @@
             tools:text="20" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvDay3"
+            android:id="@+id/tvCountMedia3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_text_day_type_3"
+            android:background="@drawable/bg_text_day_type_4"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:textColor="@color/white"
