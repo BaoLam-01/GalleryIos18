@@ -341,6 +341,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     @SuppressLint("ClickableViewAccessibility")
     private fun listener() {
         allMediaAdapter.setListener(object : AllMediaAdapter.IMediaClick {
+            override fun onChangeLayoutToSmall(x: Float, y: Float) {
+                zoomInRvAllMedia(x, y)
+            }
+
             override fun onMediaClick(media: Media, position: Int) {
                 if (!checkClick()) return
                 App.instance.currentMediaShow = media
@@ -391,15 +395,15 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
 
                 override fun onScaleEnd(detector: ScaleGestureDetector) {
+                    val focusX = detector.focusX
+                    val focusY = detector.focusY
                     Timber.e("LamPro | onScaleEnd - accumulated scale: $accumulatedScale")
-                    Timber.e("LamPro | onScaleEnd - size: ${allMediaAdapter.getSize()}")
+                    Timber.e("LamPro | onScaleEnd - focusX: $focusX, focusY: $focusY")
 
                     if (accumulatedScale > 1.03f && allMediaAdapter.getSize() < 3) {
-                        allMediaAdapter.setSize(allMediaAdapter.getSize() + 1, requireContext())
-                        updateGridSpan()
+                        zoomInRvAllMedia(focusX, focusY)
                     } else if (accumulatedScale < 0.97f && allMediaAdapter.getSize() > 0) {
-                        allMediaAdapter.setSize(allMediaAdapter.getSize() - 1, requireContext())
-                        updateGridSpan()
+                        zoomOutRvAllMedia(focusX, focusY)
                     }
                 }
             })
@@ -414,6 +418,70 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             customizeBottomSheet.show(childFragmentManager, "customize")
         }
     }
+
+    private fun zoomInRvAllMedia(rawX: Float, rawY: Float) {
+        val location = IntArray(2)
+        binding.rcvAllMedia.getLocationOnScreen(location)
+        val rvX = rawX - location[0]
+        val rvY = rawY - location[1]
+
+        val layoutManager = binding.rcvAllMedia.layoutManager as GridLayoutManager
+        val childView = binding.rcvAllMedia.findChildViewUnder(rvX, rvY)
+
+        if (childView != null) {
+            val position = binding.rcvAllMedia.getChildAdapterPosition(childView)
+
+            // Zoom
+            allMediaAdapter.setSize(allMediaAdapter.getSize() + 1, requireContext())
+            updateGridSpan()
+
+            binding.rcvAllMedia.post {
+                // Tính chiều cao của RecyclerView
+                val recyclerViewHeight = binding.rcvAllMedia.height
+                val itemHeight = childView.height
+
+                // Tính offset sao cho item nằm giữa màn hình
+                val offset = (recyclerViewHeight / 2) - (itemHeight / 2)
+
+                layoutManager.scrollToPositionWithOffset(position, offset)
+            }
+        } else {
+            // Không tìm thấy view → zoom bình thường
+            allMediaAdapter.setSize(allMediaAdapter.getSize() + 1, requireContext())
+            updateGridSpan()
+        }
+    }
+
+
+    private fun zoomOutRvAllMedia(rawX: Float, rawY: Float) {
+        val location = IntArray(2)
+        binding.rcvAllMedia.getLocationOnScreen(location)
+        val rvX = rawX - location[0]
+        val rvY = rawY - location[1]
+
+        val layoutManager = binding.rcvAllMedia.layoutManager as GridLayoutManager
+        val childView = binding.rcvAllMedia.findChildViewUnder(rvX, rvY)
+
+        if (childView != null) {
+            val position = binding.rcvAllMedia.getChildAdapterPosition(childView)
+
+            allMediaAdapter.setSize(allMediaAdapter.getSize() - 1, requireContext())
+            updateGridSpan()
+
+            binding.rcvAllMedia.post {
+                val recyclerViewHeight = binding.rcvAllMedia.height
+                val itemHeight = childView.height
+
+                val offset = (recyclerViewHeight / 2) - (itemHeight / 2)
+
+                layoutManager.scrollToPositionWithOffset(position, offset)
+            }
+        } else {
+            allMediaAdapter.setSize(allMediaAdapter.getSize() - 1, requireContext())
+            updateGridSpan()
+        }
+    }
+
 
     private fun updateGridSpan() {
         val layoutManager = binding.rcvAllMedia.layoutManager as GridLayoutManager

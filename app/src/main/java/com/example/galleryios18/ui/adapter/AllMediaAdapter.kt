@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.setPadding
@@ -34,7 +35,6 @@ class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() 
     private var listenter: IMediaClick? = null
     private var widthImage: Int = 0
     private var heightImage: Int = 0
-
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
         override fun areItemsTheSame(
             oldItem: Media,
@@ -121,7 +121,7 @@ class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() 
 
     inner class MediaViewHolder(private val binding: ItemMediaBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        @SuppressLint("CheckResult")
+        @SuppressLint("CheckResult", "ClickableViewAccessibility")
         fun bindData(media: Media, position: Int) {
             Timber.e("LamPro | bindData - ")
 
@@ -225,8 +225,19 @@ class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() 
             val second: Long = duration / 1000 % 60
             binding.tvDuration.text = "$minute:$second"
 
-            binding.root.setOnClickListener {
-                listenter?.onMediaClick(media, position)
+
+            binding.root.setOnClickListener { view ->
+                if (size == SizeAllMedia.SMALLEST) {
+                    // Lấy tọa độ gốc của itemView
+                    val location = IntArray(2)
+                    view.getLocationOnScreen(location)
+                    val centerX = location[0] + view.width
+                    val centerY = location[1] + view.height
+
+                    listenter?.onChangeLayoutToSmall(centerX.toFloat(), centerY.toFloat())
+                } else {
+                    listenter?.onMediaClick(media, position)
+                }
             }
         }
 
@@ -247,6 +258,7 @@ class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() 
     }
 
     interface IMediaClick {
+        fun onChangeLayoutToSmall(x: Float, y: Float)
         fun onMediaClick(media: Media, position: Int)
     }
 }
