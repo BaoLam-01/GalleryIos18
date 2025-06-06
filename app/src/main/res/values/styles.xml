@@ -6,7 +6,7 @@
     </style>
 
     <style name="item_media_month_border">
-        <item name="cornerSize">@dimen/_10sdp</item>
+        <item name="cornerSize">5%</item>
     </style>
 
     <style name="item_media_month_border_2">
