@@ -189,7 +189,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         initCustomizeBottomSheet()
 
         ViewUtils.adjustViewWithSystemBar(
-            binding.tvTitle,
+            binding.layoutHeaderLibrary.tvTitle,
             binding.layoutTabLibraryBottom.imgSort,
             requireActivity() as MainActivity
         )
@@ -304,10 +304,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun setPaddingRcvMedia(rcvMedia: RecyclerView) {
-        binding.tvCountItem.post {
+        binding.layoutHeaderLibrary.tvCountItem.post {
             rcvMedia.setPadding(
                 rcvMedia.paddingLeft,
-                binding.tvCountItem.bottom + 20,
+                binding.layoutHeaderLibrary.tvCountItem.bottom + 20,
                 rcvMedia.paddingRight,
                 binding.layoutTabLibraryBottom.root.height + 20
             )
