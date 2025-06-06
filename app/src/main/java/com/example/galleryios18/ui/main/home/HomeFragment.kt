@@ -386,23 +386,29 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             requireContext(), object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
                     accumulatedScale = 1f
+                    binding.rcvAllMedia.isScrollEnabled = true
                     return true
                 }
 
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
                     accumulatedScale *= detector.scaleFactor
+                    if (accumulatedScale > 1.2f && allMediaAdapter.getSize() < 3 || accumulatedScale < 0.8f && allMediaAdapter.getSize() > 0) {
+                        binding.rcvAllMedia.isScrollEnabled = false
+                    }
                     return true
                 }
 
                 override fun onScaleEnd(detector: ScaleGestureDetector) {
+                    binding.rcvAllMedia.isScrollEnabled = true
+
                     val focusX = detector.focusX
                     val focusY = detector.focusY
                     Timber.e("LamPro | onScaleEnd - accumulated scale: $accumulatedScale")
                     Timber.e("LamPro | onScaleEnd - focusX: $focusX, focusY: $focusY")
 
-                    if (accumulatedScale > 1.03f && allMediaAdapter.getSize() < 3) {
+                    if (accumulatedScale > 1.1f && allMediaAdapter.getSize() < 3) {
                         zoomInRvAllMedia(focusX, focusY)
-                    } else if (accumulatedScale < 0.97f && allMediaAdapter.getSize() > 0) {
+                    } else if (accumulatedScale < 0.9f && allMediaAdapter.getSize() > 0) {
                         zoomOutRvAllMedia(focusX, focusY)
                     }
                 }
@@ -506,7 +512,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         }
         layoutManager.spanCount = currentSpanCount
         binding.rcvAllMedia.adapter?.notifyItemRangeChanged(
-            0, binding.rcvAllMedia.adapter?.itemCount ?: 0
+            0, allMediaAdapter.itemCount
         )
     }
 
