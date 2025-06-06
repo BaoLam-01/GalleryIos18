@@ -9,6 +9,7 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -105,6 +106,14 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         Timber.e("LamPro | onCreatedView - ")
         initView()
         listener()
+
+        binding.nestedScrollView.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                binding.nestedScrollView.scrollTo(0, 200) // Hoặc smoothScrollTo
+                binding.nestedScrollView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
     }
 
 
@@ -193,7 +202,6 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.layoutTabLibraryBottom.root.post {
             binding.constrainScroll.setPadding(0, 0, 0, binding.layoutTabLibraryBottom.root.height)
         }
-
         ViewUtils.adjustViewWithSystemBar(
             binding.layoutHeaderLibrary.tvTitle,
             binding.layoutTabLibraryBottom.imgSort,
@@ -344,6 +352,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun listener() {
+
         yearMediaAdapter.setListener(object : YearMediaAdapter.IItemYearClick {
             override fun onItemYearClick(media: Media) {
                 val position = monthMediaAdapter.getPosition(media)
