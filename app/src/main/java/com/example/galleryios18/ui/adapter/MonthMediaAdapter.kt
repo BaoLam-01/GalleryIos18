@@ -7,12 +7,14 @@ import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.data.models.ItemForMonth
 import com.example.galleryios18.data.models.ItemThumbInMonth
 import com.example.galleryios18.databinding.ItemMonthMediaBinding
 import com.example.galleryios18.ui.custom.SpaceItemDecorator
 import com.example.galleryios18.ui.custom.SpanSize
 import com.example.galleryios18.ui.custom.SpannedGridLayoutManager
+import com.example.galleryios18.utils.Utils
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -40,6 +42,15 @@ class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewH
     @SuppressLint("NotifyDataSetChanged")
     fun setData(listMedia: List<ItemForMonth>) {
         this.mDiffer.submitList(listMedia)
+    }
+
+    fun getPosition(media: Media): Int {
+        for (i in mDiffer.currentList.indices) {
+            if (Utils.getYearTimestamp(mDiffer.currentList[i].year) == Utils.getYearTimestamp(media.dateTaken)) {
+                return i
+            }
+        }
+        return mDiffer.currentList.size - 1
     }
 
     override fun onCreateViewHolder(

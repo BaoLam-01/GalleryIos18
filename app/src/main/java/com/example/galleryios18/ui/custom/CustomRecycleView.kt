@@ -70,4 +70,16 @@ class CustomRecycleView : RecyclerView, RecyclerView.OnItemTouchListener {
 
     override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
     }
+
+    fun scrollItemToCenter(targetPosition: Int) {
+        val layoutManager = this.layoutManager as LinearLayoutManager
+        val position = targetPosition
+
+// Tính toán offset để item nằm chính giữa
+        val itemView = this.findViewHolderForAdapterPosition(position)?.itemView
+        val itemHeight = itemView?.height ?: 0
+        val recyclerViewHeight = this.height
+        val offset = (recyclerViewHeight / 2) - (itemHeight / 2)
+        layoutManager.scrollToPositionWithOffset(position, offset)
+    }
 }

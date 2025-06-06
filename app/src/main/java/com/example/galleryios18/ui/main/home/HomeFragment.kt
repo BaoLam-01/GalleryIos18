@@ -340,6 +340,15 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun listener() {
+        yearMediaAdapter.setListener(object : YearMediaAdapter.IItemYearClick {
+            override fun onItemYearClick(media: Media) {
+                val position = monthMediaAdapter.getPosition(media)
+                binding.rcvMonthMedia.scrollItemToCenter(position)
+                val tabMonth = binding.tlBottom.getTabAt(1)
+                tabMonth?.select()
+            }
+
+        })
         allMediaAdapter.setListener(object : AllMediaAdapter.IMediaClick {
             override fun onChangeLayoutToSmall(x: Float, y: Float) {
                 zoomInRvAllMedia(x, y)

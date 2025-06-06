@@ -5,6 +5,7 @@ import com.example.galleryios18.data.models.AlbumRecent
 import com.example.galleryios18.data.models.ItemForMonth
 import com.example.galleryios18.data.models.ItemThumbInMonth
 import com.example.galleryios18.utils.MediaRepository
+import com.example.galleryios18.utils.Utils
 import timber.log.Timber
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -67,7 +68,7 @@ class LibraryViewRepository @Inject constructor(private val mediaRepository: Med
     fun getListItemForMonth(): List<ItemForMonth> {
         val listItemDay = createItemThumbInMonthList()
         val listItemForMonth = listItemDay
-            .groupBy { getYearTimestamp(it.month) }
+            .groupBy { Utils.getYearTimestamp(it.month) }
             .map { (year, daysInYear) ->
                 when (daysInYear.size) {
                     1 -> {
@@ -126,7 +127,7 @@ class LibraryViewRepository @Inject constructor(private val mediaRepository: Med
 
     fun createItemThumbInMonthList(): List<ItemThumbInMonth> {
         val monthThumbs = listAllMedia
-            .groupBy { getMonthTimestamp(it.dateTaken) }
+            .groupBy { Utils.getMonthTimestamp(it.dateTaken) }
             .map { (monthTimestamp, imagesInMonth) ->
                 val firstImage = imagesInMonth.first()
                 ItemThumbInMonth(monthTimestamp, firstImage.path, imagesInMonth.size, 0, 0)
@@ -181,30 +182,5 @@ class LibraryViewRepository @Inject constructor(private val mediaRepository: Med
         })
     }
 
-
-    fun getMonthTimestamp(timestamp: Long): Long {
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = timestamp
-            set(Calendar.DAY_OF_MONTH, 1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        return calendar.timeInMillis
-    }
-
-    fun getYearTimestamp(timestamp: Long): Long {
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = timestamp
-            set(Calendar.MONTH, 0) // Tháng 1 (0)
-            set(Calendar.DAY_OF_MONTH, 1) // Ngày 1
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        return calendar.timeInMillis
-    }
 
 }
