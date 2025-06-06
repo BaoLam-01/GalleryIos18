@@ -22,6 +22,7 @@ import com.example.galleryios18.databinding.FragmentHomeBinding
 import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.AllMediaAdapter
 import com.example.galleryios18.ui.adapter.MonthMediaAdapter
+import com.example.galleryios18.ui.adapter.ThumbInMonthAdapter
 import com.example.galleryios18.ui.adapter.YearMediaAdapter
 import com.example.galleryios18.ui.base.BaseBindingFragment
 import com.example.galleryios18.ui.custom.GroupHeaderDecoration
@@ -349,6 +350,16 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             }
 
         })
+
+        monthMediaAdapter.setListener(object : ThumbInMonthAdapter.IItemMonthClick {
+            override fun onItemMonthClick(month: Long) {
+                val position = allMediaAdapter.getFirstItemOfMonth(month)
+                binding.rcvAllMedia.scrollItemToCenter(position)
+                val tabAll = binding.tlBottom.getTabAt(2)
+                tabAll?.select()
+            }
+        })
+
         allMediaAdapter.setListener(object : AllMediaAdapter.IMediaClick {
             override fun onChangeLayoutToSmall(x: Float, y: Float) {
                 zoomInRvAllMedia(x, y)

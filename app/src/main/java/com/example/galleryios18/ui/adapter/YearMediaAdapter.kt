@@ -16,7 +16,7 @@ import java.util.Date
 import java.util.Locale
 
 class YearMediaAdapter : BaseBindingAdapter<ItemMediaYearBinding>() {
-    private var listenter: IItemYearClick? = null
+    private var listener: IItemYearClick? = null
 
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
         override fun areItemsTheSame(
@@ -41,7 +41,7 @@ class YearMediaAdapter : BaseBindingAdapter<ItemMediaYearBinding>() {
     }
 
     fun setListener(iItemYearClick: IItemYearClick) {
-        this.listenter = iItemYearClick
+        this.listener = iItemYearClick
     }
 
     override fun onBindViewHolderBase(
@@ -57,7 +57,7 @@ class YearMediaAdapter : BaseBindingAdapter<ItemMediaYearBinding>() {
             .override(Utils.getScreenWidth(holder.binding.imgThumbMedia.context))
             .into(holder.binding.imgThumbMedia)
 
-        holder.binding.root.setOnClickListener { listenter?.onItemYearClick(media) }
+        holder.binding.root.setOnClickListener { listener?.onItemYearClick(media) }
     }
 
     override val layoutIdItem: Int

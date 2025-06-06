@@ -23,6 +23,8 @@ import kotlin.math.max
 
 class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewHolder>() {
     private lateinit var thumbInMonthAdapter: ThumbInMonthAdapter
+    private var listener: ThumbInMonthAdapter.IItemMonthClick? = null
+
     private val mDiffCallback = object : DiffUtil.ItemCallback<ItemForMonth>() {
         override fun areItemsTheSame(
             oldItem: ItemForMonth, newItem: ItemForMonth
@@ -42,6 +44,10 @@ class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewH
     @SuppressLint("NotifyDataSetChanged")
     fun setData(listMedia: List<ItemForMonth>) {
         this.mDiffer.submitList(listMedia)
+    }
+
+    fun setListener(iItemMonthClick: ThumbInMonthAdapter.IItemMonthClick) {
+        this.listener = iItemMonthClick
     }
 
     fun getPosition(media: Media): Int {
@@ -80,6 +86,9 @@ class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewH
             binding.tvYear.text = textYear
 
             thumbInMonthAdapter = ThumbInMonthAdapter()
+            listener?.let {
+                thumbInMonthAdapter.setListener(it)
+            }
             thumbInMonthAdapter.setData(mDiffer.currentList[position].listItemThumbInMonth)
 
             binding.rvMedia.post {

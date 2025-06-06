@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.setPadding
@@ -32,7 +31,7 @@ import java.util.Locale
 
 class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() {
     private var size = SizeAllMedia.MEDIUM
-    private var listenter: IMediaClick? = null
+    private var listener: IMediaClick? = null
     private var widthImage: Int = 0
     private var heightImage: Int = 0
     private val mDiffCallback = object : DiffUtil.ItemCallback<Media>() {
@@ -96,7 +95,7 @@ class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() 
     }
 
     fun setListener(iMediaClick: IMediaClick) {
-        this.listenter = iMediaClick
+        this.listener = iMediaClick
     }
 
 
@@ -234,9 +233,9 @@ class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() 
                     val centerX = location[0] + view.width
                     val centerY = location[1] + view.height
 
-                    listenter?.onChangeLayoutToSmall(centerX.toFloat(), centerY.toFloat())
+                    listener?.onChangeLayoutToSmall(centerX.toFloat(), centerY.toFloat())
                 } else {
-                    listenter?.onMediaClick(media, position)
+                    listener?.onMediaClick(media, position)
                 }
             }
         }
@@ -248,6 +247,18 @@ class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() 
         val formatter = SimpleDateFormat("MMM yyyy", Locale.getDefault())
         val monthYear = formatter.format(Date(listMedia.currentList[position].dateTaken))
         return monthYear
+    }
+
+    fun getFirstItemOfMonth(month: Long): Int {
+        for (i in listMedia.currentList.indices) {
+            if (Utils.getMonthTimestamp(listMedia.currentList[i].dateTaken) == Utils.getMonthTimestamp(
+                    month
+                )
+            ) {
+                return i
+            }
+        }
+        return listMedia.currentList.size
     }
 
     object SizeAllMedia {

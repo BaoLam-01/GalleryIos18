@@ -1,25 +1,18 @@
 package com.example.galleryios18.ui.adapter
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Drawable
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
 import com.example.galleryios18.data.models.ItemThumbInMonth
 import com.example.galleryios18.databinding.ItemThumbInMonthBinding
 import com.example.galleryios18.ui.base.BaseBindingAdapter
-import com.example.galleryios18.ui.custom.DrawView
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class ThumbInMonthAdapter : BaseBindingAdapter<ItemThumbInMonthBinding>() {
+    private var listener: IItemMonthClick? = null
     private val mDiffCallback = object : DiffUtil.ItemCallback<ItemThumbInMonth>() {
         override fun areItemsTheSame(
             oldItem: ItemThumbInMonth, newItem: ItemThumbInMonth
@@ -41,6 +34,9 @@ class ThumbInMonthAdapter : BaseBindingAdapter<ItemThumbInMonthBinding>() {
         this.mDiffer.submitList(listMedia)
     }
 
+    fun setListener(iItemMonthClick: IItemMonthClick) {
+        this.listener = iItemMonthClick
+    }
 
     override fun onBindViewHolderBase(
         holder: BaseHolder<ItemThumbInMonthBinding>, position: Int
@@ -52,10 +48,18 @@ class ThumbInMonthAdapter : BaseBindingAdapter<ItemThumbInMonthBinding>() {
             .signature(ObjectKey(mDiffer.currentList[position].month))
             .error(R.color.gray)
             .into(holder.binding.imgMedia)
+        holder.binding.root.setOnClickListener {
+            listener?.onItemMonthClick(mDiffer.currentList[position].month)
+        }
     }
 
     override val layoutIdItem: Int
         get() = R.layout.item_thumb_in_month
     override val sizeItem: Int
         get() = mDiffer.currentList.size
+
+    interface IItemMonthClick {
+        fun onItemMonthClick(month: Long)
+    }
+
 }
