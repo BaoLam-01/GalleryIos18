@@ -393,9 +393,10 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
                 if (scrollY == 0) {
                     isRcvAllMediaTop = true
+                    showTabBottom()
                 } else {
                     isRcvAllMediaTop = false
-                    if (scrollY > 10) {
+                    if (scrollY > 50) {
                         hideTabBottom()
                     } else {
                         showTabBottom()
