@@ -39,6 +39,10 @@ class CustomRecycleView : RecyclerView, RecyclerView.OnItemTouchListener {
     var isScrollEnabled = true
 
     override fun onInterceptTouchEvent(e: MotionEvent?): Boolean {
+        if (e?.pointerCount == 2) {
+            // Trả về true để chặn click item
+            return true
+        }
         return isScrollEnabled && super.onInterceptTouchEvent(e)
     }
 
