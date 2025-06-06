@@ -32,6 +32,8 @@ import com.example.galleryios18.ui.main.MainActivity
 import com.example.galleryios18.ui.main.custommize.CustomizeBottomSheet
 import com.example.galleryios18.utils.Utils
 import com.example.galleryios18.utils.ViewUtils
+import com.example.galleryios18.utils.gone
+import com.example.galleryios18.utils.show
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
@@ -397,12 +399,15 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
                 if (scrollY == 0) {
                     isRcvAllMediaTop = true
+                    hideRvCollectionAndBtnCustomize()
                     showTabBottom()
                 } else {
                     isRcvAllMediaTop = false
                     if (scrollY > binding.layoutTabLibraryBottom.root.height) {
+                        showRvCollectionAndBtnCustomize()
                         hideTabBottom()
                     } else {
+                        hideRvCollectionAndBtnCustomize()
                         showTabBottom()
                     }
                 }
@@ -469,6 +474,18 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         resetRcvAll()
         val tabAll = binding.layoutTabLibraryBottom.tlBottom.getTabAt(2)
         tabAll?.select()
+    }
+
+    private fun showRvCollectionAndBtnCustomize() {
+        resetLibrary()
+        binding.rcvCollection.show()
+        binding.grBtnCustomize.show()
+    }
+
+    private fun hideRvCollectionAndBtnCustomize() {
+        binding.rcvCollection.gone()
+        binding.grBtnCustomize.gone()
+
     }
 
     private fun resetRcvAll() {
