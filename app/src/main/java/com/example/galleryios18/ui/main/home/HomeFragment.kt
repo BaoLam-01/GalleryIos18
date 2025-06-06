@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -187,6 +188,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         initRcvCollection()
         initTabLayout()
         initCustomizeBottomSheet()
+        binding.layoutTabLibraryBottom.root.post {
+            binding.constrainScroll.setPadding(0, 0, 0, binding.layoutTabLibraryBottom.root.height)
+        }
 
         ViewUtils.adjustViewWithSystemBar(
             binding.layoutHeaderLibrary.tvTitle,
@@ -309,7 +313,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                 rcvMedia.paddingLeft,
                 binding.layoutHeaderLibrary.tvCountItem.bottom + 20,
                 rcvMedia.paddingRight,
-                binding.layoutTabLibraryBottom.root.height + 20
+                rcvMedia.paddingBottom
             )
         }
     }
@@ -396,7 +400,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
                     showTabBottom()
                 } else {
                     isRcvAllMediaTop = false
-                    if (scrollY > 50) {
+                    if (scrollY > binding.layoutTabLibraryBottom.root.height) {
                         hideTabBottom()
                     } else {
                         showTabBottom()
