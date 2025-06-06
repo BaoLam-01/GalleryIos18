@@ -1,7 +1,6 @@
 package com.example.galleryios18.ui.adapter
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
@@ -14,7 +13,6 @@ import com.example.galleryios18.databinding.ItemMonthMediaBinding
 import com.example.galleryios18.ui.custom.SpaceItemDecorator
 import com.example.galleryios18.ui.custom.SpanSize
 import com.example.galleryios18.ui.custom.SpannedGridLayoutManager
-import com.example.galleryios18.utils.ViewUtils
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -70,18 +68,21 @@ class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewH
             val textYear = formatter.format(itemForMonth.year)
             binding.tvYear.text = textYear
 
-            initSizeRecyclerView(
-                binding.rvMedia,
-                ViewUtils.getScreenWidth(binding.root.context),
-                mDiffer.currentList[position].listItemThumbInMonth
-            )
+            thumbInMonthAdapter = ThumbInMonthAdapter()
+            thumbInMonthAdapter.setData(mDiffer.currentList[position].listItemThumbInMonth)
 
+            binding.rvMedia.post {
+                initSizeRecyclerView(
+                    binding.rvMedia,
+                    binding.rvMedia.width,
+                    mDiffer.currentList[position].listItemThumbInMonth
+                )
+            }
 
             val spannedGridLayoutManager =
                 SpannedGridLayoutManager(SpannedGridLayoutManager.Orientation.VERTICAL, 6)
             binding.rvMedia.setLayoutManager(spannedGridLayoutManager)
-            thumbInMonthAdapter = ThumbInMonthAdapter()
-            thumbInMonthAdapter.setData(mDiffer.currentList[position].listItemThumbInMonth)
+
             binding.rvMedia.setAdapter(thumbInMonthAdapter)
             spannedGridLayoutManager.spanSizeLookup =
                 object : SpannedGridLayoutManager.SpanSizeLookup() {
@@ -112,16 +113,17 @@ class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewH
         var maxHeightInRow = 0 // Chiều cao lớn nhất trong hàng hiện tại
 
         for (i in list.indices) {
+
             // Lấy chiều cao item thứ i theo tỷ lệ (giả sử chiều cao của item phụ thuộc vào chiều rộng của nó)
 
-            val itemHeight = (columnWidth * list.get(i)
-                .ratioWidth) as Int // Tính chiều cao item theo tỷ lệ width:height
+            val itemHeight =
+                (columnWidth * list[i].ratioHeight) // Tính chiều cao item theo tỷ lệ width:height
 
             // Cập nhật chiều cao lớn nhất trong hàng
             maxHeightInRow = max(maxHeightInRow.toDouble(), itemHeight.toDouble()).toInt()
 
             // Trừ đi số cột item này chiếm
-            spanRemaining -= list.get(i).ratioHeight
+            spanRemaining -= list[i].ratioWidth
 
             // Khi spanRemaining <= 0, nghĩa là hàng đã đầy và chúng ta cần chuyển sang hàng mới
             if (spanRemaining <= 0) {
@@ -138,6 +140,7 @@ class MonthMediaAdapter : RecyclerView.Adapter<MonthMediaAdapter.MonthMediaViewH
 //            totalHeight += maxHeightInRow
 //        }
 
+        Timber.e("LamPro | initSizeRecyclerView - total height: $totalHeight| width: $width")
 
         val layoutParams: LayoutParams = recyclerView.layoutParams as LayoutParams
         layoutParams.height = totalHeight

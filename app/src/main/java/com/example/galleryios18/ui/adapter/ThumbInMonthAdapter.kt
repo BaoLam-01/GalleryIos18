@@ -1,15 +1,23 @@
 package com.example.galleryios18.ui.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.signature.ObjectKey
 import com.example.galleryios18.R
 import com.example.galleryios18.data.models.ItemThumbInMonth
 import com.example.galleryios18.databinding.ItemThumbInMonthBinding
 import com.example.galleryios18.ui.base.BaseBindingAdapter
+import com.example.galleryios18.ui.custom.DrawView
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ThumbInMonthAdapter : BaseBindingAdapter<ItemThumbInMonthBinding>() {
     private val mDiffCallback = object : DiffUtil.ItemCallback<ItemThumbInMonth>() {
@@ -42,6 +50,7 @@ class ThumbInMonthAdapter : BaseBindingAdapter<ItemThumbInMonthBinding>() {
         Glide.with(holder.binding.imgMedia)
             .load(mDiffer.currentList[position].path)
             .signature(ObjectKey(mDiffer.currentList[position].month))
+            .error(R.color.gray)
             .into(holder.binding.imgMedia)
     }
 

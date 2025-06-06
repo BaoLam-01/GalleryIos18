@@ -131,34 +131,54 @@ class LibraryViewRepository @Inject constructor(private val mediaRepository: Med
                 val firstImage = imagesInMonth.first()
                 ItemThumbInMonth(monthTimestamp, firstImage.path, imagesInMonth.size, 0, 0)
             }
-            .sortedBy { it.month }
 
-        val monthGroups = listOf(
-            listOf(1, 2, 3),
-            listOf(4, 5),
-            listOf(6, 7),
-            listOf(8, 9),
-            listOf(10, 11, 12)
-        )
-
+        //  Gom nhóm tháng trong từng năm
         val calendar = Calendar.getInstance()
-        val selectedThumbs = mutableListOf<ItemThumbInMonth>()
 
-        for (group in monthGroups) {
-            val item = monthThumbs.find { item ->
-                calendar.timeInMillis = item.month
-                val month = calendar.get(Calendar.MONTH) + 1
-                month in group
-            }
-
-            item?.let {
-                selectedThumbs.add(it)
-            }
-
-            if (selectedThumbs.size >= 5) break
+        // Nhóm monthThumbs theo năm
+        val yearGroups = monthThumbs.groupBy { monthThumb ->
+            calendar.timeInMillis = monthThumb.month
+            calendar.get(Calendar.YEAR)
         }
 
-        return selectedThumbs
+        val result = mutableListOf<ItemThumbInMonth>()
+
+        // Tạo nhóm tháng
+        val monthGroups = listOf(
+            listOf(1, 2),
+            listOf(3, 4, 5),
+            listOf(6, 7),
+            listOf(8, 9, 10),
+            listOf(11, 12)
+        )
+
+        // Duyệt qua từng năm
+        for ((year, thumbsInYear) in yearGroups) {
+            val selectedThumbs = mutableListOf<ItemThumbInMonth>()
+
+            for (group in monthGroups) {
+                val item = thumbsInYear.find { item ->
+                    calendar.timeInMillis = item.month
+                    val month = calendar.get(Calendar.MONTH) + 1
+                    month in group
+                }
+
+                item?.let { selectedThumbs.add(it) }
+
+                // Đảm bảo không lấy quá 5 ảnh mỗi năm
+                if (selectedThumbs.size >= 5) break
+            }
+
+            result.addAll(selectedThumbs)
+        }
+
+        // Sắp xếp kết quả theo năm giảm dần và theo tháng
+        return result.sortedWith(compareBy<ItemThumbInMonth> {
+            calendar.timeInMillis = it.month
+            calendar.get(Calendar.YEAR)
+        }.thenBy {
+            it.month
+        })
     }
 
 
