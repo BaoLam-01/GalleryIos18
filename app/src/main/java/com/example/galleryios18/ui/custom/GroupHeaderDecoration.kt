@@ -26,7 +26,6 @@ class GroupHeaderDecoration(
     }
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        Timber.e("LamPro | onDrawOver -")
         val childCount = parent.childCount
         if (childCount == 0) return
 

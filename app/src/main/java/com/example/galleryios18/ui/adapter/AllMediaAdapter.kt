@@ -120,7 +120,7 @@ class AllMediaAdapter : RecyclerView.Adapter<AllMediaAdapter.MediaViewHolder>() 
 
     inner class MediaViewHolder(private val binding: ItemMediaBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        @SuppressLint("CheckResult", "ClickableViewAccessibility")
+        @SuppressLint("CheckResult", "ClickableViewAccessibility", "SetTextI18n")
         fun bindData(media: Media, position: Int) {
             Timber.e("LamPro | bindData - ")
 

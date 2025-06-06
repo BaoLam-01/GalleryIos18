@@ -164,66 +164,12 @@
             app:layout_constraintTop_toTopOf="@id/tvChose"
             app:shapeAppearanceOverlay="@style/Circle" />
 
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imgSort"
-            android:layout_width="wrap_content"
+        <include
+            android:id="@+id/layoutTabLibraryBottom"
+            layout="@layout/layout_tab_library_bottom"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:background="#C4BDBDBD"
-            android:src="@drawable/ic_sort"
-            app:contentPadding="@dimen/_10sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:shapeAppearanceOverlay="@style/Circle" />
-
-
-        <com.github.mmin18.widget.RealtimeBlurView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/bg_circle"
-            android:clipToOutline="true"
-            app:layout_constraintBottom_toBottomOf="@id/tlBottom"
-            app:layout_constraintEnd_toEndOf="@id/tlBottom"
-            app:layout_constraintStart_toStartOf="@id/tlBottom"
-            app:layout_constraintTop_toTopOf="@id/tlBottom"
-            app:realtimeBlurRadius="5dp"
-            app:realtimeDownsampleFactor="2" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tlBottom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_circle"
-            app:layout_constraintBottom_toBottomOf="@id/imgSort"
-            app:layout_constraintEnd_toStartOf="@id/imgClose"
-            app:layout_constraintStart_toEndOf="@id/imgSort"
-            app:layout_constraintTop_toTopOf="@id/imgSort"
-            app:tabGravity="fill"
-            app:tabIndicator="@drawable/tab_indicator"
-            app:tabIndicatorColor="@color/color_8c767680"
-            app:tabIndicatorFullWidth="true"
-            app:tabIndicatorGravity="stretch"
-            app:tabMode="auto"
-            app:tabRippleColor="@color/transparent"
-            app:tabSelectedTextAppearance="@style/TextTabLayoutCategory" />
-
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imgClose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:background="#C4BDBDBD"
-            android:src="@drawable/ic_close"
-            app:contentPadding="@dimen/_10sdp"
-            app:layout_constraintBottom_toBottomOf="@id/imgSort"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/imgSort"
-            app:shapeAppearanceOverlay="@style/Circle" />
-
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

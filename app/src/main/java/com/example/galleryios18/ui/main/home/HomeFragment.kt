@@ -14,13 +14,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.galleryios18.App
 import com.example.galleryios18.R
 import com.example.galleryios18.common.Constant
 import com.example.galleryios18.common.models.Media
 import com.example.galleryios18.databinding.FragmentHomeBinding
-import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.AllMediaAdapter
+import com.example.galleryios18.ui.adapter.CollectionAdapter
 import com.example.galleryios18.ui.adapter.MonthMediaAdapter
 import com.example.galleryios18.ui.adapter.ThumbInMonthAdapter
 import com.example.galleryios18.ui.adapter.YearMediaAdapter
@@ -34,7 +35,6 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
 import timber.log.Timber
-import java.util.Calendar
 
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private var requestPermission = true
@@ -189,7 +189,9 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         initCustomizeBottomSheet()
 
         ViewUtils.adjustViewWithSystemBar(
-            binding.tvTitle, binding.imgSort, requireActivity() as MainActivity
+            binding.tvTitle,
+            binding.layoutTabLibraryBottom.imgSort,
+            requireActivity() as MainActivity
         )
 
     }
@@ -197,14 +199,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun initRcvAllMedia() {
         allMediaAdapter = AllMediaAdapter()
         allMediaAdapter.setSize(AllMediaAdapter.SizeAllMedia.MEDIUM, requireContext())
-        binding.viewBgGradient.post {
-            binding.rcvAllMedia.setPadding(
-                binding.rcvAllMedia.paddingLeft,
-                binding.tvCountItem.bottom + 20,
-                binding.rcvAllMedia.paddingRight,
-                binding.rcvAllMedia.paddingBottom
-            )
-        }
+        setPaddingRcvMedia(binding.rcvAllMedia)
+
         binding.rcvAllMedia.layoutParams.let {
             val layoutParams = it as ConstraintLayout.LayoutParams
             layoutParams.height =
@@ -232,14 +228,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initRcvMonthMedia() {
         monthMediaAdapter = MonthMediaAdapter()
-        binding.viewBgGradient.post {
-            binding.rcvMonthMedia.setPadding(
-                binding.rcvMonthMedia.paddingLeft,
-                binding.tvCountItem.bottom + 20,
-                binding.rcvMonthMedia.paddingRight,
-                binding.rcvMonthMedia.paddingBottom
-            )
-        }
+        setPaddingRcvMedia(binding.rcvMonthMedia)
 //        binding.rcvMonthMedia.layoutParams.let {
 //            val layoutParams = it as ConstraintLayout.LayoutParams
 //            layoutParams.height =
@@ -258,15 +247,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
     private fun initRcvYearMedia() {
         yearMediaAdapter = YearMediaAdapter()
-        binding.viewBgGradient.post {
-            binding.rcvYearMedia.setPadding(
-                binding.rcvYearMedia.paddingLeft,
-                binding.viewBgGradient.bottom + 20,
-                binding.rcvYearMedia.paddingRight,
-                binding.rcvYearMedia.paddingBottom
-            )
-        }
-
+        setPaddingRcvMedia(binding.rcvYearMedia)
         binding.rcvYearMedia.apply {
             clipToPadding = false
             val linearLayout =
@@ -295,26 +276,42 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initTabLayout() {
-        binding.tlBottom.addTab(
-            binding.tlBottom.newTab().setText(getText(R.string.year))
+        binding.layoutTabLibraryBottom.tlBottom.addTab(
+            binding.layoutTabLibraryBottom.tlBottom.newTab().setText(getText(R.string.year))
         )
-        binding.tlBottom.addTab(
-            binding.tlBottom.newTab().setText(getText(R.string.month))
+        binding.layoutTabLibraryBottom.tlBottom.addTab(
+            binding.layoutTabLibraryBottom.tlBottom.newTab().setText(getText(R.string.month))
         )
-        binding.tlBottom.addTab(
-            binding.tlBottom.newTab().setText(getText(R.string.all_photos))
+        binding.layoutTabLibraryBottom.tlBottom.addTab(
+            binding.layoutTabLibraryBottom.tlBottom.newTab().setText(getText(R.string.all_photos))
         )
-        binding.tlBottom.selectTab(binding.tlBottom.getTabAt(TabImage.TAB_ALL_PHOTO))
+        binding.layoutTabLibraryBottom.tlBottom.selectTab(
+            binding.layoutTabLibraryBottom.tlBottom.getTabAt(
+                TabImage.TAB_ALL_PHOTO
+            )
+        )
         changeTabLayout(TabImage.TAB_ALL_PHOTO)
 
-        for (i in 0 until binding.tlBottom.getTabCount()) {
-            val tabView = (binding.tlBottom.getChildAt(0) as ViewGroup).getChildAt(i)
+        for (i in 0 until binding.layoutTabLibraryBottom.tlBottom.getTabCount()) {
+            val tabView =
+                (binding.layoutTabLibraryBottom.tlBottom.getChildAt(0) as ViewGroup).getChildAt(i)
             tabView.setOnLongClickListener(OnLongClickListener { v: View? -> true })
         }
     }
 
     private fun initCustomizeBottomSheet() {
         customizeBottomSheet = CustomizeBottomSheet()
+    }
+
+    private fun setPaddingRcvMedia(rcvMedia: RecyclerView) {
+        binding.tvCountItem.post {
+            rcvMedia.setPadding(
+                rcvMedia.paddingLeft,
+                binding.tvCountItem.bottom + 20,
+                rcvMedia.paddingRight,
+                binding.layoutTabLibraryBottom.root.height + 20
+            )
+        }
     }
 
     private fun changeTabLayout(position: Int) {
@@ -345,7 +342,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             override fun onItemYearClick(media: Media) {
                 val position = monthMediaAdapter.getPosition(media)
                 binding.rcvMonthMedia.scrollItemToCenter(position)
-                val tabMonth = binding.tlBottom.getTabAt(1)
+                val tabMonth = binding.layoutTabLibraryBottom.tlBottom.getTabAt(1)
                 tabMonth?.select()
             }
 
@@ -355,7 +352,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             override fun onItemMonthClick(month: Long) {
                 val position = allMediaAdapter.getFirstItemOfMonth(month)
                 binding.rcvAllMedia.scrollItemToCenter(position)
-                val tabAll = binding.tlBottom.getTabAt(2)
+                val tabAll = binding.layoutTabLibraryBottom.tlBottom.getTabAt(2)
                 tabAll?.select()
             }
         })
@@ -373,7 +370,8 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         })
 
-        binding.tlBottom.addOnTabSelectedListener(object : OnTabSelectedListener {
+        binding.layoutTabLibraryBottom.tlBottom.addOnTabSelectedListener(object :
+            OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val tabCurrent = tab.position
                 changeTabLayout(tabCurrent)
@@ -389,10 +387,19 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
                 val viewTop = binding.rcvAllMedia.top
-                if (viewTop - scrollY == 0) {
+
+                Timber.e("LamPro | listener - viewtop: $viewTop, scrollY: $scrollY")
+                Timber.e("LamPro | listener - tlBottom: ${binding.layoutTabLibraryBottom.root.height}")
+
+                if (scrollY == 0) {
                     isRcvAllMediaTop = true
                 } else {
                     isRcvAllMediaTop = false
+                    if (scrollY > 10) {
+                        hideTabBottom()
+                    } else {
+                        showTabBottom()
+                    }
                 }
                 binding.rcvAllMedia.isScrollEnabled = isRcvAllMediaTop == true
                 binding.rcvMonthMedia.isScrollEnabled = isRcvAllMediaTop == true
@@ -442,6 +449,33 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
 
         binding.tvCustomizeAndReorder.setOnClickListener {
             customizeBottomSheet.show(childFragmentManager, "customize")
+        }
+    }
+
+    private fun hideTabBottom() {
+        binding.layoutTabLibraryBottom.root.visibility = View.INVISIBLE
+    }
+
+    private fun showTabBottom() {
+        binding.layoutTabLibraryBottom.root.visibility = View.VISIBLE
+    }
+
+    private fun resetLibrary() {
+        resetRcvAll()
+        val tabAll = binding.layoutTabLibraryBottom.tlBottom.getTabAt(2)
+        tabAll?.select()
+    }
+
+    private fun resetRcvAll() {
+        when (allMediaAdapter.getSize()) {
+            AllMediaAdapter.SizeAllMedia.SMALLEST -> {
+                zoomInRvAllMedia(-1f, -1f)
+            }
+
+            AllMediaAdapter.SizeAllMedia.LARGE -> {
+                zoomOutRvAllMedia(-1f, -1f)
+            }
+
         }
     }
 

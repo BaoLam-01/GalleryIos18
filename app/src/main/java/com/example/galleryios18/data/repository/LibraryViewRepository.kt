@@ -154,7 +154,7 @@ class LibraryViewRepository @Inject constructor(private val mediaRepository: Med
         )
 
         // Duyệt qua từng năm
-        for ((year, thumbsInYear) in yearGroups) {
+        for ((_, thumbsInYear) in yearGroups) {
             val selectedThumbs = mutableListOf<ItemThumbInMonth>()
 
             for (group in monthGroups) {

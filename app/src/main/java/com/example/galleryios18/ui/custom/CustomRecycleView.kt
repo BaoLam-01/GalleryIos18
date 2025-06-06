@@ -3,16 +3,9 @@ package com.example.galleryios18.ui.custom
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.example.galleryios18.App.Companion.instance
-import timber.log.Timber
-import kotlin.math.abs
 
 class CustomRecycleView : RecyclerView, RecyclerView.OnItemTouchListener {
 
