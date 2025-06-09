@@ -136,14 +136,7 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
                 0
             )
         )
-        listMediaTypes.add(
-            ItemMediaTypeUtilities(
-                R.drawable.ic_live_photos,
-                Constant.LIVE_PHOTOS,
-                R.string.live_photos,
-                0
-            )
-        )
+
         viewModelScope.launch {
             updateListCollectionItem(Constant.MEDIA_TYPES, listMediaTypes)
         }
@@ -155,7 +148,6 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
         val countSelfie = libraryViewRepository.getCountSelfie()
         val countScreenshots = libraryViewRepository.getCountScreenShort()
         val countScreenRecordings = libraryViewRepository.getCountScreenRecordings()
-        val countLivePhotos = libraryViewRepository.getCountLivePhotos()
         val countFavorite = libraryViewRepository.getCountFavorite()
         listMediaTypes.forEach {
             when (it.type) {
@@ -163,7 +155,6 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
                 Constant.SELFIE -> it.count = countSelfie
                 Constant.SCREENSHOTS -> it.count = countScreenshots
                 Constant.SCREEN_RECORDINGS -> it.count = countScreenRecordings
-                Constant.LIVE_PHOTOS -> it.count = countLivePhotos
             }
         }
         updateListCollectionItem(Constant.MEDIA_TYPES, listMediaTypes)

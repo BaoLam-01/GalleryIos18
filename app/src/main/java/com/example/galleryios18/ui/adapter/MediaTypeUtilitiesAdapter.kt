@@ -49,6 +49,12 @@ class MediaTypeUtilitiesAdapter : BaseBindingAdapter<ItemMediaTypeUtilitiesBindi
             holder.binding.imgLock.gone()
             holder.binding.tvItem.show()
         }
+
+        if (position == mDiffer.currentList.size - 1) {
+            holder.binding.line.gone()
+        } else {
+            holder.binding.line.show()
+        }
     }
 
     override val layoutIdItem: Int

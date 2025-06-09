@@ -232,11 +232,6 @@ class LibraryViewRepository @Inject constructor(private val mediaRepository: Med
         return countScreenRecordings
     }
 
-    fun getCountLivePhotos(): Int {
-        var countLivePhotos = 0
-        return countLivePhotos
-    }
-
     fun getCountFavorite(): Int {
         var countFavorite = 0
         return countFavorite
