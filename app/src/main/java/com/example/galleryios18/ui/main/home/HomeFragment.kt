@@ -107,13 +107,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         initView()
         listener()
 
-        binding.nestedScrollView.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                binding.nestedScrollView.scrollTo(0, 200) // Hoặc smoothScrollTo
-                binding.nestedScrollView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
-        })
+        binding.nestedScrollView.post {
+            binding.nestedScrollView.scrollTo(
+                0,
+                Utils.getScreenHeight(requireContext()) / 3
+            )
+        }
     }
 
 
@@ -200,7 +199,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         initTabLayout()
         initCustomizeBottomSheet()
         binding.layoutTabLibraryBottom.root.post {
-            binding.constrainScroll.setPadding(0, 0, 0, binding.layoutTabLibraryBottom.root.height)
+            binding.constrainScroll.setPadding(
+                0,
+                0,
+                0,
+                binding.layoutTabLibraryBottom.root.height + 10
+            )
         }
         ViewUtils.adjustViewWithSystemBar(
             binding.layoutHeaderLibrary.tvTitle,
