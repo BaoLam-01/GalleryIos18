@@ -1,5 +1,10 @@
 package com.example.galleryios18.ui.adapter
 
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -10,16 +15,17 @@ import com.example.galleryios18.common.Constant
 import com.example.galleryios18.data.models.AlbumRecent
 import com.example.galleryios18.data.models.AlbumMemories
 import com.example.galleryios18.data.models.CollectionItem
+import com.example.galleryios18.data.models.ItemMediaTypeUtilities
 import com.example.galleryios18.databinding.ItemCollectionBinding
 import com.example.galleryios18.ui.base.BaseBindingAdapter
-import com.example.galleryios18.ui.custom.MyLinearSnapHelper
-import timber.log.Timber
+import com.example.galleryios18.utils.Utils
 
 class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
     private var listCollection: AsyncListDiffer<CollectionItem>
 
     private var recentDaysAdapter: RecentDaysAdapter
     private var memoriesAdapter: MemoriesAdapter
+    private var mediaTypeUtilitiesAdapter: MediaTypeUtilitiesAdapter
     private val mDiffCallback = object : DiffUtil.ItemCallback<CollectionItem>() {
         override fun areItemsTheSame(
             oldItem: CollectionItem,
@@ -41,6 +47,7 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
         listCollection = AsyncListDiffer(this, mDiffCallback)
         recentDaysAdapter = RecentDaysAdapter()
         memoriesAdapter = MemoriesAdapter()
+        mediaTypeUtilitiesAdapter = MediaTypeUtilitiesAdapter()
     }
 
     fun setData(list: List<CollectionItem>) {
@@ -53,6 +60,8 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
     ) {
         val collectionItem = listCollection.currentList[position]
         holder.binding.tvTitle.text = collectionItem.title
+        var background = 0
+        var marginsHorizontal = 0
 
         when (collectionItem.type) {
             Constant.RECENT_DAY -> {
@@ -61,7 +70,8 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
                     GridLayoutManager.HORIZONTAL,
                     false
                 )
-                holder.binding.rvAlbum.background = null
+                marginsHorizontal = 0
+                background = 0
 
                 holder.binding.rvAlbum.adapter = recentDaysAdapter
                 recentDaysAdapter.setData(collectionItem.listItem as List<AlbumRecent>)
@@ -73,7 +83,8 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
                     GridLayoutManager.HORIZONTAL,
                     false
                 )
-                holder.binding.rvAlbum.background = null
+                marginsHorizontal = 0
+                background = 0
 
                 holder.binding.rvAlbum.adapter = memoriesAdapter
                 val snapHelper = PagerSnapHelper()
@@ -87,7 +98,11 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
                     GridLayoutManager.VERTICAL,
                     false
                 )
-                holder.binding.rvAlbum.setBackgroundResource(R.drawable.bg_rv_media_types)
+                marginsHorizontal = Utils.dpToPx(20f)
+                background = R.drawable.bg_rv_media_types
+
+                holder.binding.rvAlbum.adapter = mediaTypeUtilitiesAdapter
+                mediaTypeUtilitiesAdapter.setData(collectionItem.listItem as List<ItemMediaTypeUtilities>)
             }
 
             Constant.UTILITIES -> {
@@ -96,7 +111,8 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
                     GridLayoutManager.VERTICAL,
                     false
                 )
-                holder.binding.rvAlbum.setBackgroundResource(R.drawable.bg_rv_media_types)
+                marginsHorizontal = Utils.dpToPx(20f)
+                background = R.drawable.bg_rv_media_types
             }
 
             else -> {
@@ -106,10 +122,25 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
                     GridLayoutManager.HORIZONTAL,
                     false
                 )
-                holder.binding.rvAlbum.background = null
+                marginsHorizontal = 0
+                background = 0
 
             }
+        }
 
+        val layoutParams =
+            holder.binding.rvAlbum.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.setMargins(
+            marginsHorizontal,
+            holder.binding.rvAlbum.marginTop,
+            marginsHorizontal,
+            holder.binding.rvAlbum.marginBottom
+        )
+
+        if (background != 0) {
+            holder.binding.rvAlbum.setBackgroundResource(background)
+        } else {
+            holder.binding.rvAlbum.background = null
         }
     }
 

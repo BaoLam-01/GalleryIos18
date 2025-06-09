@@ -206,4 +206,40 @@ class LibraryViewRepository @Inject constructor(private val mediaRepository: Med
         }.sortedByDescending { it.date }
 
     }
+
+    fun getCountVideo(): Int {
+        var countVideo = 0
+        listAllMedia.forEach {
+            if (!it.isImage) {
+                countVideo++
+            }
+        }
+        return countVideo
+    }
+
+    fun getCountSelfie(): Int {
+        var countSelfie = 0
+        return countSelfie
+    }
+
+    fun getCountScreenShort(): Int {
+        var countScreenShort = 0
+        return countScreenShort
+    }
+
+    fun getCountScreenRecordings(): Int {
+        var countScreenRecordings = 0
+        return countScreenRecordings
+    }
+
+    fun getCountLivePhotos(): Int {
+        var countLivePhotos = 0
+        return countLivePhotos
+    }
+
+    fun getCountFavorite(): Int {
+        var countFavorite = 0
+        return countFavorite
+    }
+
 }

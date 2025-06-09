@@ -47,4 +47,14 @@ object Constant {
     const val MEDIA_TYPES = 2
     const val UTILITIES = 3
     const val ALBUMS = 4
+
+    //type MediaTypes, Utilities
+    const val VIDEO = "Video"
+    const val SELFIE = "Selfie"
+    const val SCREENSHOTS = "Screenshots"
+    const val SCREEN_RECORDINGS = "Screen Recordings"
+    const val LIVE_PHOTOS = "Live Photos"
+    const val FAVORITES = "Favorites"
+    const val HIDDEN = "Hidden"
+    const val RECENTLY_DELETED = "Recently Deleted"
 }

@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_16sdp">
+        android:layout_marginTop="@dimen/_20sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitle"
@@ -50,8 +50,11 @@
             android:id="@+id/rvAlbum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+            android:layout_marginTop="15dp"
+            android:clipToOutline="true"
+            android:clipToPadding="true"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            tools:targetApi="31" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

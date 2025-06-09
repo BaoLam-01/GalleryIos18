@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@ import com.example.galleryios18.utils.show
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.tapbi.spark.launcherios18.utils.PermissionHelper
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
@@ -140,24 +142,13 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
         mainViewModel.listItemForMonthLiveData.observe(viewLifecycleOwner) {
             monthMediaAdapter.setData(it)
         }
-
-        mainViewModel.listAlbumRecentLiveData.observe(viewLifecycleOwner) { list ->
-            mainViewModel.listCollectionItem.forEach {
-                if (it.type == Constant.RECENT_DAY) {
-                    it.listItem = list
-                    collectionAdapter.notifyItemChanged(0)
-                }
+        lifecycleScope.launch {
+            mainViewModel.positionCollectionChange.collect { position ->
+                Timber.e("LamPro | observerData - position: $position")
+                collectionAdapter.notifyItemChanged(position)
             }
         }
 
-        mainViewModel.listAlbumMemoriesLiveData.observe(viewLifecycleOwner) { list ->
-            mainViewModel.listCollectionItem.forEach {
-                if (it.type == Constant.MEMORIES) {
-                    it.listItem = list
-                    collectionAdapter.notifyItemChanged(1)
-                }
-            }
-        }
     }
 
 

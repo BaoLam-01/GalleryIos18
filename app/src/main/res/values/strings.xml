@@ -51,5 +51,13 @@
     <string name="photo_zoom">Photo Zoom</string>
     <string name="reset">Reset</string>
     <string name="reorder_or_hide_collections_to_personalize_your_view">Reorder or hide collections to personalize your view</string>
+    <string name="videos">Videos</string>
+    <string name="selfies">Selfies</string>
+    <string name="screenShots">Screenshots</string>
+    <string name="screen_recordings">Screen Recordings</string>
+    <string name="live_photos">Live Photos</string>
+    <string name="favorites">Favorites</string>
+    <string name="hidden">Hidden</string>
+    <string name="recently_deleted">Recently Deleted</string>
 
 </resources>
