@@ -9,11 +9,9 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.marginTop
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -143,11 +141,20 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding, HomeViewModel>() {
             monthMediaAdapter.setData(it)
         }
 
-        mainViewModel.listAlbumLast30Days.observe(viewLifecycleOwner) { list ->
+        mainViewModel.listAlbumRecentLiveData.observe(viewLifecycleOwner) { list ->
             mainViewModel.listCollectionItem.forEach {
                 if (it.type == Constant.RECENT_DAY) {
                     it.listItem = list
                     collectionAdapter.notifyItemChanged(0)
+                }
+            }
+        }
+
+        mainViewModel.listAlbumMemoriesLiveData.observe(viewLifecycleOwner) { list ->
+            mainViewModel.listCollectionItem.forEach {
+                if (it.type == Constant.MEMORIES) {
+                    it.listItem = list
+                    collectionAdapter.notifyItemChanged(1)
                 }
             }
         }

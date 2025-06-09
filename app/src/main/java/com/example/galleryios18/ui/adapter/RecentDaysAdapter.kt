@@ -42,11 +42,11 @@ class RecentDaysAdapter : BaseBindingAdapter<ItemRecentDaysBinding>() {
     ) {
         if (position == 0) {
             val layoutParams = holder.binding.root.layoutParams as ViewGroup.MarginLayoutParams
-            layoutParams.marginStart = Utils.dpToPx(20f)
+            layoutParams.marginStart = Utils.dpToPx(22f)
             holder.binding.root.layoutParams = layoutParams
         } else if (position == mDiffer.currentList.size - 1) {
             val layoutParams = holder.binding.root.layoutParams as ViewGroup.MarginLayoutParams
-            layoutParams.marginEnd = Utils.dpToPx(20f)
+            layoutParams.marginEnd = Utils.dpToPx(22f)
             holder.binding.root.layoutParams = layoutParams
         } else {
             val layoutParams = holder.binding.root.layoutParams as ViewGroup.MarginLayoutParams

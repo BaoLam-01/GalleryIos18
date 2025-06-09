@@ -1,6 +1,8 @@
 package com.example.galleryios18.data.repository
 
+import com.example.galleryios18.common.models.Album
 import com.example.galleryios18.common.models.Media
+import com.example.galleryios18.data.models.AlbumMemories
 import com.example.galleryios18.data.models.AlbumRecent
 import com.example.galleryios18.data.models.ItemForMonth
 import com.example.galleryios18.data.models.ItemThumbInMonth
@@ -10,6 +12,8 @@ import timber.log.Timber
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 class LibraryViewRepository @Inject constructor(private val mediaRepository: MediaRepository) {
 
@@ -182,5 +186,24 @@ class LibraryViewRepository @Inject constructor(private val mediaRepository: Med
         })
     }
 
+    fun getListAlbumMemories(): List<AlbumMemories> {
+        var monthGroup = 0L
+        val imagesGroupByMonth = listAllMedia.groupBy { media ->
+            monthGroup = Utils.getMonthTimestamp(media.dateTaken)
+            monthGroup
+        }
 
+        return imagesGroupByMonth.map { (dayMillis, listMedia) ->
+            val thumb = listMedia.firstOrNull()?.path ?: ""
+
+            AlbumMemories(
+                title = "",
+                thumb = thumb,
+                date = dayMillis,
+                listMedia = listMedia,
+                isFavorite = false
+            )
+        }.sortedByDescending { it.date }
+
+    }
 }

@@ -4,18 +4,22 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.galleryios18.R
 import com.example.galleryios18.common.Constant
-import com.example.galleryios18.common.models.Album
 import com.example.galleryios18.data.models.AlbumRecent
+import com.example.galleryios18.data.models.AlbumMemories
 import com.example.galleryios18.data.models.CollectionItem
 import com.example.galleryios18.databinding.ItemCollectionBinding
 import com.example.galleryios18.ui.base.BaseBindingAdapter
+import com.example.galleryios18.ui.custom.MyLinearSnapHelper
+import timber.log.Timber
 
 class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
     private var listCollection: AsyncListDiffer<CollectionItem>
 
     private var recentDaysAdapter: RecentDaysAdapter
+    private var memoriesAdapter: MemoriesAdapter
     private val mDiffCallback = object : DiffUtil.ItemCallback<CollectionItem>() {
         override fun areItemsTheSame(
             oldItem: CollectionItem,
@@ -36,6 +40,7 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
     init {
         listCollection = AsyncListDiffer(this, mDiffCallback)
         recentDaysAdapter = RecentDaysAdapter()
+        memoriesAdapter = MemoriesAdapter()
     }
 
     fun setData(list: List<CollectionItem>) {
@@ -57,6 +62,7 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
                     false
                 )
                 holder.binding.rvAlbum.background = null
+
                 holder.binding.rvAlbum.adapter = recentDaysAdapter
                 recentDaysAdapter.setData(collectionItem.listItem as List<AlbumRecent>)
             }
@@ -68,6 +74,11 @@ class CollectionAdapter : BaseBindingAdapter<ItemCollectionBinding>() {
                     false
                 )
                 holder.binding.rvAlbum.background = null
+
+                holder.binding.rvAlbum.adapter = memoriesAdapter
+                val snapHelper = PagerSnapHelper()
+                snapHelper.attachToRecyclerView(holder.binding.rvAlbum)
+                memoriesAdapter.setData(collectionItem.listItem as List<AlbumMemories>)
             }
 
             Constant.MEDIA_TYPES -> {

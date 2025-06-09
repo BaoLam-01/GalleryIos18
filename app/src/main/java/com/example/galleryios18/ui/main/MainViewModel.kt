@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.galleryios18.common.Constant
 import com.example.galleryios18.common.LiveEvent
 import com.example.galleryios18.common.models.Media
+import com.example.galleryios18.data.models.AlbumMemories
 import com.example.galleryios18.data.models.AlbumRecent
 import com.example.galleryios18.data.models.CollectionItem
 import com.example.galleryios18.data.models.ItemForMonth
@@ -26,7 +27,8 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
     val listItemForMonthLiveData: MutableLiveData<List<ItemForMonth>> = MutableLiveData()
     val listCollectionItem: MutableList<CollectionItem> = mutableListOf()
     val listItemJsonLiveData = MutableLiveData<List<String>>()
-    val listAlbumLast30Days = MutableLiveData<List<AlbumRecent>>()
+    val listAlbumRecentLiveData = MutableLiveData<List<AlbumRecent>>()
+    val listAlbumMemoriesLiveData = MutableLiveData<List<AlbumMemories>>()
 
     init {
         initListCollection()
@@ -47,9 +49,12 @@ class MainViewModel @Inject constructor(private val libraryViewRepository: Libra
             val listItemForMonth = libraryViewRepository.getListItemForMonth()
             listItemForMonthLiveData.postValue(listItemForMonth)
 
-            val listLastImage = libraryViewRepository.getAllAlbumRecent()
-            Timber.e("LamPro - size list last image: ${listLastImage.size}")
-            listAlbumLast30Days.postValue(listLastImage)
+            val listAlbumRecent = libraryViewRepository.getAllAlbumRecent()
+            Timber.e("LamPro - size list last image: ${listAlbumRecent.size}")
+            listAlbumRecentLiveData.postValue(listAlbumRecent)
+
+            val listAlbumMemories = libraryViewRepository.getListAlbumMemories()
+            listAlbumMemoriesLiveData.postValue(listAlbumMemories)
         }
 
     }

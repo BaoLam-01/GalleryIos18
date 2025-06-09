@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_5sdp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgMedia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/gray"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="3:4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/item_story_days_corner" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_favorite"
+            app:layout_constraintEnd_toEndOf="@id/imgMedia"
+            app:layout_constraintTop_toTopOf="@id/imgMedia" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDayMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_20sdp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/tvYear"
+            app:layout_constraintEnd_toEndOf="@id/imgMedia"
+            app:layout_constraintStart_toStartOf="@id/imgMedia"
+            tools:text="9 June" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15sdp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imgMedia"
+            app:layout_constraintEnd_toEndOf="@id/imgMedia"
+            app:layout_constraintStart_toStartOf="@id/imgMedia"
+            tools:text="2025" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

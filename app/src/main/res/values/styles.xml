@@ -25,6 +25,10 @@
         <item name="cornerSize">15%</item>
     </style>
 
+    <style name="item_story_days_corner">
+        <item name="cornerSize">5%</item>
+    </style>
+
     <style name="CircleLeft">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">50%</item>
