@@ -14,20 +14,9 @@ data class Media(
     var size: Long,
     var isImage: Boolean = true,
     var duration: Long = 0L,
+    val listLabeling: MutableList<String> = mutableListOf<String>()
 ) {
     override fun toString(): String {
-        return "id: $id\n" +
-                "name: $name\n" +
-                "path: $path\n" +
-                "bucketId: $bucketId\n" +
-                "bucketName: $bucketName\n" +
-                "dateAdded: $dateAdded\n" +
-                "dateTaken: $dateTaken\n" +
-                "dateModifier: $dateModifier\n" +
-                "width: $width\n" +
-                "height: $height\n" +
-                "size: $size\n" +
-                "isImage: $isImage\n" +
-                "duration: $duration"
+        return "id: $id\n" + "name: $name\n" + "path: $path\n" + "bucketId: $bucketId\n" + "bucketName: $bucketName\n" + "dateAdded: $dateAdded\n" + "dateTaken: $dateTaken\n" + "dateModifier: $dateModifier\n" + "width: $width\n" + "height: $height\n" + "size: $size\n" + "isImage: $isImage\n" + "duration: $duration"
     }
 }

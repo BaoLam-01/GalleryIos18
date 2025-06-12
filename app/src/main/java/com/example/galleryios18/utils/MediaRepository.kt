@@ -1,13 +1,23 @@
 package com.example.galleryios18.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.core.database.getStringOrNull
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.galleryios18.App
 import com.example.galleryios18.common.models.Media
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.label.ImageLabeling
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -100,6 +110,7 @@ class MediaRepository @Inject constructor() {
                 if (media.dateTaken == 0L) {
                     media.dateTaken = media.dateAdded
                 }
+                getLabelMedia(media)
                 listImage.add(media)
             }
             cursor.close()
@@ -146,7 +157,7 @@ class MediaRepository @Inject constructor() {
                 if (media.dateTaken == 0L) {
                     media.dateTaken = media.dateAdded
                 }
-
+                getLabelMedia(media)
                 listVideo.add(media)
             }
             cursor.close()
@@ -154,6 +165,52 @@ class MediaRepository @Inject constructor() {
         }
         val listSort = listMedia.sortedBy { it.dateTaken }
         return listSort
+    }
+
+    private fun getLabelMedia(media: Media) {
+        Glide.with(App.instance).asBitmap().load(media.path)
+            .addListener(object : RequestListener<Bitmap> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap?>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return true
+                }
+
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    model: Any,
+                    target: Target<Bitmap?>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    val image = InputImage.fromBitmap(resource, 0)
+                    val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+                    labeler.process(image)
+                        .addOnSuccessListener { labels ->
+                            // Task completed successfully
+                            for (label in labels) {
+                                val text = label.text
+                                val confidence = label.confidence
+                                val index = label.index
+                                if (media.listLabeling.size > 5 && confidence < 0.5) {
+                                    break
+                                }
+                                media.listLabeling.add(text)
+                                Timber.e("LamPro | onResourceReady1 - size: ${media.listLabeling.size}")
+                            }
+
+                        }
+                        .addOnFailureListener { e ->
+                            // Task failed with an exception
+                            // ...
+                        }
+                    return true
+                }
+
+            }).submit()
     }
 
     fun getRealVideoSize(path: String): Pair<Int, Int> {
