@@ -10,10 +10,12 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.galleryios18.App
 import com.example.galleryios18.R
 import com.example.galleryios18.databinding.ActivityMainBinding
+import com.example.galleryios18.feature.liquidglass.LiquidGLView
 import com.example.galleryios18.utils.Utils
 import com.example.galleryios18.ui.base.BaseBindingActivity
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
+    private lateinit var glView: LiquidGLView
 
     var navController: NavController? = null
     private var navGraph: NavGraph? = null
@@ -28,6 +30,13 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding, MainViewModel>() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.navigationBarColor = Color.TRANSPARENT
         initView()
+//        glView = LiquidGLView(this)
+//        setContentView(glView)
+//
+//        glView.setOnTouchListener { _, event ->
+//            glView.updateTouch(event.x, event.y)
+//            true
+//        }
     }
 
     override fun setupData() {
